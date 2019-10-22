@@ -16,6 +16,14 @@ public class StaffMenu {
         // Initialize selection variable to ASCII null to keep compiler happy
         char selection = '\0';
 
+        System.out.println("-----------------------------------------\n");
+		System.out.println(" CCCCC   IIIII  NN    NN   CCCCC    OOOOO");  
+		System.out.println("CC   CC   III   NNN   NN  CC   CC  OO   OO"); 
+		System.out.println("CC        III   NN N  NN  CC       OO   OO");
+		System.out.println("CC        III   NN  N NN  CC       OO   OO"); 
+		System.out.println("CC   CC   III   NN   NNN  CC   CC  OO   OO"); 
+		System.out.println(" CCCCC   IIIII  NN    NN   CCCCC    OOOOO\n");
+		System.out.println("-----------------------------------------");
        
         do
         {
