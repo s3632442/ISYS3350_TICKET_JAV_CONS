@@ -2,7 +2,7 @@ package HelpDeskTicketSystem;
 
 import java.util.Scanner;
 
-public class StaffMenu {
+public class IT_HelpDeskSystem {
 	 // you can refer to the array and Scanner object here anywhere
     // within this class, even within helper methods if you choose to
     // implement them
