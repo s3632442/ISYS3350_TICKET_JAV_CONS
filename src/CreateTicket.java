@@ -28,16 +28,36 @@ public class CreateTicket {
 	};
 	//	Initial setup setting ticket as true for open on creation
 	//	False for when ticket is closed
-	private boolean ticketStatus = true;
+	private boolean ticketStatus;
 	// Technician Details added once ticket allocated to technician
 	private String ticketTechnicianFirstName;
 	private String ticketTechnicianLastName;
+	
+	//Constructor for Create Ticket 
+	public CreateTicket(String ticketId, String ticketCreatorFirstName, String ticketCreatorLasttName,
+			String ticketCreatorStaffNumber, String ticketCreatorEmail, String ticketCreatorContactNumber,
+			String descriptionIssue, boolean ticketStatus, String ticketTechnicianFirstName,
+			String ticketTechnicianLastName) {
+		super();
+		this.ticketId = ticketId;
+		this.ticketCreatorFirstName = ticketCreatorFirstName;
+		this.ticketCreatorLasttName = ticketCreatorLasttName;
+		this.ticketCreatorStaffNumber = ticketCreatorStaffNumber;
+		this.ticketCreatorEmail = ticketCreatorEmail;
+		this.ticketCreatorContactNumber = ticketCreatorContactNumber;
+		this.descriptionIssue = descriptionIssue;
+		this.ticketStatus = true;
+		this.ticketTechnicianFirstName = null;
+		this.ticketTechnicianLastName = null;
+	}
+	
 	
 	// Getters for Create Ticket
 	
 	public String getTicketId() {
 		return ticketId;
 	}
+
 	public String getTicketCreatorFirstName() {
 		return ticketCreatorFirstName;
 	}
