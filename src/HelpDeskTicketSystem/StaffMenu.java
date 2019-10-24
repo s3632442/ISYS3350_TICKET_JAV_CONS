@@ -11,6 +11,22 @@ public class StaffMenu {
     
     private static final Scanner sc = new Scanner(System.in);
 
+    protected static CreateTicket.TicketSeverity checkTicketSeverity(String input)
+    {
+    	if (input.equals(CreateTicket.TicketSeverity.HIGH.name()))
+    	{
+    		return CreateTicket.TicketSeverity.HIGH;
+    	}
+    	if (input.equals(CreateTicket.TicketSeverity.MEDIUM.name()))
+    	{
+    		return CreateTicket.TicketSeverity.MEDIUM;
+    	}
+    	if (input.equals(CreateTicket.TicketSeverity.LOW.name()))
+    	{
+    		return CreateTicket.TicketSeverity.LOW;
+    	}
+    	return null;
+    }
     /*
      * Recursive input retrieval and validation
      */
@@ -32,6 +48,21 @@ public class StaffMenu {
     		System.out.println("Error - Input can not be empty!");
     		input = getInput(request);
     	}
+    	if ("X".equals(input))
+    	{
+    		System.out.println("Are you sure you want to cancel this ticket? Y/N");
+    		input = sc.nextLine();
+    		do {
+    			System.out.println("Error - Invalid input, must be Y or N");
+    			input = sc.nextLine();
+    		} while(!input.toUpperCase().equals("Y") || !input.toUpperCase().equals("N"));
+    		if (input.equals("Y"))
+    		{
+    			return "\0";
+    		}
+    		input = getInput(request);
+    		
+    	}
     	// if invalid email
     	if (request.equals("email") && !input.matches(emailPattern))
     	{
@@ -44,6 +75,16 @@ public class StaffMenu {
 			System.out.println("Error - Invalid phone number, must use Australian format!");
 			input = getInput(request);
 		}
+    	// if valid ticket severity
+    	if (request.equals("issue severity"))
+    	{
+    		if (checkTicketSeverity(input.toUpperCase())==null)
+    		{
+    			System.out.println("Error - Invalid severity, must be LOW, MEDIUM, OR HIGH!");
+    			input = getInput(request);
+    		}
+    		input = input.toUpperCase();
+    	}
     	return input;
     }
 
@@ -70,8 +111,10 @@ public class StaffMenu {
     	String creatorEmail = getInput("email");
     	String creatorContactNumber = getInput("contact number");
     	String descriptionIssue = getInput("description of the issue");
+    	String strTicketSeverity = getInput("issue severity");
+    	CreateTicket.TicketSeverity ticketSeverity = checkTicketSeverity(strTicketSeverity);
     	String ticketId = generateTicketId();
-    	return new CreateTicket(ticketId, creatorFirstName, creatorLastName, creatorStaffNumber, creatorEmail, creatorContactNumber, descriptionIssue);
+    	return new CreateTicket(ticketId, creatorFirstName, creatorLastName, creatorStaffNumber, creatorEmail, creatorContactNumber, descriptionIssue, ticketSeverity);
     }
     
 
@@ -123,7 +166,8 @@ public class StaffMenu {
                 			+ "Contact Number: %s\n"
                 			+ "Issue description: %s\n"
                 			+ "Ticket Status: %s\n"
-                			+ "Assigned Technician: %s\n", 
+                			+ "Assigned Technician: %s %s\n"
+                			+ "Ticket Severity: %s\n", 
                 			ticket.getTicketId(), 
                 			ticket.getTicketCreatorFirstName(), 
                 			ticket.getTicketCreatorLastName(), 
@@ -133,7 +177,8 @@ public class StaffMenu {
                 			ticket.getDescriptionIssue(), 
                 			ticket.getTicketStatus(), 
                 			ticket.getTicketTechnicianFirstName(), 
-                			ticket.getTicketCreatorLastName());
+                			ticket.getTicketTechnicianLastName(),
+                			ticket.getTicketSeverity().name());
                     break;
 
                 case 'X':

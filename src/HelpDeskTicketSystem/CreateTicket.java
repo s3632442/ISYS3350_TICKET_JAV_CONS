@@ -2,10 +2,15 @@ package HelpDeskTicketSystem;
 
 
 public class CreateTicket {
+	protected enum TicketSeverity {
+		LOW,
+		MEDIUM,
+		HIGH
+	};
 	// Attribute
 	private String ticketId;
 	// Counter to increment on ticket creation
-	static int ticketIDCounter = 0;
+	static int ticketIDCounter = 1;
 	private String ticketCreatorFirstName;
 	private String ticketCreatorLastName;
 	private String ticketCreatorStaffNumber;
@@ -13,11 +18,7 @@ public class CreateTicket {
 	private String ticketCreatorContactNumber;
 	// Description of IT Issue
 	private String descriptionIssue;
-	private enum ticketSeverity {
-		LOW,
-		MEDIUM,
-		HIGH
-	};
+	private TicketSeverity ticketSeverity;
 	//	Initial setup setting ticket as true for open on creation
 	//	False for when ticket is closed
 	private boolean ticketStatus;
@@ -28,7 +29,7 @@ public class CreateTicket {
 	//Constructor for Create Ticket 
 	public CreateTicket(String ticketId, String ticketCreatorFirstName, String ticketCreatorLastName,
 			String ticketCreatorStaffNumber, String ticketCreatorEmail, String ticketCreatorContactNumber,
-			String descriptionIssue) {
+			String descriptionIssue, TicketSeverity ticketSeverity) {
 		super();
 		this.ticketId = ticketId;
 		this.ticketCreatorFirstName = ticketCreatorFirstName;
@@ -37,6 +38,7 @@ public class CreateTicket {
 		this.ticketCreatorEmail = ticketCreatorEmail;
 		this.ticketCreatorContactNumber = ticketCreatorContactNumber;
 		this.descriptionIssue = descriptionIssue;
+		this.ticketSeverity = ticketSeverity;
 		this.ticketStatus = true;
 		this.ticketTechnicianFirstName = null;
 		this.ticketTechnicianLastName = null;
@@ -71,6 +73,10 @@ public class CreateTicket {
 	public String getDescriptionIssue() {
 		return descriptionIssue;
 	}	
+	
+	public TicketSeverity getTicketSeverity() {
+		return ticketSeverity;
+	}
 	
 	public String getTicketStatus() {
 		if (ticketStatus) {
@@ -118,6 +124,10 @@ public class CreateTicket {
 		this.descriptionIssue = descriptionIssue;
 	}
 
+	public void setTicketSeverity(TicketSeverity ticketSeverity)
+	{
+		this.ticketSeverity = ticketSeverity;
+	}
 	public void setTicketStatus(boolean ticketStatus) {
 		this.ticketStatus = ticketStatus;
 	}
@@ -129,5 +139,4 @@ public class CreateTicket {
 	public void setTicketTechnicianLastName(String ticketTechnicianLastName) {
 		this.ticketTechnicianLastName = ticketTechnicianLastName;
 	}
-	
 }

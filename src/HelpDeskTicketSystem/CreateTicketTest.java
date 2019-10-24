@@ -7,7 +7,7 @@ class CreateTicketTest {
 	
 	CreateTicket ticket = new CreateTicket( "1", "TestCreatorFirstName", "TestCreatorLastName",
 			"2",  "test@test.com", "0299991111",
-			"test description");
+			"test description", CreateTicket.TicketSeverity.HIGH);
 	
 	// Test ticket setter and getter with the value of 2
 	@Test
@@ -18,7 +18,7 @@ class CreateTicketTest {
 	// Test ticket counter is 1
 	@Test
 	void testTicketCounter() {
-		assertEquals(1, CreateTicket.ticketIDCounter);
+		assertEquals(2, CreateTicket.ticketIDCounter);
 	}
 	// Test ticket setter and getter for creator first name with the value of foo
 	@Test
@@ -55,6 +55,12 @@ class CreateTicketTest {
 	void testTicketDescriptionIssue() {
 		ticket.setDescriptionIssue("foobar");
 		assertEquals("foobar", ticket.getDescriptionIssue());
+	}
+	// Test ticker setter and getter for ticket severity with a value of LOW
+	@Test
+	void testTicketSeverity() {
+		ticket.setTicketSeverity(CreateTicket.TicketSeverity.LOW);
+		assertEquals("LOW", ticket.getTicketSeverity().name());
 	}
 	// Test ticket status initial value has a value of Open
 	@Test
