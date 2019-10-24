@@ -1,5 +1,6 @@
 package HelpDeskTicketSystem;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,6 +10,7 @@ public class StaffMenu {
     // within this class, even within helper methods if you choose to
     // implement them
     
+	private static ArrayList<CreateTicket> tickets = new ArrayList<CreateTicket>();
     private static final Scanner sc = new Scanner(System.in);
 
     protected static CreateTicket.TicketSeverity checkTicketSeverity(String input)
@@ -159,28 +161,34 @@ public class StaffMenu {
                 case 'C':
                     // product range search();
                 	CreateTicket ticket = createTicket();
-                	System.out.printf("Ticket ID: %s\n"
-                			+ "Name: %s %s\n"
-                			+ "Staff Number: %s\n"
-                			+ "Email: %s\n"
-                			+ "Contact Number: %s\n"
-                			+ "Issue description: %s\n"
-                			+ "Ticket Status: %s\n"
-                			+ "Assigned Technician: %s %s\n"
-                			+ "Ticket Severity: %s\n", 
-                			ticket.getTicketId(), 
-                			ticket.getTicketCreatorFirstName(), 
-                			ticket.getTicketCreatorLastName(), 
-                			ticket.getTicketCreatorStaffNumber(), 
-                			ticket.getTicketCreatorEmail(), 
-                			ticket.getTicketCreatorContactNumber(), 
-                			ticket.getDescriptionIssue(), 
-                			ticket.getTicketStatus(), 
-                			ticket.getTicketTechnicianFirstName(), 
-                			ticket.getTicketTechnicianLastName(),
-                			ticket.getTicketSeverity().name());
+                	tickets.add(ticket);
                     break;
 
+                case 'P':
+                	for (int i = 0; i<tickets.size(); i++)
+                	{
+                		CreateTicket tmp = tickets.get(i);
+                    	System.out.printf("Ticket ID: %s\n"
+                    			+ "Name: %s %s\n"
+                    			+ "Staff Number: %s\n"
+                    			+ "Email: %s\n"
+                    			+ "Contact Number: %s\n"
+                    			+ "Issue description: %s\n"
+                    			+ "Ticket Status: %s\n"
+                    			+ "Assigned Technician: %s %s\n"
+                    			+ "Ticket Severity: %s\n\n", 
+                    			tmp.getTicketId(), 
+                    			tmp.getTicketCreatorFirstName(), 
+                    			tmp.getTicketCreatorLastName(), 
+                    			tmp.getTicketCreatorStaffNumber(), 
+                    			tmp.getTicketCreatorEmail(), 
+                    			tmp.getTicketCreatorContactNumber(), 
+                    			tmp.getDescriptionIssue(), 
+                    			tmp.getTicketStatus(), 
+                    			tmp.getTicketTechnicianFirstName(), 
+                    			tmp.getTicketTechnicianLastName(),
+                    			tmp.getTicketSeverity().name());
+                	}
                 case 'X':
                     System.out.println("Exiting the program...");
                     break;

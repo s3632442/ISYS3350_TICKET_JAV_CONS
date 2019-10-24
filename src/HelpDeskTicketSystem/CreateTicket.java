@@ -48,6 +48,10 @@ public class CreateTicket {
 	
 	// Getters for Create Ticket
 	
+	public int getTicketCounter() {
+		return ticketIDCounter;
+	}
+	
 	public String getTicketId() {
 		return ticketId;
 	}

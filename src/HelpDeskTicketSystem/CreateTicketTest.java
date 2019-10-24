@@ -18,7 +18,7 @@ class CreateTicketTest {
 	// Test ticket counter is 1
 	@Test
 	void testTicketCounter() {
-		assertEquals(2, CreateTicket.ticketIDCounter);
+		assertEquals(2, ticket.getTicketCounter());
 	}
 	// Test ticket setter and getter for creator first name with the value of foo
 	@Test
