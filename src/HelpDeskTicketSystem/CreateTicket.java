@@ -73,11 +73,11 @@ public class CreateTicket {
 	}	
 	
 	public String getTicketStatus() {
-		if (ticketStatus = true) {
+		if (ticketStatus) {
 			return "Open";
+		} else {
+			return "Closed";
 		}
-		else
-		return "Closed";
 	}	
 	
 	public String getTicketTechnicianFirstName() {
