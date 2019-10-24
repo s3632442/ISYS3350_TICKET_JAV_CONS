@@ -1,3 +1,4 @@
+package HelpDeskTicketSystem;
 
 
 public class CreateTicket {
@@ -15,7 +16,7 @@ public class CreateTicket {
 	*/
 	static int ticketIDCounter = 0;
 	private String ticketCreatorFirstName;
-	private String ticketCreatorLasttName;
+	private String ticketCreatorLastName;
 	private String ticketCreatorStaffNumber;
 	private String ticketCreatorEmail;
 	private String ticketCreatorContactNumber;
@@ -34,14 +35,14 @@ public class CreateTicket {
 	private String ticketTechnicianLastName;
 	
 	//Constructor for Create Ticket 
-	public CreateTicket(String ticketId, String ticketCreatorFirstName, String ticketCreatorLasttName,
+	public CreateTicket(String ticketId, String ticketCreatorFirstName, String ticketCreatorLastName,
 			String ticketCreatorStaffNumber, String ticketCreatorEmail, String ticketCreatorContactNumber,
 			String descriptionIssue, boolean ticketStatus, String ticketTechnicianFirstName,
 			String ticketTechnicianLastName) {
 		super();
 		this.ticketId = ticketId;
 		this.ticketCreatorFirstName = ticketCreatorFirstName;
-		this.ticketCreatorLasttName = ticketCreatorLasttName;
+		this.ticketCreatorLastName = ticketCreatorLastName;
 		this.ticketCreatorStaffNumber = ticketCreatorStaffNumber;
 		this.ticketCreatorEmail = ticketCreatorEmail;
 		this.ticketCreatorContactNumber = ticketCreatorContactNumber;
@@ -61,8 +62,8 @@ public class CreateTicket {
 	public String getTicketCreatorFirstName() {
 		return ticketCreatorFirstName;
 	}
-	public String getTicketCreatorLasttName() {
-		return ticketCreatorLasttName;
+	public String getTicketCreatorLastName() {
+		return ticketCreatorLastName;
 	}
 	public String getTicketCreatorStaffNumber() {
 		return ticketCreatorStaffNumber;
@@ -106,8 +107,8 @@ public class CreateTicket {
 		this.ticketCreatorFirstName = ticketCreatorFirstName;
 	}
 	 
-	public void setTicketCreatorLasttName(String ticketCreatorLasttName) {
-		this.ticketCreatorLasttName = ticketCreatorLasttName;
+	public void setTicketCreatorLastName(String ticketCreatorLastName) {
+		this.ticketCreatorLastName = ticketCreatorLastName;
 	}
 
 	public void setTicketCreatorStaffNumber(String ticketCreatorStaffNumber) {
