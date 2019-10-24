@@ -1,6 +1,8 @@
 package HelpDeskTicketSystem;
 
 import java.util.Scanner;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class StaffMenu {
 	 // you can refer to the array and Scanner object here anywhere
@@ -9,13 +11,76 @@ public class StaffMenu {
     
     private static final Scanner sc = new Scanner(System.in);
 
+    /*
+     * Recursive input retrieval and validation
+     */
+    private static String getInput(String request)
+    {
+    	String input = "\0";
+    	// Regex that matches email addresses
+    	String emailPattern = "\\b[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,4}\\b";
+    	// Regex that matches Australian formatted phone numbers
+    	String phonePattern = "^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[- ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$";
+    	
+    	// request input
+    	System.out.printf("Enter your %s: ", request);
+    	input = sc.nextLine();
+    	
+    	// if empty
+    	if ("".equals(input))
+    	{
+    		System.out.println("Error - Input can not be empty!");
+    		input = getInput(request);
+    	}
+    	// if invalid email
+    	if (request.equals("email") && !input.matches(emailPattern))
+    	{
+    		System.out.println("Error - Invalid email address!");
+    		input = getInput(request);
+    	}
+    	// if invalid phone number
+    	if (request.equals("contact number") && !input.matches(phonePattern))
+		{
+			System.out.println("Error - Invalid phone number, must use Australian format!");
+			input = getInput(request);
+		}
+    	return input;
+    }
+
+    /*
+     * Generate a ticket identification number
+     * Ticket ID Format: yyyyMMdd-ticketIDCounter
+     */
+    private static String generateTicketId()
+    {
+    	LocalDateTime date = LocalDateTime.now();
+    	DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
+    	String formattedDate = date.format(dateFormat);
+    	return formattedDate + "-" + CreateTicket.ticketIDCounter;
+    }
+    
+    /*
+     * Ticket factory method
+     */
+    private static CreateTicket createTicket()
+    {
+    	String creatorFirstName = getInput("first name");
+    	String creatorLastName = getInput("last name");
+    	String creatorStaffNumber = getInput("staff number");
+    	String creatorEmail = getInput("email");
+    	String creatorContactNumber = getInput("contact number");
+    	String descriptionIssue = getInput("description of the issue");
+    	String ticketId = generateTicketId();
+    	return new CreateTicket(ticketId, creatorFirstName, creatorLastName, creatorStaffNumber, creatorEmail, creatorContactNumber, descriptionIssue);
+    }
+    
+
     public static void main(String[] args)
     {
         String userInput;
         Scanner sc = new Scanner(System.in);
         // Initialize selection variable to ASCII null to keep compiler happy
         char selection = '\0';
-
        
         do
         {
@@ -50,8 +115,26 @@ public class StaffMenu {
 
                 case 'C':
                     // product range search();
-                	System.out.println("Create Ticket - function to be implemented");
-                                        break;
+                	CreateTicket ticket = createTicket();
+                	System.out.printf("Ticket ID: %s\n"
+                			+ "Name: %s %s\n"
+                			+ "Staff Number: %s\n"
+                			+ "Email: %s\n"
+                			+ "Contact Number: %s\n"
+                			+ "Issue description: %s\n"
+                			+ "Ticket Status: %s\n"
+                			+ "Assigned Technician: %s\n", 
+                			ticket.getTicketId(), 
+                			ticket.getTicketCreatorFirstName(), 
+                			ticket.getTicketCreatorLastName(), 
+                			ticket.getTicketCreatorStaffNumber(), 
+                			ticket.getTicketCreatorEmail(), 
+                			ticket.getTicketCreatorContactNumber(), 
+                			ticket.getDescriptionIssue(), 
+                			ticket.getTicketStatus(), 
+                			ticket.getTicketTechnicianFirstName(), 
+                			ticket.getTicketCreatorLastName());
+                    break;
 
                 case 'X':
                     System.out.println("Exiting the program...");
@@ -65,7 +148,7 @@ public class StaffMenu {
             System.out.println();
 
         } while (selection != 'X');
-
+        sc.close();
     }
 }
    

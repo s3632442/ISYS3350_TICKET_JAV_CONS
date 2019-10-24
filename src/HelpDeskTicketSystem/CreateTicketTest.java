@@ -7,8 +7,7 @@ class CreateTicketTest {
 	
 	CreateTicket ticket = new CreateTicket( "1", "TestCreatorFirstName", "TestCreatorLastName",
 			"2",  "test@test.com", "0299991111",
-			"test description", false, "TestTechFirstName",
-			 "TestTechLastName");
+			"test description");
 	
 	// Test to check ticket is initially set to open
 	@Test

@@ -5,15 +5,6 @@ public class CreateTicket {
 	// Attribute
 	private String ticketId;
 	// Counter to increment on ticket creation
-	/*TODO For persistence counter number will need to included date 
-	e.g. 
-	import java.time.LocalDateTime;
-	import java.time.format.DateTimeFormatter;
-	LocalDateTime currentDate = LocalDateTime.now();
-	DateTimeFormatter ticketDateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
-	String ticketDate = currentDate.format(ticketDateFormat);
-	ticketId = ticketDate + "-" + ticketIDCounter;
-	*/
 	static int ticketIDCounter = 0;
 	private String ticketCreatorFirstName;
 	private String ticketCreatorLastName;
@@ -37,8 +28,7 @@ public class CreateTicket {
 	//Constructor for Create Ticket 
 	public CreateTicket(String ticketId, String ticketCreatorFirstName, String ticketCreatorLastName,
 			String ticketCreatorStaffNumber, String ticketCreatorEmail, String ticketCreatorContactNumber,
-			String descriptionIssue, boolean ticketStatus, String ticketTechnicianFirstName,
-			String ticketTechnicianLastName) {
+			String descriptionIssue) {
 		super();
 		this.ticketId = ticketId;
 		this.ticketCreatorFirstName = ticketCreatorFirstName;
@@ -50,6 +40,7 @@ public class CreateTicket {
 		this.ticketStatus = true;
 		this.ticketTechnicianFirstName = null;
 		this.ticketTechnicianLastName = null;
+		ticketIDCounter+=1;
 	}
 	
 	
