@@ -1,5 +1,7 @@
 package HelpDeskTicketSystem;
 
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 public class CreateTicket {
 	protected enum TicketSeverity {
@@ -142,5 +144,48 @@ public class CreateTicket {
 
 	public void setTicketTechnicianLastName(String ticketTechnicianLastName) {
 		this.ticketTechnicianLastName = ticketTechnicianLastName;
+	}
+	/* File Handling helper methods compile all attributes for CreateTicket 
+    object to be written out to file*/
+	public void writeAttributes(PrintWriter pw){
+		pw.println(this.ticketId);
+	    pw.println(this.ticketCreatorFirstName);
+	    pw.println(this.ticketCreatorLastName);
+	    pw.println(this.ticketCreatorStaffNumber);
+	    pw.println(this.ticketCreatorEmail);
+	    pw.println(this.ticketCreatorContactNumber);
+	    pw.println(this.descriptionIssue);
+	    pw.println(this.ticketSeverity);
+	    pw.println(this.ticketStatus);
+	    pw.println(this.ticketTechnicianFirstName);
+	    pw.println(this.ticketTechnicianLastName);
+	}
+	public void writeDetails(PrintWriter pw){
+		// tag for CreateTicket object for writing data out to file
+		pw.println("CreateTicket");
+		// adds the attributes for sale object to write data out to file
+		this.writeAttributes(pw);
+	}
+	
+	// constructor for reading in data from file and creating CreateTicket objects
+	public CreateTicket(Scanner fileScanner){
+		String tempSeverity;
+		this.ticketId = fileScanner.nextLine();
+		this.ticketCreatorFirstName = fileScanner.nextLine();
+		this.ticketCreatorLastName = fileScanner.nextLine();
+		this.ticketCreatorStaffNumber = fileScanner.nextLine();
+		this.ticketCreatorEmail = fileScanner.nextLine();
+		this.ticketCreatorContactNumber = fileScanner.nextLine();
+		this.descriptionIssue = fileScanner.nextLine();
+		 tempSeverity = fileScanner.nextLine();
+		// Convert String to Enum for reading severity from file to object
+		this.ticketSeverity = TicketSeverity.valueOf(tempSeverity.toUpperCase());
+		this.ticketStatus = fileScanner.nextBoolean();
+		this.ticketTechnicianFirstName = fileScanner.nextLine();
+		this.ticketTechnicianLastName = fileScanner.nextLine();
+		//clear trailing newline/scanner bug issue if present
+		if (fileScanner.hasNextLine()){
+			fileScanner.nextLine();
+		}
 	}
 }

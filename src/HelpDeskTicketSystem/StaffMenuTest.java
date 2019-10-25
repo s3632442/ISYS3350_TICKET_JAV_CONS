@@ -154,7 +154,7 @@ class StaffMenuTest extends StaffMenu {
 				+ ticket.getTicketSeverity().name());
 	}
 	@Test
-	void testTicketMenuExitNo() {
+	void testTicketMenuExit() {
 		String i = "\n"
 				+ "X\n"
 				+ "x\n"
