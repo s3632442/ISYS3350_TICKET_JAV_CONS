@@ -16,7 +16,7 @@ class StaffMenuTest extends StaffMenu {
 //	Scanner sc = new Scanner(System.in);
 //	String input = sc.nextLine();
 	//TODO uncomment once createTicket changed to protected
-//	HelpDeskTicketSystem.CreateTicket ticket = createTicket();
+	HelpDeskTicketSystem.CreateTicket ticket = createTicket();
 	
 	//TODO Test to check Get Input functionality via reading in text file
 //	@Test
@@ -31,14 +31,15 @@ class StaffMenuTest extends StaffMenu {
 ////		System.out.println(consoleOutput);
 //		assertEquals(consoleOutput.toString(), getInput(input));
 //	}
-	// Test to check Ticket Id generation
+	/* Test to check Ticket Id generation with not other tickets create
+	   and loaded to system*/
 	@Test
 	void testGenerateTicketId() {
 		LocalDateTime date = LocalDateTime.now();
     	DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
     	String formattedDate = date.format(dateFormat);
     	//TODO uncomment once createTicket changed to protected
-//    	assertEquals(formattedDate +"-0", ticket.getTicketId());
+    	assertEquals(formattedDate +"-1", ticket.getTicketId());
 	}
 
 }

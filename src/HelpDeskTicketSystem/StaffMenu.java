@@ -1,7 +1,7 @@
 package HelpDeskTicketSystem;
 
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -105,7 +105,7 @@ public class StaffMenu {
     /*
      * Ticket factory method
      */
-    private static CreateTicket createTicket()
+    protected static CreateTicket createTicket()
     {
     	String creatorFirstName = getInput("first name");
     	String creatorLastName = getInput("last name");
@@ -126,7 +126,10 @@ public class StaffMenu {
         Scanner sc = new Scanner(System.in);
         // Initialize selection variable to ASCII null to keep compiler happy
         char selection = '\0';
-       
+        
+        // Check to see is persistent data for tickets and load if present
+        loadTicketData();
+        
         do
         {
 
@@ -191,6 +194,8 @@ public class StaffMenu {
                 	}
                 case 'X':
                     System.out.println("Exiting the program...");
+                    // Writes out any created tickets to file
+                    writeTicketData();
                     break;
 
                 default:
@@ -203,5 +208,64 @@ public class StaffMenu {
         } while (selection != 'X');
         sc.close();
     }
+    
+    // Method or loading saved tickets
+    
+    public static void loadTicketData()
+    {
+       // tag used to identify object type being read into system from file
+       String ticketTag;
+       CreateTicket temp;
+       try
+       {
+          Scanner fileScanner =
+                   new Scanner(new FileReader("ITHelpDeskTickets.txt"));
+
+          while (fileScanner.hasNextLine())
+          {
+        	  ticketTag = fileScanner.nextLine();
+
+             temp = null;
+             // identifies tickets object type and reads in as Ticket object
+             if (ticketTag.equals("CreateTicket"))
+             {
+                temp = new CreateTicket(fileScanner);
+             }
+             if (temp == null)
+             {
+                System.out.println("File tag " + ticketTag + " is invalid.");
+             }
+             else
+             {
+//            	 StaffMenu.tickets.size()
+                tickets.add(temp);
+                // ticketIDCounter++;
+             }
+          }
+          fileScanner.close();
+       }
+       catch (FileNotFoundException FNFe)
+       {
+          System.out.println("*** File error - \"ITHelpDeskTickets.txt\" file not found. ***" +
+                             "\n" + "*** Starting System without IT Ticket data.*** \n");
+       }
+    }
+    // Method for saving created tickets for persistence
+ // helper method for writing all Ticket data out to file
+    public static void writeTicketData()
+    {
+       try
+       {
+          PrintWriter pw = new PrintWriter("ITHelpDeskTickets.txt");
+          for (int ticketCount = 0; ticketCount < tickets.size(); ticketCount++)
+          {
+             tickets.get(ticketCount).writeDetails(pw);
+          }
+          pw.close();
+       }
+       catch (IOException IOEx)
+       {
+          System.out.println("File error file could not be opened.");
+       }
+    }
 }
-   
