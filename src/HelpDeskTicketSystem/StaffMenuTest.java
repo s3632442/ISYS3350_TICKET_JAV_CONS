@@ -3,6 +3,7 @@ package HelpDeskTicketSystem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -18,20 +19,17 @@ import java.time.format.DateTimeFormatter;
 class StaffMenuTest extends StaffMenu {
 	
 	private final ByteArrayOutputStream out = new ByteArrayOutputStream();
-	private final ByteArrayOutputStream err = new ByteArrayOutputStream();
 	private final PrintStream ogOut = System.out;
-	private final PrintStream ogErr = System.err;
 	
+	// Setup output
 	@Before
 	public void setUpStreams() {
 		System.setOut(new PrintStream(out));
-		System.setErr(new PrintStream(err));
 	}
 	
 	@After
 	public void restoreStreams() {
 		System.setOut(ogOut);
-		System.setErr(ogErr);
 	}
 	
 //	@Test
@@ -83,11 +81,13 @@ class StaffMenuTest extends StaffMenu {
 		assertEquals("HIGH", input);
 	}
 	
+	// Test printing menu with menu selectors
 	@Test
 	void testPrintMenuNoSelection() {
 		StaffMenu.printMenu("UTAPAU", Arrays.asList("HELLO THERE!", "GENERAL KENOBI."), null);
 		assertEquals("", out.toString());
 	}
+	// Test printing menu with menu selectors
 	@Test
 	void testPrintMenuWithSelection() {
 		StaffMenu.printMenu("HAVE YOU HEARD THE STORY OF DARTH PLAGUEIS THE WISE?", Arrays.asList("Yes", "No"), Arrays.asList("Y", "N"));
@@ -122,6 +122,7 @@ class StaffMenuTest extends StaffMenu {
     	assertEquals(formattedDate +"-1", generateTicketId());
 	}
 
+	// Test all ticket paths
 	@Test
 	void testTicketMenu() {
 		String i = "p\n" 
@@ -153,6 +154,7 @@ class StaffMenuTest extends StaffMenu {
 				+ ticket.getDescriptionIssue()
 				+ ticket.getTicketSeverity().name());
 	}
+	// Test ticket menu exit paths
 	@Test
 	void testTicketMenuExit() {
 		String i = "\n"
@@ -164,5 +166,30 @@ class StaffMenuTest extends StaffMenu {
 				+ "Y\n";
 		CreateTicket ticket = TicketMenu(new Scanner(i));
 		assertNull(ticket);
+	}
+	
+	// Test reading from non-existant file
+	@Test
+	void testLoadTicketData() {
+		String filename = "test.txt";
+		loadTicketData(filename);
+		assertEquals("", out.toString());
+	}
+	
+	// Test writing to file
+	@Test
+	void testWriteTicketData() {
+		String filename = "testfile.txt";
+		ArrayList<CreateTicket> tickets = new ArrayList<CreateTicket>();
+		tickets.add(new CreateTicket( "1", "TestCreatorFirstName", "TestCreatorLastName",
+						"2",  "test@test.com", "0299991111",
+						"test description", CreateTicket.TicketSeverity.HIGH));
+		tickets.add(new CreateTicket( "1", "TestCreatorFirstName", "TestCreatorLastName",
+				"2",  "test@test.com", "0299991111",
+				"test description", CreateTicket.TicketSeverity.HIGH));
+		
+		writeTicketData(filename, tickets);
+		loadTicketData(filename);
+		assertEquals("", out.toString());
 	}
 }

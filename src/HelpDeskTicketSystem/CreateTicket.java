@@ -49,7 +49,6 @@ public class CreateTicket {
 	
 	
 	// Getters for Create Ticket
-	
 	public int getTicketCounter() {
 		return ticketIDCounter;
 	}
@@ -177,7 +176,7 @@ public class CreateTicket {
 		this.ticketCreatorEmail = fileScanner.nextLine();
 		this.ticketCreatorContactNumber = fileScanner.nextLine();
 		this.descriptionIssue = fileScanner.nextLine();
-		 tempSeverity = fileScanner.nextLine();
+		tempSeverity = fileScanner.nextLine();
 		// Convert String to Enum for reading severity from file to object
 		this.ticketSeverity = TicketSeverity.valueOf(tempSeverity.toUpperCase());
 		this.ticketStatus = fileScanner.nextBoolean();

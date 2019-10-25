@@ -1,6 +1,13 @@
 package HelpDeskTicketSystem;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
 import org.junit.jupiter.api.Test;
 
 class CreateTicketTest {
@@ -95,5 +102,18 @@ class CreateTicketTest {
 		ticket.setTicketTechnicianLastName("foo");
 		assertEquals("foo", ticket.getTicketTechnicianLastName());
 	}
-
+	// Test writing details & attributes to file
+	@Test
+	void testTicketWriteToFile() throws FileNotFoundException {
+		String filename = "ticket.txt";
+		File file = new File("ticket.txt");
+		PrintWriter pw = new PrintWriter(filename);
+		ticket.writeDetails(pw);
+		pw.close();
+		Scanner sc = new Scanner(new FileReader(filename));
+		sc.nextLine();
+		CreateTicket tmp = new CreateTicket(sc);
+		assertEquals("1", tmp.getTicketId());
+	}
+	
 }

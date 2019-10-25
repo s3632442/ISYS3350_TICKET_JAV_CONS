@@ -205,7 +205,7 @@ public class StaffMenu {
         List <String> menuSelections = Arrays.asList("C", "X");
         
         // Check to see is persistent data for tickets and load if present
-        loadTicketData();
+        loadTicketData("ITHelpDeskTickets.txt");
         
         do
         {
@@ -267,7 +267,7 @@ public class StaffMenu {
                 case 'X':
                     System.out.println("Exiting the program...");
                     // Writes out any created tickets to file
-                    writeTicketData();
+                    writeTicketData("ITHelpDeskTickets.txt", tickets);
                     break;
 
                 default:
@@ -283,7 +283,7 @@ public class StaffMenu {
     
     // Method or loading saved tickets
     
-    public static void loadTicketData()
+    public static void loadTicketData(String filename)
     {
        // tag used to identify object type being read into system from file
        String ticketTag;
@@ -291,7 +291,7 @@ public class StaffMenu {
        try
        {
           Scanner fileScanner =
-                   new Scanner(new FileReader("ITHelpDeskTickets.txt"));
+                   new Scanner(new FileReader(filename));
 
           while (fileScanner.hasNextLine())
           {
@@ -321,11 +321,11 @@ public class StaffMenu {
     }
     // Method for saving created tickets for persistence
  // helper method for writing all Ticket data out to file
-    public static void writeTicketData()
+    public static void writeTicketData(String filename, ArrayList<CreateTicket> tickets)
     {
        try
        {
-          PrintWriter pw = new PrintWriter("ITHelpDeskTickets.txt");
+          PrintWriter pw = new PrintWriter(filename);
           for (int ticketCount = 0; ticketCount < tickets.size(); ticketCount++)
           {
              tickets.get(ticketCount).writeDetails(pw);
