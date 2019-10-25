@@ -1,9 +1,13 @@
 package HelpDeskTicketSystem;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -12,33 +16,153 @@ import java.time.format.DateTimeFormatter;
  
 
 class StaffMenuTest extends StaffMenu {
-
-//	Scanner sc = new Scanner(System.in);
-//	String input = sc.nextLine();
-	//TODO uncomment once createTicket changed to protected
-//	HelpDeskTicketSystem.CreateTicket ticket = createTicket();
 	
-	//TODO Test to check Get Input functionality via reading in text file
+	private final ByteArrayOutputStream out = new ByteArrayOutputStream();
+	private final ByteArrayOutputStream err = new ByteArrayOutputStream();
+	private final PrintStream ogOut = System.out;
+	private final PrintStream ogErr = System.err;
+	
+	@Before
+	public void setUpStreams() {
+		System.setOut(new PrintStream(out));
+		System.setErr(new PrintStream(err));
+	}
+	
+	@After
+	public void restoreStreams() {
+		System.setOut(ogOut);
+		System.setErr(ogErr);
+	}
+	
 //	@Test
-//	void testGetInput() {
-//		HelpDeskTicketSystem.CreateTicket ticket = createTicket();
-//		System.out.println("\n");
-//		System.out.println("b");
+//	public void shouldProcessUserInput() {
+//		String i = "11\n"
+//				+ "10\n";
+//		assertEquals(10, processUserInput(new Scanner(i)));
 //	}
-////		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-////		PrintStream ps = new PrintStream(stream);
-//		PrintStream consoleOutput = System.out;
-////		System.out.println(consoleOutput);
-//		assertEquals(consoleOutput.toString(), getInput(input));
-//	}
+	/*
+	 * getInput Testing
+	 * - empty input
+	 * - name
+	 * - email
+	 * - wrong phone number format
+	 * - correct phone number
+	 * - wrong ticket severity
+	 * - correct ticket severity
+	 */
+	@Test
+	public void testGetInputBadString()
+	{
+		String i = "\n"
+				+ "foobar\n";
+		String input = getInput(new Scanner(i), "Given name");
+		assertEquals("foobar", input);
+	}
+	@Test
+	public void testGetInputBadEmail()
+	{
+		String i = "foobar\n"
+				+ "foo@bar.com\n";
+		String input = getInput(new Scanner(i), "Email");
+		assertEquals("foo@bar.com", input);
+	}
+	@Test
+	public void testGetInputBadPhone()
+	{
+		String i = "101010101010101\n"
+				+ "04 1111 1111\n";
+		String input = getInput(new Scanner(i), "Contact number");
+		assertEquals("04 1111 1111", input);
+	}
+	@Test
+	public void testGetInputBadSeverity()
+	{
+		String i = "lo\n"
+				+ "high";
+		String input = getInput(new Scanner(i), "Severity");
+		assertEquals("HIGH", input);
+	}
+	
+	@Test
+	void testPrintMenuNoSelection() {
+		StaffMenu.printMenu("UTAPAU", Arrays.asList("HELLO THERE!", "GENERAL KENOBI."), null);
+		assertEquals("", out.toString());
+	}
+	@Test
+	void testPrintMenuWithSelection() {
+		StaffMenu.printMenu("HAVE YOU HEARD THE STORY OF DARTH PLAGUEIS THE WISE?", Arrays.asList("Yes", "No"), Arrays.asList("Y", "N"));
+		assertEquals("", out.toString());
+	}
+	// Test all TicketSeverity paths
+	@Test
+	void testCheckTicketSeverity() {
+		String low = CreateTicket.TicketSeverity.LOW.name();
+		String medium = CreateTicket.TicketSeverity.MEDIUM.name();
+		String high = CreateTicket.TicketSeverity.HIGH.name();
+		
+		CreateTicket.TicketSeverity severity = checkTicketSeverity("");
+		assertNull(severity);
+		
+		severity = checkTicketSeverity(low);
+		assertEquals("LOW", severity.name());
+		
+		severity = checkTicketSeverity(medium);
+		assertEquals("MEDIUM", severity.name());
+		
+		severity = checkTicketSeverity(high);
+		assertEquals("HIGH", severity.name());
+		
+	}
 	// Test to check Ticket Id generation
 	@Test
 	void testGenerateTicketId() {
 		LocalDateTime date = LocalDateTime.now();
     	DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
     	String formattedDate = date.format(dateFormat);
-    	//TODO uncomment once createTicket changed to protected
-//    	assertEquals(formattedDate +"-0", ticket.getTicketId());
+    	assertEquals(formattedDate +"-1", generateTicketId());
 	}
 
+	@Test
+	void testTicketMenu() {
+		String i = "p\n" 
+				+ "C\n"
+				+ "1\n"
+				+ "Bar\n"
+				+ "2\n"
+				+ "Foo\n"
+				+ "3\n"
+				+ "super1000\n"
+				+ "4\n"
+				+ "foo@bar.com\n"
+				+ "5\n"
+				+ "02 6310 1010\n"
+				+ "6\n"
+				+ "leaking all the memory\n"
+				+ "7\n"
+				+ "HIGH\n"
+				+ "C\n";
+		String ticketId = generateTicketId();
+		CreateTicket ticket = TicketMenu(new Scanner(i));
+		assertEquals(ticketId + "FooBarsuper1000foo@bar.com02 6310 1010leaking all the memoryHIGH", 
+				ticket.getTicketId()
+				+ ticket.getTicketCreatorLastName()
+				+ ticket.getTicketCreatorFirstName()
+				+ ticket.getTicketCreatorStaffNumber()
+				+ ticket.getTicketCreatorEmail()
+				+ ticket.getTicketCreatorContactNumber()
+				+ ticket.getDescriptionIssue()
+				+ ticket.getTicketSeverity().name());
+	}
+	@Test
+	void testTicketMenuExitNo() {
+		String i = "\n"
+				+ "X\n"
+				+ "x\n"
+				+ "xxxxxx\n"
+				+ "N\n"
+				+ "X\n"
+				+ "Y\n";
+		CreateTicket ticket = TicketMenu(new Scanner(i));
+		assertNull(ticket);
+	}
 }
