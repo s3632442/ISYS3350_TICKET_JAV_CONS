@@ -299,19 +299,16 @@ public class StaffMenu {
 
              temp = null;
              // identifies tickets object type and reads in as Ticket object
-             if (ticketTag.equals("CreateTicket"))
-             {
+             if (ticketTag.equals("CreateTicket")){
                 temp = new CreateTicket(fileScanner);
              }
-             if (temp == null)
-             {
+             if (temp == null){
                 System.out.println("File tag " + ticketTag + " is invalid.");
              }
-             else
-             {
-//            	 StaffMenu.tickets.size()
+             else{
                 tickets.add(temp);
-                // ticketIDCounter++;
+		// Set ticket count to number of tickets in arraylist
+                CreateTicket.ticketIDCounter = StaffMenu.tickets.size() + 1;
              }
           }
           fileScanner.close();
