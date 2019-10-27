@@ -158,7 +158,6 @@ public class StaffMenu {
 					System.out.println("Exiting will cause any progress to be lost");
 					System.out.println("Are you sure you want to exit? Y/N");
 					exit = scanner.nextLine();
-					System.out.println(exit.length());
 					do {
 						if (exit.length() == 1)
 						{
