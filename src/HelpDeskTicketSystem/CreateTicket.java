@@ -162,7 +162,7 @@ public class CreateTicket {
 	public void writeDetails(PrintWriter pw){
 		// tag for CreateTicket object for writing data out to file
 		pw.println("CreateTicket");
-		// adds the attributes for sale object to write data out to file
+		// adds the attributes for CreateTicket object to write data out to file
 		this.writeAttributes(pw);
 	}
 	
