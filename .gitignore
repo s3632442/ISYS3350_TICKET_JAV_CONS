@@ -1,4 +1,6 @@
 bin/
+lib/
+*.txt
 *.log
 .DS_Store
 .DS_Store?
