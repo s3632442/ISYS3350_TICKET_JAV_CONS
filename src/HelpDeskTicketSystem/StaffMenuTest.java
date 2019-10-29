@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
  
 
-class StaffMenuTest extends StaffMenu {
+class StaffMenuTest extends Login_Menus {
 	
 	private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 	private final PrintStream ogOut = System.out;
@@ -84,13 +84,13 @@ class StaffMenuTest extends StaffMenu {
 	// Test printing menu with menu selectors
 	@Test
 	void testPrintMenuNoSelection() {
-		StaffMenu.printMenu("UTAPAU", Arrays.asList("HELLO THERE!", "GENERAL KENOBI."), null);
+		Login_Menus.printMenu("UTAPAU", Arrays.asList("HELLO THERE!", "GENERAL KENOBI."), null);
 		assertEquals("", out.toString());
 	}
 	// Test printing menu with menu selectors
 	@Test
 	void testPrintMenuWithSelection() {
-		StaffMenu.printMenu("HAVE YOU HEARD THE STORY OF DARTH PLAGUEIS THE WISE?", Arrays.asList("Yes", "No"), Arrays.asList("Y", "N"));
+		Login_Menus.printMenu("HAVE YOU HEARD THE STORY OF DARTH PLAGUEIS THE WISE?", Arrays.asList("Yes", "No"), Arrays.asList("Y", "N"));
 		assertEquals("", out.toString());
 	}
 	// Test all TicketSeverity paths
