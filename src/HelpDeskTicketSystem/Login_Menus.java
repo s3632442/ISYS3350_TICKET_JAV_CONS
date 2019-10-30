@@ -51,7 +51,7 @@ public class Login_Menus {
 					credPWD = br.readLine();
 
 					// evaluate user credentials against stored credentials
-					if (userNO==(credNO) && userPWD==(credPWD)) {
+					if (userNO.equals(credNO) && userPWD.equals(credPWD)) {
 						System.out.println("Logged In!");
 
 						// make user prefix case insensitive
@@ -136,8 +136,8 @@ public class Login_Menus {
 						case 'T':
 							do {
 								// set menu selections
-								menu = Arrays.asList("View Allocated Tickets", "Exit Program");
-								menuSelections = Arrays.asList("V", "X");
+								menu = Arrays.asList("Close Ticket", "Change Ticket Status" ,"Exit Program");
+								menuSelections = Arrays.asList("C", "S" , "X");
 
 								// menu title
 								printMenu("Tech Menu", menu, menuSelections);
@@ -157,10 +157,15 @@ public class Login_Menus {
 									switch (Character.toUpperCase(userInput.charAt(0))) {
 
 									// view open ticket case
-									case 'V':
-										System.out.println("View open tickets");
+									case 'C':
+										System.out.println("Enter the ticket # you wish to close");
 										break;
 
+										// view open ticket case
+									case 'S':
+										System.out.println("Enter the ticket # you wish to change");
+										break;
+										
 									// exit case
 									case 'X':
 										System.out.println("Exiting the program...");
