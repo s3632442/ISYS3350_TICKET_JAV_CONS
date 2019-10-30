@@ -163,11 +163,15 @@ public class Login_Menus {
 									// view open ticket case
 									case 'C':
 										System.out.println("Enter the ticket # you wish to close");
+										userInput = sc.nextLine();
+										System.out.println("closed ticket " + userInput + " ...PFFT! Just Jokes!");
 										break;
 
 										// view open ticket case
 									case 'S':
 										System.out.println("Enter the ticket # you wish to change");
+										userInput = sc.nextLine();
+										System.out.println("changed status of ticket " + userInput + " ...PFFT! Just Jokes!");
 										break;
 										
 									// exit case
