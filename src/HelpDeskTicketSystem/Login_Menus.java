@@ -53,6 +53,8 @@ public class Login_Menus {
 					// evaluate user credentials against stored credentials
 					if (userNO.equals(credNO) && userPWD.equals(credPWD)) {
 						System.out.println("Logged In!");
+						
+						System.out.println();
 
 						// make user prefix case insensitive
 						selection = Character.toUpperCase(userNO.charAt(0));
@@ -138,7 +140,9 @@ public class Login_Menus {
 								// set menu selections
 								menu = Arrays.asList("Close Ticket", "Change Ticket Status" ,"Exit Program");
 								menuSelections = Arrays.asList("C", "S" , "X");
-
+								
+								displayAllocatedTickets();
+								
 								// menu title
 								printMenu("Tech Menu", menu, menuSelections);
 								userInput = sc.nextLine();
@@ -199,6 +203,34 @@ public class Login_Menus {
 			}
 		}
 	}
+	
+    protected static void displayAllocatedTickets() {
+    	
+
+		
+    	
+        try {
+            // resets reference in the array
+            int ticketArrayCount = 0;
+            int arrSize = tickets.size();
+            // iterates through array
+            while (arrSize > ticketArrayCount)
+            {
+                // displays details for each stored object
+            	System.out.println("Allocated tickets");
+                System.out.print("ID: " + tickets.get(ticketArrayCount).getTicketId() + " Status:" + tickets.get(ticketArrayCount).getTicketStatus() + "Severity: " + tickets.get(ticketArrayCount).getTicketSeverity());
+                System.out.println();
+
+                ticketArrayCount++;
+            }
+        } catch (Exception e) {// Catch exception if any
+            
+        
+            System.err.println("Error: " + e.getMessage());
+        }
+
+        
+}
 
 	// print menu method
 	protected static void printMenu(String title, List<String> menu, List<String> menuSelections) {
