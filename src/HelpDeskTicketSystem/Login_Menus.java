@@ -218,7 +218,7 @@ public class Login_Menus {
             {
                 // displays details for each stored object
             	System.out.println("Allocated tickets");
-                System.out.print("ID: " + tickets.get(ticketArrayCount).getTicketId() + " Status:" + tickets.get(ticketArrayCount).getTicketStatus() + "Severity: " + tickets.get(ticketArrayCount).getTicketSeverity());
+                System.out.print("ID: " + tickets.get(ticketArrayCount).getTicketId() + "| Status:" + tickets.get(ticketArrayCount).getTicketStatus() + "| Severity:" + tickets.get(ticketArrayCount).getTicketSeverity());
                 System.out.println();
 
                 ticketArrayCount++;
