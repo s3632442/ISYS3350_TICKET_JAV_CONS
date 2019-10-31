@@ -1,27 +1,33 @@
-package HelpDeskTicketSystem;
+package HelpDeskTicketSystemTesting;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Scanner;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
- 
+import HelpDeskTicketSystem.Ticket;
+import HelpDeskTicketSystem.Menus;
 
-class StaffMenuTest extends Login_Menus {
-	
+class MenusTest extends Menus {
+
 	private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 	private final PrintStream ogOut = System.out;
 	
-	// Setup output
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		Ticket.ticketIDCounter = 0;
+	}
+	
 	@Before
 	public void setUpStreams() {
 		System.setOut(new PrintStream(out));
@@ -32,12 +38,6 @@ class StaffMenuTest extends Login_Menus {
 		System.setOut(ogOut);
 	}
 	
-//	@Test
-//	public void shouldProcessUserInput() {
-//		String i = "11\n"
-//				+ "10\n";
-//		assertEquals(10, processUserInput(new Scanner(i)));
-//	}
 	/*
 	 * getInput Testing
 	 * - empty input
@@ -84,23 +84,23 @@ class StaffMenuTest extends Login_Menus {
 	// Test printing menu with menu selectors
 	@Test
 	void testPrintMenuNoSelection() {
-		Login_Menus.printMenu("UTAPAU", Arrays.asList("HELLO THERE!", "GENERAL KENOBI."), null);
+		Menus.printMenu("UTAPAU", Arrays.asList("HELLO THERE!", "GENERAL KENOBI."), null);
 		assertEquals("", out.toString());
 	}
 	// Test printing menu with menu selectors
 	@Test
 	void testPrintMenuWithSelection() {
-		Login_Menus.printMenu("HAVE YOU HEARD THE STORY OF DARTH PLAGUEIS THE WISE?", Arrays.asList("Yes", "No"), Arrays.asList("Y", "N"));
+		Menus.printMenu("HAVE YOU HEARD THE STORY OF DARTH PLAGUEIS THE WISE?", Arrays.asList("Yes", "No"), Arrays.asList("Y", "N"));
 		assertEquals("", out.toString());
 	}
 	// Test all TicketSeverity paths
 	@Test
 	void testCheckTicketSeverity() {
-		String low = CreateTicket.TicketSeverity.LOW.name();
-		String medium = CreateTicket.TicketSeverity.MEDIUM.name();
-		String high = CreateTicket.TicketSeverity.HIGH.name();
+		String low = Ticket.TicketSeverity.LOW.name();
+		String medium = Ticket.TicketSeverity.MEDIUM.name();
+		String high = Ticket.TicketSeverity.HIGH.name();
 		
-		CreateTicket.TicketSeverity severity = checkTicketSeverity("");
+		Ticket.TicketSeverity severity = checkTicketSeverity("");
 		assertNull(severity);
 		
 		severity = checkTicketSeverity(low);
@@ -119,7 +119,7 @@ class StaffMenuTest extends Login_Menus {
 		LocalDateTime date = LocalDateTime.now();
     	DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
     	String formattedDate = date.format(dateFormat);
-    	assertEquals(formattedDate +"-1", generateTicketId());
+    	assertEquals(formattedDate +"-0", generateTicketId());
 	}
 
 	// Test all ticket paths
@@ -143,16 +143,16 @@ class StaffMenuTest extends Login_Menus {
 				+ "HIGH\n"
 				+ "C\n";
 		String ticketId = generateTicketId();
-		CreateTicket ticket = TicketMenu(new Scanner(i));
+		Ticket ticket = createTicketMenu(new Scanner(i));
 		assertEquals(ticketId + "FooBarsuper1000foo@bar.com02 6310 1010leaking all the memoryHIGH", 
-				ticket.getTicketId()
-				+ ticket.getTicketCreatorLastName()
-				+ ticket.getTicketCreatorFirstName()
-				+ ticket.getTicketCreatorStaffNumber()
-				+ ticket.getTicketCreatorEmail()
-				+ ticket.getTicketCreatorContactNumber()
-				+ ticket.getDescriptionIssue()
-				+ ticket.getTicketSeverity().name());
+				ticket.getId()
+				+ ticket.getCreatorLastName()
+				+ ticket.getCreatorFirstName()
+				+ ticket.getCreatorStaffNumber()
+				+ ticket.getCreatorEmail()
+				+ ticket.getCreatorContactNumber()
+				+ ticket.getDescription()
+				+ ticket.getSeverity().name());
 	}
 	// Test ticket menu exit paths
 	@Test
@@ -164,32 +164,8 @@ class StaffMenuTest extends Login_Menus {
 				+ "N\n"
 				+ "X\n"
 				+ "Y\n";
-		CreateTicket ticket = TicketMenu(new Scanner(i));
+		Ticket ticket = createTicketMenu(new Scanner(i));
 		assertNull(ticket);
 	}
 	
-	// Test reading from non-existant file
-	@Test
-	void testLoadTicketData() {
-		String filename = "test.txt";
-		loadTicketData(filename);
-		assertEquals("", out.toString());
-	}
-	
-	// Test writing to file
-	@Test
-	void testWriteTicketData() {
-		String filename = "testfile.txt";
-		ArrayList<CreateTicket> tickets = new ArrayList<CreateTicket>();
-		tickets.add(new CreateTicket( "1", "TestCreatorFirstName", "TestCreatorLastName",
-						"2",  "test@test.com", "0299991111",
-						"test description", CreateTicket.TicketSeverity.HIGH));
-		tickets.add(new CreateTicket( "1", "TestCreatorFirstName", "TestCreatorLastName",
-				"2",  "test@test.com", "0299991111",
-				"test description", CreateTicket.TicketSeverity.HIGH));
-		
-		writeTicketData(filename, tickets);
-		loadTicketData(filename);
-		assertEquals("", out.toString());
-	}
 }
