@@ -160,7 +160,7 @@ public class StaffMenu {
     	boolean[] exitResults = {false, false, false};
     	int ticketAttributeNo = 0;
 		List<String> menu = Arrays.asList("Surname", "Given name", "Staff number", "Email", "Contact number", "Description", "Severity", "Confirm", "Exit");
-    	List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "C", "X");
+    	List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "C", "X or X! during input");
 		
 		do {
     		printMenu("CREATE TICKET MENU", menu, menuSelections);
