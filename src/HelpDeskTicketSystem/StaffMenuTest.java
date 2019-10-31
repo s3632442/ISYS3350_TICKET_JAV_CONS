@@ -129,17 +129,11 @@ class StaffMenuTest extends StaffMenu {
 				+ "C\n"
 				+ "1\n"
 				+ "Bar\n"
-				+ "2\n"
 				+ "Foo\n"
-				+ "3\n"
 				+ "super1000\n"
-				+ "4\n"
 				+ "foo@bar.com\n"
-				+ "5\n"
 				+ "02 6310 1010\n"
-				+ "6\n"
 				+ "leaking all the memory\n"
-				+ "7\n"
 				+ "HIGH\n"
 				+ "C\n";
 		String ticketId = generateTicketId();
@@ -168,7 +162,7 @@ class StaffMenuTest extends StaffMenu {
 		assertNull(ticket);
 	}
 	
-	// Test reading from non-existant file
+	// Test reading from non-existent file
 	@Test
 	void testLoadTicketData() {
 		String filename = "test.txt";

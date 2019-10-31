@@ -37,7 +37,9 @@ public class StaffMenu {
     	{
     		return CreateTicket.TicketSeverity.LOW;
     	}
-    	return null;
+    	else {
+    		return null;
+    	}
     }
 
     protected static String getInput(Scanner scanner, String request)
@@ -51,7 +53,10 @@ public class StaffMenu {
     	// request input
     	System.out.printf("Enter your %s: ", request);
     	input = scanner.nextLine();
-    	
+    	// if exit command
+    	if ("X!".equals(input.toUpperCase())) {
+    		return input;
+    	}
     	// if empty
     	if ("".equals(input))
     	{
@@ -67,19 +72,27 @@ public class StaffMenu {
     	// if invalid phone number
     	if (request.equalsIgnoreCase("contact number") && !input.matches(phonePattern))
 		{
-			System.out.println("Error - invalid phone number, must use Australian format!");
+			System.out.println("Error - invalid phone number, must use Australian format! e.g. +61290001234");
 			input = getInput(scanner, request);
 		}
     	// if valid ticket severity
     	if (request.equalsIgnoreCase("severity"))
     	{
+    		if ("X!".equals(input.toUpperCase())) {
+        		return input;
+        	}
     		if (checkTicketSeverity(input.toUpperCase())==null)
     		{
     			System.out.println("Error - invalid severity, must be LOW, MEDIUM, OR HIGH!");
     			input = getInput(scanner, request);
     		}
-    		input = input.toUpperCase();
+    		else {
+    			input = input.toUpperCase();
+    			
+    		}
+    		
     	}
+    	
     	return input;
     }
 
@@ -94,48 +107,349 @@ public class StaffMenu {
     	String formattedDate = date.format(dateFormat);
     	return formattedDate + "-" + CreateTicket.ticketIDCounter;
     }
+    /* helper method for capturing multiple exit boolean results to exit create
+       ticket input*/
+    protected static boolean[] exitResults() {
+    	boolean cancel = false;
+    	boolean exit = false;
+    	return new boolean[] {cancel, exit};
+    }
+    // Exit menu method for both exit from create ticket and from user input
+    protected static boolean[] exit(Scanner scanner) {
+    	String exit = "\0";
+    	Boolean cancel = false;
+    	boolean exitResult = false, exitCase = false;
+    	System.out.println("Exiting will cause any progress to be lost");
+		System.out.println("Are you sure you want to exit? Y/N");
+		exit = scanner.nextLine();
+		do {
+			if (exit.length() == 1)
+			{
+				switch(Character.toUpperCase(exit.charAt(0)))
+				{
+					case 'N':
+						System.out.println("Returning to create ticket menu...");
+						cancel = true;
+						break;
+					case 'Y':
+						System.out.println("Returning to staff menu...");
+						cancel = true;
+						exitResult = true;
+						exitCase = true;
+						break;
+					default:
+						System.out.println("Error - invalid selection, must be Y or N");
+						exit = scanner.nextLine();
+				}
+			} else {
+				System.out.println("Error - invalid selection, must be Y or N");
+				exit = scanner.nextLine();
+			}
+				
+		} while (!cancel);
+		return new boolean[] {cancel, exitResult, exitCase};
+    }
 
 
     protected static CreateTicket TicketMenu(Scanner scanner)
     {
-		String input = null, exit = "\0";
-		Boolean cancel = false;
+		String input = null, exit = "\0", exits = "\0";
+		boolean cancel = false;
 		String[] ticket = new String[8];
     	CreateTicket.TicketSeverity severity = null;
-		
+    	boolean[] exitResults = {false, false, false};
+    	int ticketAttributeNo = 0;
 		List<String> menu = Arrays.asList("Surname", "Given name", "Staff number", "Email", "Contact number", "Description", "Severity", "Confirm", "Exit");
     	List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "C", "X");
 		
 		do {
     		printMenu("CREATE TICKET MENU", menu, menuSelections);
 			input = scanner.nextLine();
-			if (input.length() >= 1)
+			
+			if (input.length() >= 1 )
 			{
 				switch(Character.toUpperCase(input.charAt(0)))
 				{
 				case '1':
-					ticket[1] = getInput(scanner, menu.get(0));
-					break;
+					// capture case number for ticket object input of attribute
+					ticketAttributeNo = Integer.parseInt(input);
+					// loop to capture exit request from create ticket menu
+					do {
+						exits = getInput(scanner, menu.get(ticketAttributeNo - 1));
+						// if no exit command input fills ticket attribute
+						if ((exits.toUpperCase() != "X!")) {
+							exitResults[2] = true;
+							ticket[ticketAttributeNo] = exits;
+						}
+						// if exit command checks for confirmation
+						if ("X!".equals(exits.toUpperCase())) {
+							exitResults = exit(scanner);
+							// if Yes exits create menu and returns to staff menu
+							if (exitResults[1]== true) {
+								exit = "Y";
+								break;
+							}
+							// if No returns user back to user input they were on
+							else {
+								exit = "N";
+								exitResults[2] = false;
+							}
+						}
+					} while ((exits.toUpperCase() == "X!")|| (exitResults[2] != true));
+					// exits from create menu loop
+					if (exitResults[1]== true) {
+						break;
+					}
+					// if ticket already filled in returns to create menu
+					if (ticket[ticketAttributeNo + 1] != null) {
+						break;
+					}
+					cancel = exitResults[0];
+					
 				case '2':
-					ticket[2] = getInput(scanner, menu.get(1));
-					break;
+					// capture case number for ticket object input of attribute
+					if(ticketAttributeNo == 0) {
+						ticketAttributeNo = Integer.parseInt(input);
+					}
+					else {
+						ticketAttributeNo += 1;
+					}
+					// loop to capture exit request from create ticket menu
+					do {
+						exits = getInput(scanner, menu.get(ticketAttributeNo - 1));
+						// if no exit command input fills ticket attribute
+						if ((exits.toUpperCase() != "X!")) {
+							exitResults[2] = true;
+							ticket[ticketAttributeNo] = exits;
+						}
+						// if exit command checks for confirmation
+						if ("X!".equals(exits.toUpperCase())) {
+							exitResults = exit(scanner);
+							// if Yes exits create menu and returns to staff menu
+							if (exitResults[1]== true) {
+								exit = "Y";
+								break;
+							}
+							// if No returns user back to user input they were on
+							else {
+								exit = "N";
+								exitResults[2] = false;
+							}
+						}
+					} while ((exits.toUpperCase() == "X!")|| (exitResults[2] != true));
+					// exits from create menu loop
+					if (exitResults[1]== true) {
+						break;
+					}
+					// if ticket already filled in returns to create menu
+					if (ticket[ticketAttributeNo + 1] != null) {
+						break;
+					}
+					cancel = exitResults[0];
+					
+					
 				case '3':
-					ticket[3] = getInput(scanner, menu.get(2));
-					break;
+					// capture case number for ticket object input of attribute
+					if(ticketAttributeNo == 0) {
+						ticketAttributeNo = Integer.parseInt(input);
+					}
+					else {
+						ticketAttributeNo += 1;
+					}
+					// loop to capture exit request from create ticket menu
+					do {
+						exits = getInput(scanner, menu.get(ticketAttributeNo - 1));
+						// if no exit command input fills ticket attribute
+						if ((exits.toUpperCase() != "X!")) {
+							exitResults[2] = true;
+							ticket[ticketAttributeNo] = exits;
+						}
+						// if exit command checks for confirmation
+						if ("X!".equals(exits.toUpperCase())) {
+							exitResults = exit(scanner);
+							// if Yes exits create menu and returns to staff menu
+							if (exitResults[1]== true) {
+								exit = "Y";
+								break;
+							}
+							// if No returns user back to user input they were on
+							else {
+								exit = "N";
+								exitResults[2] = false;
+							}
+						}
+					} while ((exits.toUpperCase() == "X!")|| (exitResults[2] != true));
+					// exits from create menu loop
+					if (exitResults[1]== true) {
+						break;
+					}
+					// if ticket already filled in returns to create menu
+					if (ticket[ticketAttributeNo + 1] != null) {
+						break;
+					}
+					cancel = exitResults[0];
+					
 				case '4':
-					ticket[4] = getInput(scanner, menu.get(3));
-					break;
+					// capture case number for ticket object input of attribute
+					if(ticketAttributeNo == 0) {
+						ticketAttributeNo = Integer.parseInt(input);
+					}
+					else {
+						ticketAttributeNo += 1;
+					}
+					// loop to capture exit request from create ticket menu
+					do {
+						exits = getInput(scanner, menu.get(ticketAttributeNo - 1));
+						// if no exit command input fills ticket attribute
+						if ((exits.toUpperCase() != "X!")) {
+							exitResults[2] = true;
+							ticket[ticketAttributeNo] = exits;
+						}
+						// if exit command checks for confirmation
+						if ("X!".equals(exits.toUpperCase())) {
+							exitResults = exit(scanner);
+							// if Yes exits create menu and returns to staff menu
+							if (exitResults[1]== true) {
+								exit = "Y";
+								break;
+							}
+							// if No returns user back to user input they were on
+							else {
+								exit = "N";
+								exitResults[2] = false;
+							}
+						}
+					} while ((exits.toUpperCase() == "X!")|| (exitResults[2] != true));
+					// exits from create menu loop
+					if (exitResults[1]== true) {
+						break;
+					}
+					// if ticket already filled in returns to create menu
+					if (ticket[ticketAttributeNo + 1] != null) {
+						break;
+					}
+					cancel = exitResults[0];
+					
 				case '5':
-					ticket[5] = getInput(scanner, menu.get(4));     
-					break;
+					// capture case number for ticket object input of attribute
+					if(ticketAttributeNo == 0) {
+						ticketAttributeNo = Integer.parseInt(input);
+					}
+					else {
+						ticketAttributeNo += 1;
+					}
+					// loop to capture exit request from create ticket menu
+					do {
+						exits = getInput(scanner, menu.get(ticketAttributeNo - 1));
+						// if no exit command input fills ticket attribute
+						if ((exits.toUpperCase() != "X!")) {
+							exitResults[2] = true;
+							ticket[ticketAttributeNo] = exits;
+						}
+						// if exit command checks for confirmation
+						if ("X!".equals(exits.toUpperCase())) {
+							exitResults = exit(scanner);
+							// if Yes exits create menu and returns to staff menu
+							if (exitResults[1]== true) {
+								exit = "Y";
+								break;
+							}
+							// if No returns user back to user input they were on
+							else {
+								exit = "N";
+								exitResults[2] = false;
+							}
+						}
+					} while ((exits.toUpperCase() == "X!")|| (exitResults[2] != true));
+					// exits from create menu loop
+					if (exitResults[1]== true) {
+						break;
+					}
+					// if ticket already filled in returns to create menu
+					if (ticket[ticketAttributeNo + 1] != null) {
+						break;
+					}
+					cancel = exitResults[0];
+					
 				case '6':
-					ticket[6] = getInput(scanner, menu.get(5));
-					break;
+					// capture case number for ticket object input of attribute
+					if(ticketAttributeNo == 0) {
+						ticketAttributeNo = Integer.parseInt(input);
+					}
+					else {
+						ticketAttributeNo += 1;
+					}
+					// loop to capture exit request from create ticket menu
+					do {
+						exits = getInput(scanner, menu.get(ticketAttributeNo - 1));
+						// if no exit command input fills ticket attribute
+						if ((exits.toUpperCase() != "X!")) {
+							exitResults[2] = true;
+							ticket[ticketAttributeNo] = exits;
+						}
+						// if exit command checks for confirmation
+						if ("X!".equals(exits.toUpperCase())) {
+							exitResults = exit(scanner);
+							// if Yes exits create menu and returns to staff menu
+							if (exitResults[1]== true) {
+								exit = "Y";
+								break;
+							}
+							// if No returns user back to user input they were on
+							else {
+								exit = "N";
+								exitResults[2] = false;
+							}
+						}
+					} while ((exits.toUpperCase() == "X!")|| (exitResults[2] != true));
+					// exits from create menu loop
+					if (exitResults[1]== true) {
+						break;
+					}
+					// if ticket already filled in returns to create menu
+					if (ticket[ticketAttributeNo + 1] != null) {
+						break;
+					}
+					cancel = exitResults[0];
+					
 				case '7':
-					ticket[7] = getInput(scanner, menu.get(6));
-					severity = checkTicketSeverity(ticket[7]);
+					// capture case number for ticket object input of attribute
+					if(ticketAttributeNo == 0) {
+						ticketAttributeNo = Integer.parseInt(input);
+					}
+					else {
+						ticketAttributeNo += 1;
+					}
+					// loop to capture exit request from create ticket menu
+					do {
+						exits = getInput(scanner, menu.get(ticketAttributeNo - 1));
+						// if no exit command input fills ticket attribute
+						if ((exits.toUpperCase() != "X!")) {
+							exitResults[2] = true;
+							ticket[ticketAttributeNo] = exits;
+							severity = checkTicketSeverity(ticket[ticketAttributeNo]);
+						}
+						// if exit command checks for confirmation
+						if ("X!".equals(exits.toUpperCase())) {
+							exitResults = exit(scanner);
+							// if Yes exits create menu and returns to staff menu
+							if (exitResults[1]== true) {
+								exit = "Y";
+								break;
+							}
+							// if No returns user back to user input they were on
+							else {
+								exit = "N";
+								exitResults[2] = false;
+							}
+						}
+					} while ((exits.toUpperCase() == "X!")|| (exitResults[2] != true));
+					// exits from create menu loop
+					if (exitResults[1]== true) {
+						break;
+					}
+					cancel = exitResults[0];
 					break;
-        		
 				case 'C':
 					ticket[0] = generateTicketId();
 					boolean missingField = false;
@@ -155,33 +469,14 @@ public class StaffMenu {
 					break;
 				
 				case 'X':
-					System.out.println("Exiting will cause any progress to be lost");
-					System.out.println("Are you sure you want to exit? Y/N");
-					exit = scanner.nextLine();
-					do {
-						if (exit.length() == 1)
-						{
-							switch(Character.toUpperCase(exit.charAt(0)))
-							{
-								case 'N':
-									System.out.println("Returning to create ticket menu...");
-									cancel = true;
-									break;
-								case 'Y':
-									System.out.println("Returning to staff menu...");
-									cancel = true;
-									break;
-								default:
-									System.out.println("Error - invalid selection, must be Y or N");
-									exit = scanner.nextLine();
-							}
-						} else {
-							System.out.println("Error - invalid selection, must be Y or N");
-							exit = scanner.nextLine();
-						}
-							
-					} while (!cancel);
-					cancel = false;
+					exitResults = exit(scanner);
+					if (exitResults[1]== true) {
+						exit = "Y";
+					}
+					else {
+						exit = "N";
+					}
+					cancel = exitResults[0];
 					break;
         		
 				default:
