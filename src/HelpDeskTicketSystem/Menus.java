@@ -139,7 +139,7 @@ public class Menus {
 	
 	protected static void displayAllocatedTickets() 
 	{
-		if (!tickets.isEmpty())
+		if (tickets != null && !tickets.isEmpty())
 		{
 			for (int i = 0; i < tickets.size(); i++)
 			{
