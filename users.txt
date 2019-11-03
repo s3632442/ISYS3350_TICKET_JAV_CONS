@@ -8,7 +8,7 @@ Bar
 STAFF
 2
 fdsa
-Bar
 Foo
+Bar
 Bar@foo.com
 0400000000

@@ -12,7 +12,7 @@ public class Menus {
 	// array of created ticket objects
 	private static ArrayList<Ticket> tickets = new ArrayList<Ticket>();
 	private static User user = null;
-	
+
 	public static void main(String[] args) {
 		String userInput;
 		Scanner sc = new Scanner(System.in);
@@ -20,132 +20,114 @@ public class Menus {
 		char selection = '\0';
 
 		String[] login = new String[2];
-		
+
 		// Check to see is persistent data for tickets and load if present
 		tickets = FileHandler.loadTicketDatabase("tickets.txt", "TICKET");
-				
-		do 
-		{
+
+		do {
 			login[0] = getInput(sc, "Employee No");
 			login[1] = getInput(sc, "Password");
 			user = FileHandler.loginUser("users.txt", login);
-			if (user == null) { System.out.println("Error - Invalid credentials"); }
-			else 
-			{
+			if (user == null) {
+				System.out.println("Error - Invalid credentials");
+			} else {
 				System.out.println("Logging in..");
 			}
-		} while (user == null);				
-				
-				
-		do 
-		{
-			if (user instanceof StaffUser)
-			{
+		} while (user == null);
+
+		do {
+			if (user instanceof StaffUser) {
 				List<String> menu = Arrays.asList("Create Ticket", "Exit Program");
 				List<String> menuSelections = Arrays.asList("C", "X");
-						
+
 				printMenu("STAFF MENU", menu, menuSelections);
 				userInput = sc.nextLine();
 				System.out.println();
-					
-				if (userInput.length() != 1) { System.out.println("Error - invalid selection!");	} 
-				else 
-				{
+
+				if (userInput.length() != 1) {
+					System.out.println("Error - invalid selection!");
+				} else {
 					// make selection case insensitive
 					selection = Character.toUpperCase(userInput.charAt(0));
 
 					// process user menu selection
-					switch (selection) 
-					{
-						// create ticket case
-						case 'C': 
-						{
-							Ticket ticket = createTicketMenu(sc);
-							if (ticket != null) { tickets.add(ticket); }
-							break;
+					switch (selection) {
+					// create ticket case
+					case 'C': {
+						Ticket ticket = createTicketMenu(sc);
+						if (ticket != null) {
+							tickets.add(ticket);
 						}
-						case 'P': 
-						{
-							for (int i = 0; i < tickets.size(); i++) 
-							{
-								tickets.get(i).print();
-							}
-							break;
+						break;
+					}
+					case 'P': {
+						for (int i = 0; i < tickets.size(); i++) {
+							tickets.get(i).print();
 						}
-						// exit case
-						case 'X': 
-						{
-							System.out.println("Exiting the program...");
-							// Writes out any created tickets to file
-							FileHandler.writeTicketDatabase("tickets.txt", tickets);
-							break;
-						}
-						// invalid selection case
-						default: { System.out.println("Error - invalid selection!"); }
+						break;
+					}
+					// exit case
+					case 'X': {
+						System.out.println("Exiting the program...");
+						// Writes out any created tickets to file
+						FileHandler.writeTicketDatabase("tickets.txt", tickets);
+						break;
+					}
+					// invalid selection case
+					default: {
+						System.out.println("Error - invalid selection!");
+					}
 					}
 				}
-			} 
-			else 
-			{
-				do 
-				{
+			} else {
+				do {
 					// set menu selections
-					List<String> menu = Arrays.asList("Close Ticket", "Exit Program");
-					List<String> menuSelections = Arrays.asList("C", "X");
+					List<String> menu = Arrays.asList("Close Ticket", "Change Ticket Status", "Exit Program");
+					List<String> menuSelections = Arrays.asList("C", "S", "X");
 
 					// menu title
 					printMenu("TECH MENU", menu, menuSelections);
 					userInput = sc.nextLine();
 
 					System.out.println();
-					
-					displayAllocatedTickets();
+
 					// validate selection input length
-					if (userInput.length() != 1) { System.out.println("Error - invalid selection!"); } 
-					else 
-					{
+					if (userInput.length() != 1) {
+						System.out.println("Error - invalid selection!");
+					} else {
 						// make selection case insensitive
 						selection = Character.toUpperCase(userInput.charAt(0));
 
 						// process user menu selection
-						switch (selection) 
-						{
-							case 'V': 
-							{
-								userInput = getInput(sc, "ticket number for the ticket you want to close");
-								if (tickets != null)
-								{
-									for (int i = 0; i < tickets.size(); i++)
-									{
-										if (tickets.get(i).equals(userInput))
-										{
-											if ( ((TechUser)user).isTechnician(tickets.get(i) ))
-											{
-												tickets.get(i).setStatus(false);
-												System.out.printf("Ticket %s has been closed!");
-												break;
-											}
-											else
-											{
-												System.out.println("Error - Can not close another technician's ticket");
-											}
+						switch (selection) {
+						case 'V': {
+							userInput = getInput(sc, "ticket number for the ticket you want to close");
+							if (tickets != null) {
+								for (int i = 0; i < tickets.size(); i++) {
+									if (tickets.get(i).equals(userInput)) {
+										if (((TechUser) user).isTechnician(tickets.get(i))) {
+											tickets.get(i).setStatus(false);
+											System.out.printf("Ticket %s has been closed!");
+											break;
+										} else {
+											System.out.println("Error - Can not close another technician's ticket");
 										}
 									}
-								}	
-								else 
-								{
-									System.out.println("Error - There are currently no tickets in the database!");
 								}
-								break;
+							} else {
+								System.out.println("Error - There are currently no tickets in the database!");
 							}
-							// exit case
-							case 'X': 
-							{
-								System.out.println("Exiting the program...");
-								break;
-							}
-							// invalid selection case
-							default: { System.out.println("Error - invalid selection!"); }
+							break;
+						}
+						// exit case
+						case 'X': {
+							System.out.println("Exiting the program...");
+							break;
+						}
+						// invalid selection case
+						default: {
+							System.out.println("Error - invalid selection!");
+						}
 						}
 						System.out.println();
 					}
@@ -153,26 +135,34 @@ public class Menus {
 			}
 		} while (selection != 'X');
 	}
-	
-	protected static void displayAllocatedTickets() 
-	{
-		if (tickets != null && !tickets.isEmpty())
-		{
-			for (int i = 0; i < tickets.size(); i++)
-			{
-				if (tickets.get(i).getTechnicianFirstName().equals(user.getFirstName()) &&
-						tickets.get(i).getTechnicianLastName().equals(user.getLastName()))
-				{
-					System.out.println("Allocated tickets: ");
-					System.out.printf("%s ", tickets.get(i).getId());
-				}
+
+	protected static void displayOpenTickets() {
+		if (tickets != null && !tickets.isEmpty()) {
+			for (int i = 0; i < tickets.size(); i++) {
+
+				// evaluation for tech allocation
+				/*
+				 * if (tickets.get(i).getTechnicianFirstName().equals(user.getFirstName()) &&
+				 * tickets.get(i).getTechnicianLastName().equals(user.getLastName())) {
+				 */
+
+				// displays details for each stored object
+				System.out.println("Allocated tickets");
+				System.out.print("ID: " + tickets.get(i).getId() + "| Status:" + tickets.get(i).getStatus()
+						+ "| Severity:" + tickets.get(i).getSeverity());
+				System.out.print("\n---------------------------\n\n");
+//			}
 			}
 		}
 	}
-	
+
 	// print menu method
 	protected static void printMenu(String title, List<String> menu, List<String> menuSelections) {
 		System.out.printf("%s\n---------------------------\n\n", title);
+		
+		// displays open tickets
+		displayOpenTickets();
+	
 		for (int i = 0; i < menu.size(); i++) {
 			System.out.printf("%-25s%s\n", menu.get(i), menuSelections != null ? menuSelections.get(i) : i + 1);
 		}
@@ -203,33 +193,28 @@ public class Menus {
 		// request input
 		System.out.printf("Enter your %s: ", request);
 		input = scanner.nextLine();
-		
+
 		// if exit command
-		if ("X!".equals(input.toUpperCase()))
-		{
+		if ("X!".equals(input.toUpperCase())) {
 			return input;
 		}
 		// if empty
-		if ("".equals(input)) 
-		{
+		if ("".equals(input)) {
 			System.out.println("Error - input can not be empty!");
 			input = getInput(scanner, request);
 		}
 		// if invalid email
-		if (request.equalsIgnoreCase("email") && !input.matches(emailPattern)) 
-		{
+		if (request.equalsIgnoreCase("email") && !input.matches(emailPattern)) {
 			System.out.println("Error - invalid email address!");
 			input = getInput(scanner, request);
 		}
 		// if invalid phone number
-		if (request.equalsIgnoreCase("contact number") && !input.matches(phonePattern)) 
-		{
+		if (request.equalsIgnoreCase("contact number") && !input.matches(phonePattern)) {
 			System.out.println("Error - invalid phone number, must use Australian format! e.g. +61290001234");
 			input = getInput(scanner, request);
 		}
 		// if valid ticket severity
-		if (request.equalsIgnoreCase("severity")) 
-		{
+		if (request.equalsIgnoreCase("severity")) {
 			if (checkTicketSeverity(input.toUpperCase()) == null) {
 				System.out.println("Error - invalid severity, must be LOW, MEDIUM, OR HIGH!");
 				input = getInput(scanner, request);
@@ -239,76 +224,65 @@ public class Menus {
 		return input;
 	}
 
-	protected static boolean[] exitResults()
-	{
+	protected static boolean[] exitResults() {
 		boolean cancel = false;
 		boolean exit = false;
-		return new boolean[] {cancel, exit};
+		return new boolean[] { cancel, exit };
 	}
-	
-	protected static boolean[] exit(Scanner sc)
-	{
+
+	protected static boolean[] exit(Scanner sc) {
 		String exit = "\0";
 		boolean cancel = false, exitResult = false, exitCase = false;
 		System.out.println("Exiting will cause any progress to be lost");
 		System.out.println("You will be given the option to edit your ticket after filling out all details");
 		System.out.println("Are you sure you want to exit? Y/N");
 		exit = sc.nextLine();
-		do
-		{
-			if (exit.length() == 1)
-			{
-				switch(Character.toUpperCase(exit.charAt(0)))
-				{
-					case 'N':
-					{
-						System.out.println("Returning to create ticket menu..");
-						cancel = true;
-						break;
-					}
-					case 'Y':
-					{
-						System.out.println("Returning to staff menu..");
-						cancel = true;
-						exitResult = true;
-						exitCase = true;
-						break;
-					}
-					default:
-					{
-						System.out.println("Error - invalid selection, must be Y or N");
-						exit = sc.nextLine();
-					}
+		do {
+			if (exit.length() == 1) {
+				switch (Character.toUpperCase(exit.charAt(0))) {
+				case 'N': {
+					System.out.println("Returning to create ticket menu..");
+					cancel = true;
+					break;
 				}
-			}
-			else
-			{
+				case 'Y': {
+					System.out.println("Returning to staff menu..");
+					cancel = true;
+					exitResult = true;
+					exitCase = true;
+					break;
+				}
+				default: {
+					System.out.println("Error - invalid selection, must be Y or N");
+					exit = sc.nextLine();
+				}
+				}
+			} else {
 				System.out.println("Error - invalid selection, must be Y or N");
 				exit = sc.nextLine();
 			}
-		} while(!cancel);
-		return new boolean[] {cancel, exitResult, exitCase};
+		} while (!cancel);
+		return new boolean[] { cancel, exitResult, exitCase };
 	}
+
 	/*
 	 * Generate a ticket identification number Ticket ID Format:
 	 * yyyyMMdd-ticketIDCounter
 	 */
-	protected static String generateTicketId() 
-	{
+	protected static String generateTicketId() {
 		LocalDateTime date = LocalDateTime.now();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
 		String formattedDate = date.format(dateFormat);
 		return formattedDate + "-" + Ticket.ticketIDCounter;
 	}
 
-	protected static Ticket createTicketMenu(Scanner scanner) 
-	{
+	protected static Ticket createTicketMenu(Scanner scanner) {
 		String input = null, exit = "\0";
 		Boolean cancel = false;
 		String[] ticket = new String[8];
 		Ticket.TicketSeverity severity = null;
-		boolean[] exitResults = {false, false, false};
-		
+		boolean[] exitResults = { false, false, false };
+
 		List<String> menu = Arrays.asList("Surname", "Given name", "Staff number", "Email", "Contact number",
 				"Description", "Severity", "Confirm", "Exit");
 		List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "C", "X");
@@ -351,8 +325,8 @@ public class Menus {
 						}
 					}
 					if (!missingField) {
-						return new Ticket(ticket[0], ticket[1], ticket[2], ticket[3], ticket[4], ticket[5],
-								ticket[6], severity);
+						return new Ticket(ticket[0], ticket[1], ticket[2], ticket[3], ticket[4], ticket[5], ticket[6],
+								severity);
 					}
 					System.out.println("Error - all fields are required!");
 					break;
