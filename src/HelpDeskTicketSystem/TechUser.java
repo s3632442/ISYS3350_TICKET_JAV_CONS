@@ -1,7 +1,6 @@
 package HelpDeskTicketSystem;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class TechUser extends User {
@@ -51,5 +50,14 @@ public class TechUser extends User {
 		pw.println(this.getFirstName());
 		pw.println(this.getLastName());
 		pw.println(this.getLevel());
+	}
+	
+	public boolean isTechnician(Ticket ticket)
+	{
+		if (ticket != null && ticket.getTechnicianFirstName().equals(this.getFirstName()) && ticket.getTechnicianLastName().equals(this.getLastName()))
+		{
+			return true;
+		}
+		return false;
 	}
 }

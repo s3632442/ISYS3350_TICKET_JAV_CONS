@@ -90,8 +90,8 @@ public class Menus {
 				do 
 				{
 					// set menu selections
-					List<String> menu = Arrays.asList("View Allocated Tickets", "Exit Program");
-					List<String> menuSelections = Arrays.asList("V", "X");
+					List<String> menu = Arrays.asList("Close Ticket", "Exit Program");
+					List<String> menuSelections = Arrays.asList("C", "X");
 
 					// menu title
 					printMenu("TECH MENU", menu, menuSelections);
@@ -110,15 +110,32 @@ public class Menus {
 						// process user menu selection
 						switch (selection) 
 						{
-							// view open ticket case
 							case 'V': 
 							{
-								System.out.println("View open tickets");
-								break;
-							}
-							case 'A':
-							{
-								System.out.println("View archived tickets");
+								userInput = getInput(sc, "ticket number for the ticket you want to close");
+								if (tickets != null)
+								{
+									for (int i = 0; i < tickets.size(); i++)
+									{
+										if (tickets.get(i).equals(userInput))
+										{
+											if ( ((TechUser)user).isTechnician(tickets.get(i) ))
+											{
+												tickets.get(i).setStatus(false);
+												System.out.printf("Ticket %s has been closed!");
+												break;
+											}
+											else
+											{
+												System.out.println("Error - Can not close another technician's ticket");
+											}
+										}
+									}
+								}	
+								else 
+								{
+									System.out.println("Error - There are currently no tickets in the database!");
+								}
 								break;
 							}
 							// exit case
@@ -186,7 +203,12 @@ public class Menus {
 		// request input
 		System.out.printf("Enter your %s: ", request);
 		input = scanner.nextLine();
-
+		
+		// if exit command
+		if ("X!".equals(input.toUpperCase()))
+		{
+			return input;
+		}
 		// if empty
 		if ("".equals(input)) 
 		{
@@ -202,7 +224,7 @@ public class Menus {
 		// if invalid phone number
 		if (request.equalsIgnoreCase("contact number") && !input.matches(phonePattern)) 
 		{
-			System.out.println("Error - invalid phone number, must use Australian format!");
+			System.out.println("Error - invalid phone number, must use Australian format! e.g. +61290001234");
 			input = getInput(scanner, request);
 		}
 		// if valid ticket severity
@@ -217,6 +239,56 @@ public class Menus {
 		return input;
 	}
 
+	protected static boolean[] exitResults()
+	{
+		boolean cancel = false;
+		boolean exit = false;
+		return new boolean[] {cancel, exit};
+	}
+	
+	protected static boolean[] exit(Scanner sc)
+	{
+		String exit = "\0";
+		boolean cancel = false, exitResult = false, exitCase = false;
+		System.out.println("Exiting will cause any progress to be lost");
+		System.out.println("You will be given the option to edit your ticket after filling out all details");
+		System.out.println("Are you sure you want to exit? Y/N");
+		exit = sc.nextLine();
+		do
+		{
+			if (exit.length() == 1)
+			{
+				switch(Character.toUpperCase(exit.charAt(0)))
+				{
+					case 'N':
+					{
+						System.out.println("Returning to create ticket menu..");
+						cancel = true;
+						break;
+					}
+					case 'Y':
+					{
+						System.out.println("Returning to staff menu..");
+						cancel = true;
+						exitResult = true;
+						exitCase = true;
+						break;
+					}
+					default:
+					{
+						System.out.println("Error - invalid selection, must be Y or N");
+						exit = sc.nextLine();
+					}
+				}
+			}
+			else
+			{
+				System.out.println("Error - invalid selection, must be Y or N");
+				exit = sc.nextLine();
+			}
+		} while(!cancel);
+		return new boolean[] {cancel, exitResult, exitCase};
+	}
 	/*
 	 * Generate a ticket identification number Ticket ID Format:
 	 * yyyyMMdd-ticketIDCounter
@@ -235,7 +307,8 @@ public class Menus {
 		Boolean cancel = false;
 		String[] ticket = new String[8];
 		Ticket.TicketSeverity severity = null;
-
+		boolean[] exitResults = {false, false, false};
+		
 		List<String> menu = Arrays.asList("Surname", "Given name", "Staff number", "Email", "Contact number",
 				"Description", "Severity", "Confirm", "Exit");
 		List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "C", "X");

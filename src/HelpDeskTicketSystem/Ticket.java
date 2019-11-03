@@ -155,7 +155,6 @@ public class Ticket {
 				this.getTechnicianFirstName(),
 				this.getTechnicianLastName());
 	}
-	
 	/* File Handling helper methods compile all attributes for CreateTicket 
     object to be written out to file*/
 	public void writeAttributes(PrintWriter pw){
