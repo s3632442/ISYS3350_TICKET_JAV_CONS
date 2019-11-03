@@ -146,8 +146,8 @@ public class Menus {
 				 * tickets.get(i).getTechnicianLastName().equals(user.getLastName())) {
 				 */
 
-				// displays details for each stored object
-				System.out.println("Allocated tickets");
+				// displays details for each open ticket object
+				System.out.println("Open tickets");
 				System.out.print("ID: " + tickets.get(i).getId() + "| Status:" + tickets.get(i).getStatus()
 						+ "| Severity:" + tickets.get(i).getSeverity());
 				System.out.print("\n---------------------------\n\n");
