@@ -42,6 +42,14 @@ public class User {
 		this.pwd = pwd;
 	}
 
+	public boolean login(String pwd)
+	{
+		if (this.getPwd().equals(pwd))
+		{
+			return true;
+		}
+		return false;
+	}
 	public void writeAttributes(PrintWriter pw)
 	{
 		pw.println("USER");

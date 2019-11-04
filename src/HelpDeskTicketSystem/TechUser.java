@@ -1,6 +1,7 @@
 package HelpDeskTicketSystem;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class TechUser extends User {
@@ -15,9 +16,9 @@ public class TechUser extends User {
 		this.activeCount = activeCount;
 	}
 	
-	public TechUser(String id, String pwd, String firstName, String lastName, Scanner sc)
+	public TechUser(Scanner sc)
 	{
-		super(id, pwd, firstName, lastName);
+		super(sc.nextLine(), sc.nextLine(), sc.nextLine(), sc.nextLine());
 		this.level = Integer.parseInt(sc.nextLine());
 		this.activeCount = Integer.parseInt(sc.nextLine());
 	}
@@ -41,6 +42,21 @@ public class TechUser extends User {
 	{
 		this.activeCount = activeCount;
 	}
+	
+	public void printActiveTickets(ArrayList<Ticket> tickets)
+	{
+		if (tickets != null)
+		{
+			for (Ticket tmp : tickets)
+			{
+				if (tmp.getTechnicianId().equals(this.getId()))
+				{
+					System.out.println(tmp.getId());
+				}
+			}
+		}
+		System.out.printf("You currently have %s active tickets\n", this.getActiveCount());
+	}
 
 	public void writeAttributes(PrintWriter pw)
 	{
@@ -50,14 +66,16 @@ public class TechUser extends User {
 		pw.println(this.getFirstName());
 		pw.println(this.getLastName());
 		pw.println(this.getLevel());
+		pw.println(this.getActiveCount());
 	}
 	
 	public boolean isTechnician(Ticket ticket)
 	{
-		if (ticket != null && ticket.getTechnicianFirstName().equals(this.getFirstName()) && ticket.getTechnicianLastName().equals(this.getLastName()))
+		if (ticket != null && ticket.getTechnicianId().equals(this.getId()))
 		{
 			return true;
 		}
 		return false;
 	}
+
 }

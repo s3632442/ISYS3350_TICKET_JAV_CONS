@@ -25,13 +25,12 @@ public class Ticket {
 	//	False for when ticket is closed
 	private boolean status;
 	// Technician Details added once ticket allocated to technician
-	private String technicianFirstName;
-	private String technicianLastName;
+	private String technicianId;
 	
 	//Constructor for Create Ticket 
 	public Ticket(String id, String creatorFirstName, String creatorLastName,
 			String creatorStaffNumber, String creatorEmail, String creatorContactNumber,
-			String description, TicketSeverity severity) {
+			String description, TicketSeverity severity, String technicianId) {
 		super();
 		this.id = id;
 		this.creatorFirstName = creatorFirstName;
@@ -42,8 +41,7 @@ public class Ticket {
 		this.description = description;
 		this.severity = severity;
 		this.status = true;
-		this.technicianFirstName = null;
-		this.technicianLastName = null;
+		this.technicianId = technicianId;
 		ticketIDCounter+=1;
 	}
 	
@@ -85,13 +83,9 @@ public class Ticket {
 		}
 	}	
 	
-	public String getTechnicianFirstName() {
-		return technicianFirstName;
+	public String getTechnicianId() {
+		return technicianId;
 	}	
-	
-	public String getTechnicianLastName() {
-		return technicianLastName;
-	}
 	
 	// Setters for Create Ticket
 	
@@ -132,17 +126,14 @@ public class Ticket {
 		this.status = status;
 	}
 
-	public void setTechnicianFirstName(String technicianFirstName) {
-		this.technicianFirstName = technicianFirstName;
-	}
-
-	public void setTechnicianLastName(String technicianLastName) {
-		this.technicianLastName = technicianLastName;
+	public void setTechnicianId(String technicianId)
+	{
+		this.technicianId = technicianId;
 	}
 	
 	public void print()
 	{
-		System.out.printf("ID: %s\nCreator Name: %s %s\nCreator Staff Number: %s\nCreator Email: %s\nCreator Contact Number: %s\nDescription: %s\nSeverity: %s\nStatus: %s\nTechnician Name: %s %s\n",
+		System.out.printf("ID: %s\nCreator Name: %s %s\nCreator Staff Number: %s\nCreator Email: %s\nCreator Contact Number: %s\nDescription: %s\nSeverity: %s\nStatus: %s\nTechnician ID: %s\n",
 				this.getId(),
 				this.getCreatorFirstName(),
 				this.getCreatorLastName(),
@@ -152,8 +143,7 @@ public class Ticket {
 				this.getDescription(),
 				this.getSeverity(),
 				this.getStatus(),
-				this.getTechnicianFirstName(),
-				this.getTechnicianLastName());
+				this.getTechnicianId());
 	}
 	/* File Handling helper methods compile all attributes for CreateTicket 
     object to be written out to file*/
@@ -166,9 +156,8 @@ public class Ticket {
 	    pw.println(this.creatorContactNumber);
 	    pw.println(this.description);
 	    pw.println(this.severity);
+	    pw.println(this.technicianId);
 	    pw.println(this.status);
-	    pw.println(this.technicianFirstName);
-	    pw.println(this.technicianLastName);
 	}
 	
 	public void writeDetails(PrintWriter pw){
@@ -182,18 +171,27 @@ public class Ticket {
 	public Ticket(Scanner sc){
 		String tempSeverity;
 		this.id = sc.nextLine();
+		System.out.println(id);
 		this.creatorFirstName = sc.nextLine();
+		System.out.println(creatorFirstName);
 		this.creatorLastName = sc.nextLine();
+		System.out.println(creatorLastName);
 		this.creatorStaffNumber = sc.nextLine();
+		System.out.println(creatorStaffNumber);
 		this.creatorEmail = sc.nextLine();
+		System.out.println(creatorEmail);
 		this.creatorContactNumber = sc.nextLine();
+		System.out.println(creatorContactNumber);
 		this.description = sc.nextLine();
+		System.out.println(description);
 		tempSeverity = sc.nextLine();
+		System.out.println(tempSeverity);
 		// Convert String to Enum for reading severity from file to object
 		this.severity = TicketSeverity.valueOf(tempSeverity.toUpperCase());
+		this.technicianId = sc.nextLine();
+		System.out.println(technicianId);
 		this.status = sc.nextBoolean();
-		this.technicianFirstName = sc.nextLine();
-		this.technicianLastName = sc.nextLine();
+		System.out.println(status);
 		//clear trailing newline/scanner bug issue if present
 		if (sc.hasNextLine()){
 			sc.nextLine();

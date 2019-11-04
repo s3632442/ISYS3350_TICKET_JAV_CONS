@@ -15,9 +15,9 @@ public class StaffUser extends User {
 		this.contactNumber = contactNumber;
 	}
 	
-	public StaffUser(String id, String pwd, String firstName, String lastName, Scanner sc)
+	public StaffUser(Scanner sc)
 	{
-		super(id, pwd, firstName, lastName);
+		super(sc.nextLine(), sc.nextLine(), sc.nextLine(), sc.nextLine());
 		this.email = sc.nextLine();
 		this.contactNumber = sc.nextLine();
 	}

@@ -8,7 +8,6 @@ import java.util.Scanner;
 
 public class FileHandler {
 	
-	private static String TECH_TAG = "TECH";
 	private static String STAFF_TAG = "STAFF";
 	
 	public static Scanner reader(String filename)
@@ -22,44 +21,39 @@ public class FileHandler {
 			return sc;
 	}
 	
-	public static User loginUser(String filename, String[] login)
+	public static ArrayList<User> loadUserDatabase(String filename)
 	{
-		String id, pwd, firstName, lastName, file_tag;
-		
+		String read = "\0";
 		Scanner sc = reader(filename);
-		
+		ArrayList<User> users = new ArrayList<User>();
+		int counter = 0;
 		if (sc == null) { return null; };
 		
 		while (sc.hasNextLine())
 		{
-			file_tag = sc.nextLine();
-			if (file_tag.equals(TECH_TAG) || file_tag.equals(STAFF_TAG))
+			read = sc.nextLine();
+			
+			if (read.equals(STAFF_TAG))
 			{
-				id = sc.nextLine();
-				pwd = sc.nextLine();
-				
-				if (login[0].equals(id) && login[1].equals(pwd))
-				{
-					firstName = sc.nextLine();
-					lastName = sc.nextLine();
-					
-					if (file_tag.equals(STAFF_TAG))
-					{
-						return new StaffUser(id, pwd, firstName, lastName, sc);
-					}
-					return new TechUser(id, pwd, firstName, lastName, sc);
-				}
+				users.add(new StaffUser(sc));
+			}
+			else
+			{
+				users.add(new TechUser(sc));
 			}
 		}
-		return null;
+		return users;
 	}
 	
-	public static void writeUserDatabase(String filename, String tag, User user)
+	public static void writeUserDatabase(String filename, ArrayList<User> users)
 	{
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(filename);
-			user.writeAttributes(pw);
+			for (User tmp : users)
+			{
+				tmp.writeAttributes(pw);
+			}
 			pw.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -74,7 +68,7 @@ public class FileHandler {
 		
 		Scanner sc = reader(filename);
 		
-		if (sc == null) { return null; }
+		if (sc == null) { return tickets; }
 		
 		while (sc.hasNextLine())
 		{
@@ -101,9 +95,9 @@ public class FileHandler {
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(filename);
-			for (int i = 0; i < tickets.size(); i++)
+			for (Ticket tmp : tickets)
 			{
-				tickets.get(i).writeDetails(pw);
+				tmp.writeDetails(pw);
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {

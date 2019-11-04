@@ -18,7 +18,7 @@ class FileHandlerTest extends FileHandler {
 				tmp_tickets = new ArrayList<Ticket>();
 		tickets.add(new Ticket( "1", "TestCreatorFirstName", "TestCreatorLastName",
 						"2",  "test@test.com", "0299991111",
-						"test description", Ticket.TicketSeverity.HIGH));
+						"test description", Ticket.TicketSeverity.HIGH, "1"));
 		tickets.get(0).setStatus(false);
 		FileHandler.writeTicketDatabase("test.txt", tickets);
 		tmp_tickets = FileHandler.loadTicketDatabase("test.txt", "TICKET");
@@ -31,7 +31,7 @@ class FileHandlerTest extends FileHandler {
 				tmp_tickets = null;
 		tickets.add(new Ticket( "1", "TestCreatorFirstName", "TestCreatorLastName",
 						"2",  "test@test.com", "0299991111",
-						"test description", Ticket.TicketSeverity.HIGH));
+						"test description", Ticket.TicketSeverity.HIGH, "1"));
 		tickets.get(0).setStatus(false);
 		tmp_tickets = FileHandler.loadTicketDatabase("p.txt", "TICKET");
 		assertNull(tmp_tickets);

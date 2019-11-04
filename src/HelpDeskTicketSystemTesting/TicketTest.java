@@ -15,7 +15,7 @@ class TicketTest {
 	
 	Ticket ticket = new Ticket( "1", "TestCreatorFirstName", "TestCreatorLastName",
 			"2",  "test@test.com", "0299991111",
-			"test description", Ticket.TicketSeverity.HIGH);
+			"test description", Ticket.TicketSeverity.HIGH, "1");
 	
 	// Test ticket setter and getter with the value of 2
 	@Test
@@ -83,25 +83,14 @@ class TicketTest {
 	}
 	// Test to check constructor sets Technician first  name to null
 	@Test
-	void testTicketTechnicianFirstName() {
-		assertEquals(null, ticket.getTechnicianFirstName());
+	void testTicketTechnicianId() {
+		assertEquals("1", ticket.getTechnicianId());
 	}
 	// Test setter and getter for technician first name with a value of bar
 	@Test
-	void testSetTicketTechnicianFirstName() {
-		ticket.setTechnicianFirstName("bar");
-		assertEquals("bar", ticket.getTechnicianFirstName());
-	}
-	// Test to check constructor sets Technician last name to null
-	@Test
-	void testTicketTechnicianLastName() {
-		assertEquals(null, ticket.getTechnicianLastName());
-	}
-	// Test setter and getter for technician last name with a value of foo
-	@Test
-	void testSetTicketTechnicianLastName() {
-		ticket.setTechnicianLastName("foo");
-		assertEquals("foo", ticket.getTechnicianLastName());
+	void testSetTicketTechnicianId() {
+		ticket.setTechnicianId("2");
+		assertEquals("2", ticket.getTechnicianId());
 	}
 	// Test writing details & attributes to file
 	@Test
