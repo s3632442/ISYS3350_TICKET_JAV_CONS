@@ -125,8 +125,17 @@ class MenusTest extends Menus {
 	// Test all ticket paths
 	@Test
 	void testTicketMenu() {
-		String i = "p\n" 
-				+ "C\n"
+		String i = "X!\n"
+				+ "Foo\n"
+				+ "N\n"
+				+ "Foo\n"
+				+ "Bar\n"
+				+ "super1000\n"
+				+ "foo@bar.com\n"
+				+ "02 6310 1010\n"
+				+ "leaking all the memory\n"
+				+ "HIGH\n"
+				+ "p\n" 
 				+ "1\n"
 				+ "Bar\n"
 				+ "2\n"
@@ -141,6 +150,8 @@ class MenusTest extends Menus {
 				+ "leaking all the memory\n"
 				+ "7\n"
 				+ "HIGH\n"
+				+ "X\n"
+				+ "N\n"
 				+ "C\n";
 		String ticketId = generateTicketId();
 		Ticket ticket = createTicketMenu(new Scanner(i));
@@ -152,15 +163,56 @@ class MenusTest extends Menus {
 				+ ticket.getCreatorEmail()
 				+ ticket.getCreatorContactNumber()
 				+ ticket.getDescription()
-				+ ticket.getSeverity().name());
+				+ ticket.getSeverity());
 	}
 	// Test ticket menu exit paths
 	@Test
-	void testTicketMenuExit() {
-		String i = "\n"
-				+ "X\n"
+	void testTicketMenuCleanExit() {
+		/*String i = "\n"
+				+ "X!\n"
 				+ "x\n"
 				+ "xxxxxx\n"
+				+ "N\n"
+				+ "X\n"
+				+ "Y\n";*/
+		String i = "\n"
+				+ "X\n"
+				+ "X!\n"
+				+ "p\n"
+				+ "Y\n";
+		Ticket ticket = createTicketMenu(new Scanner(i));
+		assertNull(ticket);
+	}
+	
+	@Test
+	void testTicketMenuCompleteExit() {
+		String i = "X!\n"
+				+ "Foo\n"
+				+ "N\n"
+				+ "Foo\n"
+				+ "Bar\n"
+				+ "super1000\n"
+				+ "foo@bar.com\n"
+				+ "02 6310 1010\n"
+				+ "leaking all the memory\n"
+				+ "HIGH\n"
+				+ "p\n"
+				+ "ppppppppp\n"
+				+ "1\n"
+				+ "Bar\n"
+				+ "2\n"
+				+ "Foo\n"
+				+ "3\n"
+				+ "super1000\n"
+				+ "4\n"
+				+ "foo@bar.com\n"
+				+ "5\n"
+				+ "02 6310 1010\n"
+				+ "6\n"
+				+ "leaking all the memory\n"
+				+ "7\n"
+				+ "HIGH\n"
+				+ "X\n"
 				+ "N\n"
 				+ "X\n"
 				+ "Y\n";
@@ -168,4 +220,9 @@ class MenusTest extends Menus {
 		assertNull(ticket);
 	}
 	
+	@Test
+	void testDisplayOpenTickets() {
+		displayOpenTickets();
+		assertEquals("", out.toString());
+	}
 }
