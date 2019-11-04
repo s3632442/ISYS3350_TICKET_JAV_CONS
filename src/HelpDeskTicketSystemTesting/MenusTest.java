@@ -81,6 +81,7 @@ class MenusTest extends Menus {
 		assertEquals("HIGH", input);
 	}
 	
+
 	// Test printing menu with menu selectors
 	@Test
 	void testPrintMenuNoSelection() {
@@ -220,6 +221,25 @@ class MenusTest extends Menus {
 		assertNull(ticket);
 	}
 	
+	/*
+	 * Integer input test
+	 * - ticket number testing
+	 */
+	@Test
+	void testGetIntegerInput()
+	{
+		String i = "2\n";
+		int ticket = getInteger(new Scanner(i), "ticket number");
+		assertEquals(2, ticket);
+	}
+	@Test
+	void testGetIntegerBadInput()
+	{
+		String i = "xxxxxx\n"
+				+ "-1\n";
+		int ticket = getInteger(new Scanner(i), "ticket number");
+		assertEquals(1, ticket);
+	}
 	@Test
 	void testDisplayOpenTickets() {
 		displayOpenTickets();

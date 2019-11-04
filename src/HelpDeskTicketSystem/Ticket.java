@@ -76,9 +76,11 @@ public class Ticket {
 	}
 	
 	public String getStatus() {
-		if (status) {
+		if (status) 
+		{
 			return "Open";
-		} else {
+		} else 
+		{
 			return "Closed";
 		}
 	}	

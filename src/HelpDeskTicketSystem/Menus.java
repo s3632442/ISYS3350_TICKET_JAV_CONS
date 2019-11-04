@@ -21,137 +21,158 @@ public class Menus {
 
 	public static void main(String[] args) {
 		
-		Runtime.getRuntime().addShutdownHook(new Thread()
-		{
-			public void run()
-			{
-				if (tickets != null && !tickets.isEmpty())
-				{
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				if (tickets != null && !tickets.isEmpty()){
 					FileHandler.writeTicketDatabase("tickets.txt", tickets);
 				}
-				if (users != null && !users.isEmpty())
-				{
+				if (users != null && !users.isEmpty()) {
 					FileHandler.writeUserDatabase("users.txt", users);
 				}
 			}
 		});
 		
-		String userInput;
+		String input = "\0";
+		Integer intInput;
+		
 		Scanner sc = new Scanner(System.in);
 		// Initialize selection variable to ASCII null to keep compiler happy
 		char selection = '\0';
 
-		String[] login = new String[2];
+		String userId;
+		String userPwd;
 
 		// Check to see is persistent data for tickets and load if present
 		tickets = FileHandler.loadTicketDatabase("tickets.txt", "TICKET");
 		users = FileHandler.loadUserDatabase("users.txt");
 
 		do {
-			login[0] = getInput(sc, "Employee No");
-			login[1] = getInput(sc, "Password");
-			for (User tmp: users)
+			if (user == null)
 			{
-				if (tmp.getId() != null && tmp.getId().equals(login[0]))
-				{
-					if (tmp.login(login[1]))
-					{
-						user = tmp;
+				List<String> menu = Arrays.asList("Create Account", "Login", "Exit Program");
+				List<String> menuSelections = Arrays.asList("C", "L", "X");
+				
+				printMenu("IT HELP DESK SYSTEM", menu, menuSelections);
+				input = sc.nextLine();
+				System.out.println();
+				
+				if (input.length() != 1) {
+					System.out.println("Error - invalid selection!");
+				} else {
+					selection = Character.toUpperCase(input.charAt(0));
+					
+					switch(selection) {
+					case 'C':
+						System.out.println("This feature is not implemented");
+						break;
+					case 'L':
+						userId = getInput(sc, "Employee No");
+						userPwd = getInput(sc, "Password");
+						
+						for (User tmp: users){
+							if (tmp.getId() != null && compareString(tmp.getId(), userId)){
+								if (tmp.login(userPwd)){
+									user = tmp;
+								}
+							}
+						}
+						if (user == null) {
+							System.out.println("Error - Invalid credentials");
+						} else {
+							System.out.printf("Welcome %s %s!\n", user.getFirstName(), user.getLastName());
+						}
+						break;
+					case 'X':
+						input = exit(sc, "selection", false);
+						if (compareString(input, "EXIT_RESUME")) {
+							System.exit(0);
+						}
+						break;
 					}
 				}
-			}
-			if (user == null) {
-				System.out.println("Error - Invalid credentials");
-			} else {
-				System.out.println("Logging in..");
-			}
-		} while (user == null);
-
-		do {
-			if (user instanceof StaffUser) {
-				List<String> menu = Arrays.asList("Create Ticket", "Exit Program");
+				
+			} else if (user instanceof StaffUser) {
+				List<String> menu = Arrays.asList("Create Ticket", "Logout");
 				List<String> menuSelections = Arrays.asList("C", "X");
 				
 				// displays open tickets
 				displayOpenTickets();
 				printMenu("STAFF MENU", menu, menuSelections);
-				userInput = sc.nextLine();
+				input = sc.nextLine();
 				System.out.println();
 
-				if (userInput.length() != 1) {
+				if (input.length() != 1) {
 					System.out.println("Error - invalid selection!");
 				} else {
 					// make selection case insensitive
-					selection = Character.toUpperCase(userInput.charAt(0));
+					selection = Character.toUpperCase(input.charAt(0));
 
 					// process user menu selection
 					switch (selection) {
 					// create ticket case
-					case 'C': {
+					case 'C': 
 						Ticket ticket = createTicketMenu(sc);
 						if (ticket != null) {
 							tickets.add(ticket);
 						}
 						break;
-					}
-					case 'P': {
+					case 'P': 
 						for (Ticket tmp : tickets) {
 							tmp.print();
 						}
 						break;
-					}
 					// exit case
-					case 'X': {
-						System.out.println("Exiting the program...");
-						System.exit(0);
+					case 'X': 
+						input = exit(sc, "selection", false);
+						if (compareString(input, "EXIT_RESUME")) {
+							user = null;
+						}
 						break;
-					}
 					// invalid selection case
-					default: {
+					default: 
 						System.out.println("Error - invalid selection!");
-					}
 					}
 				}
 			} else {
 				do {
 					// set menu selections
-					List<String> menu = Arrays.asList("Close Ticket", "View Active Tickets", "Exit Program");
+					List<String> menu = Arrays.asList("Close Ticket", "View Active Tickets", "Logout");
 					List<String> menuSelections = Arrays.asList("C", "V", "X");
 					
 					// menu title
 					printMenu("TECH MENU", menu, menuSelections);
-					userInput = sc.nextLine();
+					input = sc.nextLine();
 					
 					System.out.println();
 
 					// validate selection input length
-					if (userInput.length() != 1) {
+					if (input.length() != 1) {
 						System.out.println("Error - invalid selection!");
 					} else {
 						// make selection case insensitive
-						selection = Character.toUpperCase(userInput.charAt(0));
+						selection = Character.toUpperCase(input.charAt(0));
 
 						// process user menu selection
-						switch (selection) 
-						{
+						switch (selection) {
 						case 'C': 
-						{
-							userInput = getInput(sc, "ticket number for the ticket you want to close");
+							
+							intInput = getInteger(sc, "ticket number");
 							if (tickets != null) 
 							{
-								for (Ticket tmp : tickets) 
+								Ticket tmp = tickets.get(intInput);
+								if (tmp.getId().equals(input)) 
 								{
-									if (tmp.getId().equals(userInput) &&
-											((TechUser) user).isTechnician(tmp)) 
+									if (((TechUser) user).isTechnician(tmp))
 									{
 										tmp.setStatus(false);
-										System.out.printf("Ticket %s has been closed!");
+										System.out.printf("Ticket %s has been closed!", tmp.getId());
 										break;
-									} 
+									}
 									else 
 									{
 										System.out.println("Error - Can not close another technician's ticket");
-									}
+										break;
+									}		
 								}
 							} 
 							else
@@ -159,38 +180,33 @@ public class Menus {
 								System.out.println("Error - There are currently no tickets in the database!");
 							} 
 							break;
-						}
 						case 'V':
-						{
 							((TechUser)user).printActiveTickets(tickets);
 							break;
-						}
 						// exit case
 						case 'X': 
-						{
-							System.out.println("Exiting the program...");
-							System.exit(0);
+							input = exit(sc, "selection", false);
+							System.out.println(input);
+							if (compareString(input, "EXIT_RESUME")) {
+								user = null;
+							}
 							break;
-						}
 						// invalid selection case
 						default: 
-						{
 							System.out.println("Error - invalid selection!");
-						}
 						}
 						System.out.println();
 					}
-				} while (selection != 'X');
+				} while (!compareString(input, "EXIT_RESUME"));
 			}
-		} while (selection != 'X');
+		} while (user == null || !compareString(input, "EXIT_RESUME"));
+		System.exit(0);
 	}
 
 	protected static void displayOpenTickets() {
-		if (tickets != null && !tickets.isEmpty()) 
-		{
+		if (tickets != null && !tickets.isEmpty()) {
 			System.out.println("Open tickets");
-			for (Ticket tmp : tickets) 
-			{
+			for (Ticket tmp : tickets) {
 				System.out.print("ID: " + tmp.getId() + "| Status:" + tmp.getStatus()
 						+ "| Severity:" + tmp.getSeverity());
 				System.out.print("\n---------------------------\n\n");
@@ -263,37 +279,54 @@ public class Menus {
 		return input;
 	}
 	
-	protected static boolean compareSelection(char selection, char comparison)
-	{
-		if (Character.compare(selection, comparison) == 0)
-		{
+	protected static boolean compareString(String selection, String comparison) {
+		if (selection.equals(comparison)) {
 			return true;
 		}
 		return false;
 	}
 	
-	protected static char exit(Scanner sc, String request)
+	protected static Integer getInteger(Scanner sc, String request)
 	{
-		char exit = '\0';
-		String input = "\0";
-		System.out.println("Exiting will cause any progress to be lost");
-		System.out.println("Are you sure you want to exit? Y/N");
-		do
-		{	
-			input = getInput(sc, request);
-			if (input.length() != 1)
-			{
-				System.out.println("Error - too many characters, must select Y or N");
+		String userInput = "\0", substr = "\0";
+		Integer out = -1;
+		try {
+			userInput = getInput(sc, request);
+			
+			if ("ticket number".equals(request)) {
+				substr = userInput.substring(userInput.lastIndexOf('-') + 1);
+				out = Integer.parseInt(substr);
 			}
-			else
-			{
-				exit = input.toUpperCase().charAt(0);
-				if (!compareSelection(exit, 'Y') && !compareSelection(exit, 'N'))
-				{
+		} catch(NumberFormatException ex) {
+			System.out.println("Error - must enter a valid number");
+			out = getInteger(sc, request);
+		}
+		return out;
+	}
+	
+	protected static String exit(Scanner sc, String request, boolean earlyExit) {
+		String exit = "EXIT_ABORT";
+		String input = "\0";
+		if (earlyExit)
+		{
+			System.out.println("Exiting will cause any progress to be lost");
+		}
+		System.out.println("Are you sure you want to exit? Y/N");
+		do {	
+			input = getInput(sc, request);
+			if (input.length() != 1) {
+				System.out.println("Error - too many characters, must select Y or N");
+			} else {
+				exit = input.toUpperCase();
+				if (compareString(exit, "Y")) {
+					exit = "EXIT_RESUME";
+				} else if (compareString(exit, "N")) {
+					return exit;
+				} else {
 					System.out.println("Error - invalid selection, must select Y or N");
 				}
 			}
-		} while (!compareSelection(exit, 'Y') && !compareSelection(exit, 'N'));
+		} while (!compareString(exit, "EXIT_RESUME") && !compareString(exit, "N"));
 		return exit;
 	}
 	/*
@@ -307,43 +340,33 @@ public class Menus {
 		return formattedDate + "-" + Ticket.ticketIDCounter;
 	}
 
-	public static TechUser getAvailableTechnician(TicketSeverity severity)
-	{
+	public static TechUser getAvailableTechnician(TicketSeverity severity) {
 		Entry<TechUser, Integer> technician = null;
 		
 		Map<TechUser, Integer> availableTechnicians = new HashMap<TechUser, Integer>();
 		
-		for (User usr : users)
-		{
-			if (usr instanceof TechUser)
-			{
+		for (User usr : users) {
+			if (usr instanceof TechUser) {
 				TechUser tmp = ((TechUser)usr);
-				if (severity == TicketSeverity.HIGH)
-				{
-					if (tmp.getLevel() == 2)
-					{
+				if (severity == TicketSeverity.HIGH) {
+					if (tmp.getLevel() == 2) {
 						availableTechnicians.put(tmp, tmp.getActiveCount());
 					}
 				}
-				else
-				{
-					if (tmp.getLevel() == 1)
-					{
+				else {
+					if (tmp.getLevel() == 1) {
 						availableTechnicians.put(tmp, tmp.getActiveCount());
 					}
 				}
 			}
 		}
 		
-		if (availableTechnicians == null || availableTechnicians.isEmpty())
-		{
+		if (availableTechnicians == null || availableTechnicians.isEmpty()) {
 			return null;
 		}
 		
-		for (Entry<TechUser, Integer> entry : availableTechnicians.entrySet())
-		{
-			if (technician == null || technician.getValue() > entry.getValue()) 
-			{
+		for (Entry<TechUser, Integer> entry : availableTechnicians.entrySet()) {
+			if (technician == null || technician.getValue() > entry.getValue()) {
 				technician = entry;
 			}
 		}
@@ -351,11 +374,9 @@ public class Menus {
 		return technician.getKey();
 	}
 	
-	protected static Ticket createTicketMenu(Scanner sc) 
-	{
+	protected static Ticket createTicketMenu(Scanner sc) {
 		String input = null, technicianId = "N\\A";
 		TechUser technician = null;
-		char exit = '\0';
 		String[] ticket = new String[8];
 		int ticketCounter = 0;
 		Ticket.TicketSeverity severity = null;
@@ -366,116 +387,72 @@ public class Menus {
 
 		System.out.println("Type X! at any time to cancel the ticket");
 		
-		do 
-		{
+		do {
 			ticket[ticketCounter + 1] = getInput(sc, menu.get(ticketCounter));
-			if (ticket[ticketCounter + 1].equals("X!"))
-			{
-				exit = exit(sc, "selection");
-				if (compareSelection(exit, 'Y'))
-				{
+			if (ticket[ticketCounter + 1].equals("X!")) {
+				input = exit(sc, "selection", false);
+				if (compareString(input, "Y")) {
 					return null;
 				}
-			}
-			else
-			{
+			} else {
 				//menu.set(ticketCounter, ticket[ticketCounter + 1]); 
 				ticketCounter += 1;
 			}
-		} while (ticketCounter != menu.size() - 2 || compareSelection(exit, 'Y'));
+		} while (ticketCounter != menu.size() - 2 || compareString(input, "Y"));
 
 		severity = checkTicketSeverity(ticket[7]);
 		
-		if (!compareSelection(exit, 'Y'))
-		{
-			do 
-			{
+		if (!compareString(input, "Y")) {
+			do {
 				printMenu("CREATE TICKET MENU", menu, menuSelections);
 				input = sc.nextLine();
-				if (input.length() >= 1 && input.length() <= 2) 
-				{
-					switch (input.toUpperCase()) 
-					{
+				if (input.length() == 1) {
+					switch (input.toUpperCase()) {
 					case "1": 
-					{
 						ticket[1] = getInput(sc, menu.get(0));
 						break;
-					}
 					case "2": 
-					{
 						ticket[2] = getInput(sc, menu.get(1));
 						break;
-					}
 					case "3": 
-					{
 						ticket[3] = getInput(sc, menu.get(2));
 						break;
-					}
 					case "4": 
-					{
 						ticket[4] = getInput(sc, menu.get(3));
 						break;
-					}
 					case "5": 
-					{
 						ticket[5] = getInput(sc, menu.get(4));
 						break;
-					}
 					case "6": 
-					{
 						ticket[6] = getInput(sc, menu.get(5));
 						break;
-					}
 					case "7": 
-					{
 						ticket[7] = getInput(sc, menu.get(6));
 						severity = checkTicketSeverity(ticket[7]);
 						break;
-					}
 					case "C": 
-					{
 						ticket[0] = generateTicketId();
 						technician = getAvailableTechnician(severity);
-						if (technician != null)
-						{
+						if (technician != null) {
 							technicianId = technician.getId();
 							technician.setActiveCount(technician.getActiveCount() + 1);
 						}
 						return new Ticket(ticket[0], ticket[1], ticket[2], ticket[3], ticket[4], ticket[5], ticket[6],
 							severity, technicianId);
-					}
 					case "X": 
-					{
-						exit = exit(sc, "selection");
-						if (compareSelection(exit, 'Y'))
-						{
+						input = exit(sc, "selection", true);
+						if (compareString(input, "EXIT_RESUME")) {
 							return null;
 						}
 						break;
-					}
-					case "X!":
-					{
-						exit = exit(sc, "selection");
-						if (compareSelection(exit, 'Y'))
-						{
-							return null;
-						}
-						break;
-					}
 					default: 
-					{
 						System.out.println("Error - invalid selection!");
 					}
-					}
-				} 
-				else 
-				{
+				} else {
 					System.out.println("Error - invalid selection!");
 				}
-			} while (!compareSelection(exit, 'Y'));
+			} while (!compareString(input, "EXIT_RESUME"));
 		}
 	return null;
-			
 	}
-
 }
