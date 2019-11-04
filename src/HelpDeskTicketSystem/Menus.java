@@ -15,6 +15,8 @@ public class Menus {
 
 	public static void main(String[] args) {
 		String userInput;
+		String enteredTicketNo;
+		String enteredSeverity;
 		Scanner sc = new Scanner(System.in);
 		// Initialize selection variable to ASCII null to keep compiler happy
 		char selection = '\0';
@@ -82,8 +84,8 @@ public class Menus {
 			} else {
 				do {
 					// set menu selections
-					List<String> menu = Arrays.asList("Close Ticket", "Change Ticket Status", "Exit Program");
-					List<String> menuSelections = Arrays.asList("C", "S", "X");
+					List<String> menu = Arrays.asList("Close Ticket", "Exit Program");
+					List<String> menuSelections = Arrays.asList("C", "X");
 
 					// menu title
 					printMenu("TECH MENU", menu, menuSelections);
@@ -100,7 +102,7 @@ public class Menus {
 
 						// process user menu selection
 						switch (selection) {
-						case 'V': {
+						case 'C': {
 							userInput = getInput(sc, "ticket number for the ticket you want to close");
 							if (tickets != null) {
 								for (int i = 0; i < tickets.size(); i++) {
@@ -119,6 +121,20 @@ public class Menus {
 							}
 							break;
 						}
+						
+						case 'S': {
+							enteredTicketNo = getInput(sc, "Enter ticket number to update its severity ");
+							
+							//create ticket object 
+							enteredSeverity = getInput(sc, "Enter new severty by entering 'LOW', 'MEDIUM', 'HIGH' :");
+							
+							//set severity
+							System.out.println("Severity of " + enteredTicketNo + " has been set to : " + enteredSeverity);
+							break;
+							
+							
+						}
+						
 						// exit case
 						case 'X': {
 							System.out.println("Exiting the program...");
