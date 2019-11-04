@@ -89,7 +89,6 @@ public class Menus {
 					// create ticket case
 					case 'C': {
 						Ticket ticket = createTicketMenu(sc);
-						System.out.println(ticket.getId());
 						if (ticket != null) {
 							tickets.add(ticket);
 						}
@@ -365,6 +364,8 @@ public class Menus {
 				"Description", "Severity", "Confirm", "Exit");
 		List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "C", "X");
 
+		System.out.println("Type X! at any time to cancel the ticket");
+		
 		do 
 		{
 			ticket[ticketCounter + 1] = getInput(sc, menu.get(ticketCounter));
@@ -378,7 +379,7 @@ public class Menus {
 			}
 			else
 			{
-				menu.set(ticketCounter, ticket[ticketCounter + 1]); 
+				//menu.set(ticketCounter, ticket[ticketCounter + 1]); 
 				ticketCounter += 1;
 			}
 		} while (ticketCounter != menu.size() - 2 || compareSelection(exit, 'Y'));
@@ -391,47 +392,47 @@ public class Menus {
 			{
 				printMenu("CREATE TICKET MENU", menu, menuSelections);
 				input = sc.nextLine();
-				if (input.length() == 1) 
+				if (input.length() >= 1 && input.length() <= 2) 
 				{
-					switch (Character.toUpperCase(input.charAt(0))) 
+					switch (input.toUpperCase()) 
 					{
-					case '1': 
+					case "1": 
 					{
 						ticket[1] = getInput(sc, menu.get(0));
 						break;
 					}
-					case '2': 
+					case "2": 
 					{
 						ticket[2] = getInput(sc, menu.get(1));
 						break;
 					}
-					case '3': 
+					case "3": 
 					{
 						ticket[3] = getInput(sc, menu.get(2));
 						break;
 					}
-					case '4': 
+					case "4": 
 					{
 						ticket[4] = getInput(sc, menu.get(3));
 						break;
 					}
-					case '5': 
+					case "5": 
 					{
 						ticket[5] = getInput(sc, menu.get(4));
 						break;
 					}
-					case '6': 
+					case "6": 
 					{
 						ticket[6] = getInput(sc, menu.get(5));
 						break;
 					}
-					case '7': 
+					case "7": 
 					{
 						ticket[7] = getInput(sc, menu.get(6));
 						severity = checkTicketSeverity(ticket[7]);
 						break;
 					}
-					case 'C': 
+					case "C": 
 					{
 						ticket[0] = generateTicketId();
 						technician = getAvailableTechnician(severity);
@@ -443,7 +444,16 @@ public class Menus {
 						return new Ticket(ticket[0], ticket[1], ticket[2], ticket[3], ticket[4], ticket[5], ticket[6],
 							severity, technicianId);
 					}
-					case 'X': 
+					case "X": 
+					{
+						exit = exit(sc, "selection");
+						if (compareSelection(exit, 'Y'))
+						{
+							return null;
+						}
+						break;
+					}
+					case "X!":
 					{
 						exit = exit(sc, "selection");
 						if (compareSelection(exit, 'Y'))
