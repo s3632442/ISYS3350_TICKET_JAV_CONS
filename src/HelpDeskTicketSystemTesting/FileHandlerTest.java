@@ -1,7 +1,7 @@
 package HelpDeskTicketSystemTesting;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
@@ -34,9 +34,9 @@ class FileHandlerTest extends FileHandler {
 						"test description", Ticket.TicketSeverity.HIGH, "1"));
 		tickets.get(0).setStatus(false);
 		tmp_tickets = FileHandler.loadTicketDatabase("p.txt", "TICKET");
-		assertNull(tmp_tickets);
+		assertTrue(tmp_tickets.isEmpty());
 		tmp_tickets = FileHandler.loadTicketDatabase("test.txt", "NOTET");
-		assertNull(tmp_tickets);
+		assertTrue(tmp_tickets.isEmpty());
 	}
 
 }

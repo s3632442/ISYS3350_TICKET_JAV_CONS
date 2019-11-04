@@ -26,7 +26,6 @@ public class FileHandler {
 		String read = "\0";
 		Scanner sc = reader(filename);
 		ArrayList<User> users = new ArrayList<User>();
-		int counter = 0;
 		if (sc == null) { return null; };
 		
 		while (sc.hasNextLine())
@@ -77,13 +76,11 @@ public class FileHandler {
 			if (read.equals(tag))
 			{
 				tmp = new Ticket(sc);
-			}
-			if (tmp == null) {
-				System.out.println("File tag " + tag + " is invalid.");
-				return null;
-			} else {
-				tickets.add(tmp);
-				Ticket.ticketIDCounter = tickets.size() + 1;
+				if (tmp != null)
+				{
+					tickets.add(tmp);
+					Ticket.ticketIDCounter = tickets.size() + 1;
+				}
 			}
 		}
 		

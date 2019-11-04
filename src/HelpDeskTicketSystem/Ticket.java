@@ -171,27 +171,17 @@ public class Ticket {
 	public Ticket(Scanner sc){
 		String tempSeverity;
 		this.id = sc.nextLine();
-		System.out.println(id);
 		this.creatorFirstName = sc.nextLine();
-		System.out.println(creatorFirstName);
 		this.creatorLastName = sc.nextLine();
-		System.out.println(creatorLastName);
 		this.creatorStaffNumber = sc.nextLine();
-		System.out.println(creatorStaffNumber);
 		this.creatorEmail = sc.nextLine();
-		System.out.println(creatorEmail);
 		this.creatorContactNumber = sc.nextLine();
-		System.out.println(creatorContactNumber);
 		this.description = sc.nextLine();
-		System.out.println(description);
 		tempSeverity = sc.nextLine();
-		System.out.println(tempSeverity);
 		// Convert String to Enum for reading severity from file to object
 		this.severity = TicketSeverity.valueOf(tempSeverity.toUpperCase());
 		this.technicianId = sc.nextLine();
-		System.out.println(technicianId);
 		this.status = sc.nextBoolean();
-		System.out.println(status);
 		//clear trailing newline/scanner bug issue if present
 		if (sc.hasNextLine()){
 			sc.nextLine();
