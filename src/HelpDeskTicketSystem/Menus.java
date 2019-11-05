@@ -39,8 +39,7 @@ public class Menus {
 		// Initialize selection variable to ASCII null to keep compiler happy
 		char selection = '\0';
 
-		String userId;
-		String userPwd;
+		String userId, userPwd, confirmPwd;
 
 		// Check to see is persistent data for tickets and load if present
 		tickets = FileHandler.loadTicketDatabase("tickets.txt", "TICKET");
@@ -63,7 +62,7 @@ public class Menus {
 					
 					switch(selection) {
 					case 'C':
-						System.out.println("This feature is not implemented");
+						System.out.println("Not implemented");
 						break;
 					case 'L':
 						userId = getInput(sc, "Employee No");
@@ -294,6 +293,10 @@ public class Menus {
 			userInput = getInput(sc, request);
 			
 			if ("ticket number".equals(request)) {
+				if (userInput.length() >= 10)
+				{
+					throw new NumberFormatException();
+				}
 				substr = userInput.substring(userInput.lastIndexOf('-') + 1);
 				out = Integer.parseInt(substr);
 			}
