@@ -9,48 +9,38 @@ public class TechUser extends User {
 	private int level;
 	private int activeCount;
 	
-	public TechUser(String id, String pwd, String firstName, String lastName, int level, int activeCount)
-	{
+	public TechUser(String id, String pwd, String firstName, String lastName, int level, int activeCount) {
 		super(id, pwd, firstName, lastName);
 		this.level = level;
 		this.activeCount = activeCount;
 	}
 	
-	public TechUser(Scanner sc)
-	{
+	public TechUser(Scanner sc) {
 		super(sc.nextLine(), sc.nextLine(), sc.nextLine(), sc.nextLine());
 		this.level = Integer.parseInt(sc.nextLine());
 		this.activeCount = Integer.parseInt(sc.nextLine());
 	}
 	
-	public int getLevel()
-	{
+	public int getLevel() {
 		return this.level;
 	}
 	
-	public int getActiveCount() 
-	{
+	public int getActiveCount() {
 		return this.activeCount;
 	}
 	
-	public void setLevel(int level)
-	{
+	public void setLevel(int level) {
 		this.level = level;
 	}
 	
-	public void setActiveCount(int activeCount)
-	{
+	public void setActiveCount(int activeCount) {
 		this.activeCount = activeCount;
 	}
 	
-	public void printActiveTickets(ArrayList<Ticket> tickets)
-	{
-		if (tickets != null)
-		{
-			for (Ticket tmp : tickets)
-			{
-				if (tmp.getTechnicianId().equals(this.getId()))
-				{
+	public void printActiveTickets(ArrayList<Ticket> tickets) {
+		if (tickets != null) {
+			for (Ticket tmp : tickets) {
+				if (tmp.getTechnicianId().equals(this.getId())) {
 					System.out.println(tmp.getId());
 				}
 			}
@@ -58,8 +48,7 @@ public class TechUser extends User {
 		System.out.printf("You currently have %s active tickets\n", this.getActiveCount());
 	}
 
-	public void writeAttributes(PrintWriter pw)
-	{
+	public void writeAttributes(PrintWriter pw) {
 		pw.println("TECH");
 		pw.println(this.getId());
 		pw.println(this.getPwd());
@@ -67,15 +56,6 @@ public class TechUser extends User {
 		pw.println(this.getLastName());
 		pw.println(this.getLevel());
 		pw.println(this.getActiveCount());
-	}
-	
-	public boolean isTechnician(Ticket ticket)
-	{
-		if (ticket != null && ticket.getTechnicianId().equals(this.getId()))
-		{
-			return true;
-		}
-		return false;
 	}
 
 }

@@ -39,15 +39,14 @@ public class Menus {
 		// Initialize selection variable to ASCII null to keep compiler happy
 		char selection = '\0';
 
-		String userId, userPwd, confirmPwd;
+		String userId, userPwd;
 
 		// Check to see is persistent data for tickets and load if present
 		tickets = FileHandler.loadTicketDatabase("tickets.txt", "TICKET");
 		users = FileHandler.loadUserDatabase("users.txt");
 
 		do {
-			if (user == null)
-			{
+			if (user == null) {
 				List<String> menu = Arrays.asList("Create Account", "Login", "Exit Program");
 				List<String> menuSelections = Arrays.asList("C", "L", "X");
 				
@@ -153,29 +152,21 @@ public class Menus {
 
 						// process user menu selection
 						switch (selection) {
-						case 'C': 
-							
+						case 'C': 					
 							intInput = getInteger(sc, "ticket number");
-							if (tickets != null) 
-							{
+							if (tickets != null) {
 								Ticket tmp = tickets.get(intInput);
-								if (tmp.getId().equals(input)) 
-								{
-									if (((TechUser) user).isTechnician(tmp))
-									{
-										tmp.setStatus(false);
-										System.out.printf("Ticket %s has been closed!", tmp.getId());
-										break;
-									}
-									else 
-									{
-										System.out.println("Error - Can not close another technician's ticket");
-										break;
-									}		
-								}
-							} 
-							else
-							{
+								if (!tmp.getStatus()) {
+									System.out.println("Error - ticket is already closed!");
+								} else if (tmp.isTechnician(user.getId())) {
+									tmp.setStatus(false);
+									System.out.printf("Ticket %s has been closed!", tmp.getId());
+									break;
+								} else {
+									System.out.println("Error - Can not close another technician's ticket!");
+									break;
+								}		
+							} else{
 								System.out.println("Error - There are currently no tickets in the database!");
 							} 
 							break;
@@ -185,7 +176,6 @@ public class Menus {
 						// exit case
 						case 'X': 
 							input = exit(sc, "selection", false);
-							System.out.println(input);
 							if (compareString(input, "EXIT_RESUME")) {
 								user = null;
 							}
@@ -201,12 +191,12 @@ public class Menus {
 		} while (user == null || !compareString(input, "EXIT_RESUME"));
 		System.exit(0);
 	}
-
+	
 	protected static void displayOpenTickets() {
 		if (tickets != null && !tickets.isEmpty()) {
 			System.out.println("Open tickets");
 			for (Ticket tmp : tickets) {
-				System.out.print("ID: " + tmp.getId() + "| Status:" + tmp.getStatus()
+				System.out.print("ID: " + tmp.getId() + "| Status:" + tmp.getStringStatus()
 						+ "| Severity:" + tmp.getSeverity());
 				System.out.print("\n---------------------------\n\n");
 			}
@@ -215,7 +205,7 @@ public class Menus {
 
 	// print menu method
 	protected static void printMenu(String title, List<String> menu, List<String> menuSelections) {
-		System.out.printf("%s\n---------------------------\n\n", title);
+		System.out.printf("%s\n---------------------------\n", title);
 	
 		for (int i = 0; i < menu.size(); i++) {
 			System.out.printf("%-25s%s\n", menu.get(i), menuSelections != null ? menuSelections.get(i) : i + 1);
@@ -293,15 +283,16 @@ public class Menus {
 			userInput = getInput(sc, request);
 			
 			if ("ticket number".equals(request)) {
-				if (userInput.length() >= 10)
+				if (userInput.length() < 10)
 				{
 					throw new NumberFormatException();
 				}
-				substr = userInput.substring(userInput.lastIndexOf('-') + 1);
+				substr = userInput.substring(userInput.lastIndexOf('-') + 1, userInput.length());
 				out = Integer.parseInt(substr);
+				out -= 1;
 			}
 		} catch(NumberFormatException ex) {
-			System.out.println("Error - must enter a valid number");
+			System.out.printf("Error - must enter a valid %s\n", request);
 			out = getInteger(sc, request);
 		}
 		return out;
@@ -310,8 +301,7 @@ public class Menus {
 	protected static String exit(Scanner sc, String request, boolean earlyExit) {
 		String exit = "EXIT_ABORT";
 		String input = "\0";
-		if (earlyExit)
-		{
+		if (earlyExit) {
 			System.out.println("Exiting will cause any progress to be lost");
 		}
 		System.out.println("Are you sure you want to exit? Y/N");

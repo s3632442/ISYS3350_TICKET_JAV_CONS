@@ -10,8 +10,7 @@ public class FileHandler {
 	
 	private static String STAFF_TAG = "STAFF";
 	
-	public static Scanner reader(String filename)
-	{
+	public static Scanner reader(String filename) {
 			Scanner sc;
 			try {
 				sc = new Scanner(new FileReader(filename));
@@ -21,36 +20,29 @@ public class FileHandler {
 			return sc;
 	}
 	
-	public static ArrayList<User> loadUserDatabase(String filename)
-	{
+	public static ArrayList<User> loadUserDatabase(String filename) {
 		String read = "\0";
 		Scanner sc = reader(filename);
 		ArrayList<User> users = new ArrayList<User>();
 		if (sc == null) { return null; };
 		
-		while (sc.hasNextLine())
-		{
+		while (sc.hasNextLine()) {
 			read = sc.nextLine();
 			
-			if (read.equals(STAFF_TAG))
-			{
+			if (read.equals(STAFF_TAG)) {
 				users.add(new StaffUser(sc));
-			}
-			else
-			{
+			} else {
 				users.add(new TechUser(sc));
 			}
 		}
 		return users;
 	}
 	
-	public static void writeUserDatabase(String filename, ArrayList<User> users)
-	{
+	public static void writeUserDatabase(String filename, ArrayList<User> users) {
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(filename);
-			for (User tmp : users)
-			{
+			for (User tmp : users) {
 				tmp.writeAttributes(pw);
 			}
 			pw.close();
@@ -59,8 +51,7 @@ public class FileHandler {
 		}
 	}
 	
-	public static ArrayList<Ticket> loadTicketDatabase(String filename, String tag)
-	{
+	public static ArrayList<Ticket> loadTicketDatabase(String filename, String tag) {
 		String read = "\0";
 		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
 		Ticket tmp;
@@ -69,15 +60,12 @@ public class FileHandler {
 		
 		if (sc == null) { return tickets; }
 		
-		while (sc.hasNextLine())
-		{
+		while (sc.hasNextLine()) {
 			read = sc.nextLine();
 			tmp = null;
-			if (read.equals(tag))
-			{
+			if (read.equals(tag)) {
 				tmp = new Ticket(sc);
-				if (tmp != null)
-				{
+				if (tmp != null) {
 					tickets.add(tmp);
 					Ticket.ticketIDCounter = tickets.size() + 1;
 				}
@@ -87,13 +75,11 @@ public class FileHandler {
 		return tickets;
 	}
 	
-	public static void writeTicketDatabase(String filename, ArrayList<Ticket> tickets)
-	{
+	public static void writeTicketDatabase(String filename, ArrayList<Ticket> tickets) {
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(filename);
-			for (Ticket tmp : tickets)
-			{
+			for (Ticket tmp : tickets) {
 				tmp.writeDetails(pw);
 			}
 			pw.close();

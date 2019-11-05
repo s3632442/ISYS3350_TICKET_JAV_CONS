@@ -75,15 +75,16 @@ public class Ticket {
 		return severity;
 	}
 	
-	public String getStatus() {
-		if (status) 
-		{
-			return "Open";
-		} else 
-		{
-			return "Closed";
-		}
+	public boolean getStatus() {
+		return status;
 	}	
+	
+	public String getStringStatus() {
+		if (this.status) {
+			return "Open";
+		}
+		return "Closed";
+	}
 	
 	public String getTechnicianId() {
 		return technicianId;
@@ -169,6 +170,12 @@ public class Ticket {
 		this.writeAttributes(pw);
 	}
 	
+	public boolean isTechnician(String id) {
+		if (id.compareTo(this.getTechnicianId()) == 0) {
+			return true;
+		}
+		return false;
+	}
 	// constructor for reading in data from file and creating CreateTicket objects
 	public Ticket(Scanner sc){
 		String tempSeverity;
