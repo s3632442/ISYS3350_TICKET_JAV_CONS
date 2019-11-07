@@ -31,7 +31,7 @@ public class Menus {
 				}
 			}
 		});
-
+		// variable declaration
 		String input = "\0";
 		Integer intInput;
 
@@ -46,40 +46,50 @@ public class Menus {
 		users = FileHandler.loadUserDatabase("users.txt");
 
 		do {
+			// initial system menu
 			if (user == null) {
 				List<String> menu = Arrays.asList("Create Account", "Login", "Exit Program");
 				List<String> menuSelections = Arrays.asList("C", "L", "X");
-
+				// title
 				printMenu("IT HELP DESK SYSTEM", menu, menuSelections);
 				input = sc.nextLine();
 				System.out.println();
-
+				// if invalid selection is made
 				if (input.length() != 1) {
 					System.out.println("Error - invalid selection!");
 				} else {
+					// select first character
 					selection = Character.toUpperCase(input.charAt(0));
-
+					// menu selection switch case
 					switch (selection) {
+					// create user
 					case 'C':
 						System.out.println("Not implemented");
 						break;
+					// login
 					case 'L':
+						// variables for storing credentials
 						userId = getInput(sc, "Employee No");
 						userPwd = getInput(sc, "Password");
-
+						// Iterate through users i DB
 						for (User tmp : users) {
+							// validate user name
 							if (tmp.getId() != null && compareString(tmp.getId(), userId)) {
+								// validate password
 								if (tmp.login(userPwd)) {
 									user = tmp;
 								}
 							}
 						}
+						// invalid credentials message
 						if (user == null) {
 							System.out.println("Error - Invalid credentials");
 						} else {
+							// successful login message
 							System.out.printf("Welcome %s %s!\n", user.getFirstName(), user.getLastName());
 						}
 						break;
+					// exit case
 					case 'X':
 						input = exit(sc, "selection", false);
 						if (compareString(input, "EXIT_RESUME")) {
@@ -88,23 +98,21 @@ public class Menus {
 						break;
 					}
 				}
-
+			//staff user menu logic
 			} else if (user instanceof StaffUser) {
+				//declare menu selection lists
 				List<String> menu = Arrays.asList("Create Ticket", "Logout");
 				List<String> menuSelections = Arrays.asList("C", "X");
-
-				// displays open tickets
+				//staff menu title
 				printMenu("STAFF MENU", menu, menuSelections);
 				input = sc.nextLine();
 				System.out.println();
-
+				//invalid menu selection message
 				if (input.length() != 1) {
 					System.out.println("Error - invalid selection!");
 				} else {
-					// make selection case insensitive
+					//take user input and make it case insensitive
 					selection = Character.toUpperCase(input.charAt(0));
-
-					// process user menu selection
 					switch (selection) {
 					// create ticket case
 					case 'C':
@@ -113,6 +121,7 @@ public class Menus {
 							tickets.add(ticket);
 						}
 						break;
+					//
 					case 'P':
 						for (Ticket tmp : tickets) {
 							tmp.print();
@@ -182,13 +191,11 @@ public class Menus {
 								if (!tmp.getStatus()) {
 									System.out.println("Error - This ticket has been closed!");
 								} else if (tmp.isTechnician(user.getId())) {
-									//request severity
+									// request severity
 									input = getInput(sc, "enter severity");
-									//set severity
-									
+									// set severity
 									TicketSeverity severity = checkTicketSeverity(input);
 									tmp.setSeverity(severity);
-									
 									System.out.printf("Status of ticket %s has been changed!", tmp.getId());
 									break;
 								} else {
