@@ -20,10 +20,10 @@ public class Menus {
 	private static User user = null;
 
 	public static void main(String[] args) {
-		
+
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
-				if (tickets != null && !tickets.isEmpty()){
+				if (tickets != null && !tickets.isEmpty()) {
 					FileHandler.writeTicketDatabase("tickets.txt", tickets);
 				}
 				if (users != null && !users.isEmpty()) {
@@ -31,10 +31,10 @@ public class Menus {
 				}
 			}
 		});
-		
+
 		String input = "\0";
 		Integer intInput;
-		
+
 		Scanner sc = new Scanner(System.in);
 		// Initialize selection variable to ASCII null to keep compiler happy
 		char selection = '\0';
@@ -49,27 +49,27 @@ public class Menus {
 			if (user == null) {
 				List<String> menu = Arrays.asList("Create Account", "Login", "Exit Program");
 				List<String> menuSelections = Arrays.asList("C", "L", "X");
-				
+
 				printMenu("IT HELP DESK SYSTEM", menu, menuSelections);
 				input = sc.nextLine();
 				System.out.println();
-				
+
 				if (input.length() != 1) {
 					System.out.println("Error - invalid selection!");
 				} else {
 					selection = Character.toUpperCase(input.charAt(0));
-					
-					switch(selection) {
+
+					switch (selection) {
 					case 'C':
 						System.out.println("Not implemented");
 						break;
 					case 'L':
 						userId = getInput(sc, "Employee No");
 						userPwd = getInput(sc, "Password");
-						
-						for (User tmp: users){
-							if (tmp.getId() != null && compareString(tmp.getId(), userId)){
-								if (tmp.login(userPwd)){
+
+						for (User tmp : users) {
+							if (tmp.getId() != null && compareString(tmp.getId(), userId)) {
+								if (tmp.login(userPwd)) {
 									user = tmp;
 								}
 							}
@@ -88,11 +88,11 @@ public class Menus {
 						break;
 					}
 				}
-				
+
 			} else if (user instanceof StaffUser) {
 				List<String> menu = Arrays.asList("Create Ticket", "Logout");
 				List<String> menuSelections = Arrays.asList("C", "X");
-				
+
 				// displays open tickets
 				printMenu("STAFF MENU", menu, menuSelections);
 				input = sc.nextLine();
@@ -107,39 +107,40 @@ public class Menus {
 					// process user menu selection
 					switch (selection) {
 					// create ticket case
-					case 'C': 
+					case 'C':
 						Ticket ticket = createTicketMenu(sc);
 						if (ticket != null) {
 							tickets.add(ticket);
 						}
 						break;
-					case 'P': 
+					case 'P':
 						for (Ticket tmp : tickets) {
 							tmp.print();
 						}
 						break;
 					// exit case
-					case 'X': 
+					case 'X':
 						input = exit(sc, "selection", false);
 						if (compareString(input, "EXIT_RESUME")) {
 							user = null;
 						}
 						break;
 					// invalid selection case
-					default: 
+					default:
 						System.out.println("Error - invalid selection!");
 					}
 				}
 			} else {
 				do {
 					// set menu selections
-					List<String> menu = Arrays.asList("Close Ticket", "View Active Tickets", "View Inactive Tickets" , "Open Ticket" , "Logout");
-					List<String> menuSelections = Arrays.asList("C", "A", "I" , "O" , "X");
-					
+					List<String> menu = Arrays.asList("View Active Tickets", "Close Ticket", "Change Ticket Status",
+							"View Inactive Tickets", "Open Ticket", "Logout");
+					List<String> menuSelections = Arrays.asList("A", "C", "S", "I", "O", "X");
+
 					// menu title
 					printMenu("TECH MENU", menu, menuSelections);
 					input = sc.nextLine();
-					
+
 					System.out.println();
 
 					// validate selection input length
@@ -151,7 +152,7 @@ public class Menus {
 
 						// process user menu selection
 						switch (selection) {
-						case 'C': 					
+						case 'C':
 							intInput = getInteger(sc, "ticket number");
 							if (tickets != null) {
 								Ticket tmp = tickets.get(intInput);
@@ -159,24 +160,47 @@ public class Menus {
 									System.out.println("Error - ticket is already closed!");
 								} else if (tmp.isTechnician(user.getId())) {
 									tmp.setStatus(false);
-									((TechUser)user).setActiveCount(((TechUser)user).getActiveCount()-1);
-									((TechUser)user).setInActiveCount(((TechUser)user).getInActiveCount()+1);
+									((TechUser) user).setActiveCount(((TechUser) user).getActiveCount() - 1);
+									((TechUser) user).setInActiveCount(((TechUser) user).getInActiveCount() + 1);
 									System.out.printf("Ticket %s has been closed!", tmp.getId());
 									break;
 								} else {
 									System.out.println("Error - Can not close another technician's ticket!");
 									break;
-								}		
-							} else{
+								}
+							} else {
 								System.out.println("Error - There are currently no tickets in the database!");
-							} 
+							}
 							break;
 						case 'A':
-							((TechUser)user).printActiveTickets(tickets);
+							((TechUser) user).printActiveTickets(tickets);
 							break;
-						// exit case
+						case 'S':
+							intInput = getInteger(sc, "ticket number");
+							if (tickets != null) {
+								Ticket tmp = tickets.get(intInput);
+								if (!tmp.getStatus()) {
+									System.out.println("Error - This ticket has been closed!");
+								} else if (tmp.isTechnician(user.getId())) {
+									//request severity
+									input = getInput(sc, "enter severity");
+									//set severity
+									
+									TicketSeverity severity = checkTicketSeverity(input);
+									tmp.setSeverity(severity);
+									
+									System.out.printf("Status of ticket %s has been changed!", tmp.getId());
+									break;
+								} else {
+									System.out.println(
+											"Error - Can not change the status of another technician's ticket!");
+									break;
+								}
+							} else {
+								System.out.println("Error - There are currently no tickets in the database!");
+							}
 						case 'I':
-							((TechUser)user).printInActiveTickets(tickets);
+							((TechUser) user).printInActiveTickets(tickets);
 							break;
 						case 'O':
 							intInput = getInteger(sc, "ticket number");
@@ -186,27 +210,27 @@ public class Menus {
 									System.out.println("Error - ticket is already open!");
 								} else if (tmp.isTechnician(user.getId())) {
 									tmp.setStatus(true);
-									((TechUser)user).setActiveCount(((TechUser)user).getActiveCount()+1);
-									((TechUser)user).setInActiveCount(((TechUser)user).getInActiveCount()-1);
+									((TechUser) user).setActiveCount(((TechUser) user).getActiveCount() + 1);
+									((TechUser) user).setInActiveCount(((TechUser) user).getInActiveCount() - 1);
 									System.out.printf("Ticket %s has been opened!", tmp.getId());
 									break;
 								} else {
 									System.out.println("Error - Can not open another technician's ticket!");
 									break;
-								}		
-							} else{
+								}
+							} else {
 								System.out.println("Error - There are currently no tickets in the database!");
-							} 
+							}
 							break;
 						// exit case
-						case 'X': 
+						case 'X':
 							input = exit(sc, "selection", false);
 							if (compareString(input, "EXIT_RESUME")) {
 								user = null;
 							}
 							break;
 						// invalid selection case
-						default: 
+						default:
 							System.out.println("Error - invalid selection!");
 						}
 						System.out.println();
@@ -216,12 +240,11 @@ public class Menus {
 		} while (user == null || !compareString(input, "EXIT_RESUME"));
 		System.exit(0);
 	}
-	
 
 	// print menu method
 	protected static void printMenu(String title, List<String> menu, List<String> menuSelections) {
 		System.out.printf("%s\n---------------------------\n", title);
-	
+
 		for (int i = 0; i < menu.size(); i++) {
 			System.out.printf("%-25s%s\n", menu.get(i), menuSelections != null ? menuSelections.get(i) : i + 1);
 		}
@@ -282,37 +305,35 @@ public class Menus {
 		}
 		return input;
 	}
-	
+
 	protected static boolean compareString(String selection, String comparison) {
 		if (selection.equals(comparison)) {
 			return true;
 		}
 		return false;
 	}
-	
-	protected static Integer getInteger(Scanner sc, String request)
-	{
+
+	protected static Integer getInteger(Scanner sc, String request) {
 		String userInput = "\0", substr = "\0";
 		Integer out = -1;
 		try {
 			userInput = getInput(sc, request);
-			
+
 			if ("ticket number".equals(request)) {
-				if (userInput.length() < 10)
-				{
+				if (userInput.length() < 10) {
 					throw new NumberFormatException();
 				}
 				substr = userInput.substring(userInput.lastIndexOf('-') + 1, userInput.length());
 				out = Integer.parseInt(substr);
 				out -= 1;
 			}
-		} catch(NumberFormatException ex) {
+		} catch (NumberFormatException ex) {
 			System.out.printf("Error - must enter a valid %s\n", request);
 			out = getInteger(sc, request);
 		}
 		return out;
 	}
-	
+
 	protected static String exit(Scanner sc, String request, boolean earlyExit) {
 		String exit = "EXIT_ABORT";
 		String input = "\0";
@@ -320,7 +341,7 @@ public class Menus {
 			System.out.println("Exiting will cause any progress to be lost");
 		}
 		System.out.println("Are you sure you want to exit? Y/N");
-		do {	
+		do {
 			input = getInput(sc, request);
 			if (input.length() != 1) {
 				System.out.println("Error - too many characters, must select Y or N");
@@ -337,6 +358,7 @@ public class Menus {
 		} while (!compareString(exit, "EXIT_RESUME") && !compareString(exit, "N"));
 		return exit;
 	}
+
 	/*
 	 * Generate a ticket identification number Ticket ID Format:
 	 * yyyyMMdd-ticketIDCounter
@@ -350,38 +372,37 @@ public class Menus {
 
 	public static TechUser getAvailableTechnician(TicketSeverity severity) {
 		Entry<TechUser, Integer> technician = null;
-		
+
 		Map<TechUser, Integer> availableTechnicians = new HashMap<TechUser, Integer>();
-		
+
 		for (User usr : users) {
 			if (usr instanceof TechUser) {
-				TechUser tmp = ((TechUser)usr);
+				TechUser tmp = ((TechUser) usr);
 				if (severity == TicketSeverity.HIGH) {
 					if (tmp.getLevel() == 2) {
 						availableTechnicians.put(tmp, tmp.getActiveCount());
 					}
-				}
-				else {
+				} else {
 					if (tmp.getLevel() == 1) {
 						availableTechnicians.put(tmp, tmp.getActiveCount());
 					}
 				}
 			}
 		}
-		
+
 		if (availableTechnicians == null || availableTechnicians.isEmpty()) {
 			return null;
 		}
-		
+
 		for (Entry<TechUser, Integer> entry : availableTechnicians.entrySet()) {
 			if (technician == null || technician.getValue() > entry.getValue()) {
 				technician = entry;
 			}
 		}
-		
+
 		return technician.getKey();
 	}
-	
+
 	protected static Ticket createTicketMenu(Scanner sc) {
 		String input = null, technicianId = "N\\A";
 		TechUser technician = null;
@@ -394,7 +415,7 @@ public class Menus {
 		List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "C", "X");
 
 		System.out.println("Type X! at any time to cancel the ticket");
-		
+
 		do {
 			ticket[ticketCounter + 1] = getInput(sc, menu.get(ticketCounter));
 			if (ticket[ticketCounter + 1].equals("X!")) {
@@ -403,42 +424,42 @@ public class Menus {
 					return null;
 				}
 			} else {
-				//menu.set(ticketCounter, ticket[ticketCounter + 1]); 
+				// menu.set(ticketCounter, ticket[ticketCounter + 1]);
 				ticketCounter += 1;
 			}
 		} while (ticketCounter != menu.size() - 2 || compareString(input, "Y"));
 
 		severity = checkTicketSeverity(ticket[7]);
-		
+
 		if (!compareString(input, "Y")) {
 			do {
 				printMenu("CREATE TICKET MENU", menu, menuSelections);
 				input = sc.nextLine();
 				if (input.length() == 1) {
 					switch (input.toUpperCase()) {
-					case "1": 
+					case "1":
 						ticket[1] = getInput(sc, menu.get(0));
 						break;
-					case "2": 
+					case "2":
 						ticket[2] = getInput(sc, menu.get(1));
 						break;
-					case "3": 
+					case "3":
 						ticket[3] = getInput(sc, menu.get(2));
 						break;
-					case "4": 
+					case "4":
 						ticket[4] = getInput(sc, menu.get(3));
 						break;
-					case "5": 
+					case "5":
 						ticket[5] = getInput(sc, menu.get(4));
 						break;
-					case "6": 
+					case "6":
 						ticket[6] = getInput(sc, menu.get(5));
 						break;
-					case "7": 
+					case "7":
 						ticket[7] = getInput(sc, menu.get(6));
 						severity = checkTicketSeverity(ticket[7]);
 						break;
-					case "C": 
+					case "C":
 						ticket[0] = generateTicketId();
 						technician = getAvailableTechnician(severity);
 						if (technician != null) {
@@ -446,14 +467,14 @@ public class Menus {
 							technician.setActiveCount(technician.getActiveCount() + 1);
 						}
 						return new Ticket(ticket[0], ticket[1], ticket[2], ticket[3], ticket[4], ticket[5], ticket[6],
-							severity, technicianId);
-					case "X": 
+								severity, technicianId);
+					case "X":
 						input = exit(sc, "selection", true);
 						if (compareString(input, "EXIT_RESUME")) {
 							return null;
 						}
 						break;
-					default: 
+					default:
 						System.out.println("Error - invalid selection!");
 					}
 				} else {
@@ -461,6 +482,6 @@ public class Menus {
 				}
 			} while (!compareString(input, "EXIT_RESUME"));
 		}
-	return null;
+		return null;
 	}
 }
