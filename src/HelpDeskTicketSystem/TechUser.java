@@ -40,7 +40,7 @@ public class TechUser extends User {
 	public void printActiveTickets(ArrayList<Ticket> tickets) {
 		if (tickets != null) {
 			for (Ticket tmp : tickets) {
-				if (tmp.getTechnicianId().equals(this.getId())) {
+				if (tmp.getTechnicianId().equals(this.getId()) && tmp.getStatus()) {
 					System.out.println(tmp.getId());
 				}
 			}

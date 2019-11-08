@@ -160,6 +160,7 @@ public class Menus {
 									System.out.println("Error - ticket is already closed!");
 								} else if (tmp.isTechnician(user.getId())) {
 									tmp.setStatus(false);
+									((TechUser)user).setActiveCount(((TechUser)user).getActiveCount() - 1);
 									System.out.printf("Ticket %s has been closed!", tmp.getId());
 									break;
 								} else {
