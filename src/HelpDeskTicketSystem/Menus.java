@@ -368,7 +368,7 @@ public class Menus {
 	}
 	
 	protected static Ticket createTicketMenu(Scanner sc) {
-		String input = null, technicianId = "N\\A";
+		String input = "\0", technicianId = "N\\A";
 		TechUser technician = null;
 		String[] ticket = new String[8];
 		int ticketCounter = 0;
@@ -391,11 +391,11 @@ public class Menus {
 				//menu.set(ticketCounter, ticket[ticketCounter + 1]); 
 				ticketCounter += 1;
 			}
-		} while (ticketCounter != menu.size() - 2 || input != null && compareString(input, "Y"));
+		} while (ticketCounter != menu.size() - 2 || compareString(input, "Y"));
 
 		severity = checkTicketSeverity(ticket[7]);
 		
-		if (input != null && !compareString(input, "Y")) {
+		if (!compareString(input, "Y")) {
 			do {
 				printMenu("CREATE TICKET MENU", menu, menuSelections);
 				input = sc.nextLine();
