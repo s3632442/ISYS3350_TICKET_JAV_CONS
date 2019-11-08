@@ -240,4 +240,9 @@ class MenusTest extends Menus {
 		int ticket = getInteger(new Scanner(i), "ticket number");
 		assertEquals(1, ticket);
 	}
+	@Test
+	void testDisplayOpenTickets() {
+		displayOpenTickets();
+		assertEquals("", out.toString());
+	}
 }

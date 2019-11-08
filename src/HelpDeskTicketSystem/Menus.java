@@ -94,6 +94,7 @@ public class Menus {
 				List<String> menuSelections = Arrays.asList("C", "X");
 				
 				// displays open tickets
+				displayOpenTickets();
 				printMenu("STAFF MENU", menu, menuSelections);
 				input = sc.nextLine();
 				System.out.println();
@@ -217,6 +218,16 @@ public class Menus {
 		System.exit(0);
 	}
 	
+	protected static void displayOpenTickets() {
+		if (tickets != null && !tickets.isEmpty()) {
+			System.out.println("Open tickets");
+			for (Ticket tmp : tickets) {
+				System.out.print("ID: " + tmp.getId() + "| Status:" + tmp.getStringStatus()
+						+ "| Severity:" + tmp.getSeverity());
+				System.out.print("\n---------------------------\n\n");
+			}
+		}
+	}
 
 	// print menu method
 	protected static void printMenu(String title, List<String> menu, List<String> menuSelections) {
@@ -383,7 +394,7 @@ public class Menus {
 	}
 	
 	protected static Ticket createTicketMenu(Scanner sc) {
-		String input = null, technicianId = "N\\A";
+		String input = "\0", technicianId = "N\\A";
 		TechUser technician = null;
 		String[] ticket = new String[8];
 		int ticketCounter = 0;

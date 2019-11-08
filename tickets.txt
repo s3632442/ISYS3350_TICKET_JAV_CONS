@@ -1,0 +1,33 @@
+TICKET
+20191104-1
+Foo
+Bar
+2
+Bar@foo.com
+0412341234
+lab vm cpu died
+HIGH
+3
+false
+TICKET
+20191104-2
+Foo
+Bar
+2
+Bar@foo.com
+0412341234
+database passwords are not hashed
+MEDIUM
+1
+true
+TICKET
+20191108-3
+e
+d
+2
+D@d.com
+0413737197
+asdasd
+HIGH
+3
+true
