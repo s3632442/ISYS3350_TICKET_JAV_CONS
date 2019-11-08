@@ -391,11 +391,11 @@ public class Menus {
 				//menu.set(ticketCounter, ticket[ticketCounter + 1]); 
 				ticketCounter += 1;
 			}
-		} while (ticketCounter != menu.size() - 2 || compareString(input, "Y"));
+		} while (ticketCounter != menu.size() - 2 || input != null && compareString(input, "Y"));
 
 		severity = checkTicketSeverity(ticket[7]);
 		
-		if (!compareString(input, "Y")) {
+		if (input != null && !compareString(input, "Y")) {
 			do {
 				printMenu("CREATE TICKET MENU", menu, menuSelections);
 				input = sc.nextLine();
