@@ -84,6 +84,7 @@ public class TechUser extends User {
 		pw.println(this.getLastName());
 		pw.println(this.getLevel());
 		pw.println(this.getActiveCount());
+		pw.println(this.getInActiveCount());
 	}
 
 }

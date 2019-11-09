@@ -18,7 +18,6 @@ public class Menus {
 	private static ArrayList<Ticket> tickets = new ArrayList<Ticket>();
 	private static ArrayList<User> users = new ArrayList<User>();
 	private static User user = null;
-
 	public static void main(String[] args) {
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -44,7 +43,12 @@ public class Menus {
 		// Check to see is persistent data for tickets and load if present
 		tickets = FileHandler.loadTicketDatabase("tickets.txt", "TICKET");
 		users = FileHandler.loadUserDatabase("users.txt");
-
+		
+		//Call for closing tickets older than 7	that are still open.
+		if (tickets != null && !tickets.isEmpty()){
+			closeActiveTicketsMoreThanSevenDaysOld(tickets);
+		}
+		
 		do {
 			if (user == null) {
 				List<String> menu = Arrays.asList("Create Account", "Login", "Exit Program");
@@ -473,5 +477,48 @@ public class Menus {
 			} while (!compareString(input, "EXIT_RESUME"));
 		}
 	return null;
+	}
+	
+	public static boolean dateChecker(String ticketId) {
+		int difference = 0;
+		String stripTicketId = ticketId.substring(0, 8);
+		int ticketDate = Integer.parseInt(stripTicketId);
+		LocalDateTime date = LocalDateTime.now();
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
+		int currentDate = Integer.parseInt(date.format(dateFormat));
+		difference = currentDate - ticketDate;
+		if (difference > 7) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	
+	public static void closeActiveTicketsMoreThanSevenDaysOld(ArrayList<Ticket> tickets) {
+		int closedTicketCount = 0;
+		if (tickets != null) {
+			for (Ticket tmp : tickets) {
+				if ((tmp.getStringStatus().toUpperCase()).equals("OPEN") && dateChecker(tmp.getId())) {
+//					System.out.println(tmp.getId());
+//					System.out.println(tmp.getStringStatus());
+					tmp.setStatus(false);
+//					System.out.println(tmp.getStringStatus());
+					closedTicketCount++;
+					
+				}
+			}
+		}
+		if (closedTicketCount==0) {
+		System.out.print("Zero active tickets were closed");
+		System.out.print("\n---------------------------\n\n");
+		}
+		else {
+			System.out.printf("Number of active tickets closed: %s\n"
+					+ "(due to age older than 7 days)\n", closedTicketCount);
+			System.out.print("\n---------------------------\n\n");
+		}
+				
 	}
 }
