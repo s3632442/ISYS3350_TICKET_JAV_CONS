@@ -61,7 +61,19 @@ public class Menus {
 					
 					switch(selection) {
 					case 'C':
-						System.out.println("Not implemented");
+						input = getInput(sc, "Employee Type");
+						
+						if (input.equalsIgnoreCase("staff")) {
+							user = createUserMenu(sc, User.UserType.STAFF);
+							users.add(user);
+							System.out.println("Logging into Staff Menu..");
+						} else if (input.equalsIgnoreCase("tech")) {
+							user = createUserMenu(sc, User.UserType.TECH);
+							users.add(user);
+							System.out.println("Logging into Tech Menu..");
+						} else {
+							System.out.println("Returning to login menu..");
+						}
 						break;
 					case 'L':
 						userId = getInput(sc, "Employee No");
@@ -248,6 +260,13 @@ public class Menus {
 			System.out.println("Error - input can not be empty!");
 			input = getInput(scanner, request);
 		}
+		// if employee type
+		if (request.equalsIgnoreCase("employee type")) {
+			if (!input.equalsIgnoreCase("staff") && !input.equalsIgnoreCase("tech")) {
+				System.out.println("Error - must enter either staff or tech!");
+				input = getInput(scanner, request);
+			}
+		}
 		// if invalid email
 		if (request.equalsIgnoreCase("email") && !input.matches(emailPattern)) {
 			System.out.println("Error - invalid email address!");
@@ -282,10 +301,17 @@ public class Menus {
 		Integer out = -1;
 		try {
 			userInput = getInput(sc, request);
-			
+			if ("Tech Level".equalsIgnoreCase(request)) {
+				if (userInput.length() != 1) {
+					throw new NumberFormatException();
+				}
+				out = Integer.parseInt(userInput);
+				if (out != 1 && out != 2) {
+					throw new NumberFormatException();
+				}
+			}
 			if ("ticket number".equals(request)) {
-				if (userInput.length() < 10)
-				{
+				if (userInput.length() < 10) {
 					throw new NumberFormatException();
 				}
 				substr = userInput.substring(userInput.lastIndexOf('-') + 1, userInput.length());
@@ -368,6 +394,25 @@ public class Menus {
 		return technician.getKey();
 	}
 	
+	protected static String generateUserId() {
+		return String.valueOf(users.size() + 1);
+	}
+	
+	protected static User createUserMenu(Scanner sc, User.UserType type) {
+		String pwd = "\0", firstName = "\0", lastName = "\0";
+		pwd = getInput(sc, "Password");
+		firstName = getInput(sc, "First name");
+		lastName = getInput(sc, "Last name");
+		if (type == User.UserType.STAFF) {
+			String email = getInput(sc, "Email");
+			String contactNumber = getInput(sc, "Contact Number");
+			return new StaffUser(generateUserId(), pwd, firstName, lastName, email, contactNumber);
+		} else {
+			Integer level = getInteger(sc, "Tech Level");
+			return new TechUser(generateUserId(), pwd, firstName, lastName, level, 0);
+		}
+	}
+	
 	protected static Ticket createTicketMenu(Scanner sc) {
 		String input = "\0", technicianId = "N\\A";
 		TechUser technician = null;
@@ -392,7 +437,7 @@ public class Menus {
 				//menu.set(ticketCounter, ticket[ticketCounter + 1]); 
 				ticketCounter += 1;
 			}
-		} while (ticketCounter != menu.size() - 2 || compareString(input, "Y"));
+		} while (ticketCounter != (menu.size() - 2) || compareString(input, "Y"));
 
 		severity = checkTicketSeverity(ticket[7]);
 		
