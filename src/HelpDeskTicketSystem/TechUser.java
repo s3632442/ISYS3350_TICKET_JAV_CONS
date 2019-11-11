@@ -10,7 +10,8 @@ public class TechUser extends User {
 	private int activeCount;
 	private int inActiveCount;
 
-	public TechUser(String id, String pwd, String firstName, String lastName, int level, int activeCount, int inActiveCount) {
+	public TechUser(String id, String pwd, String firstName, String lastName, int level, int activeCount,
+			int inActiveCount) {
 		super(id, pwd, firstName, lastName);
 		this.level = level;
 		this.activeCount = activeCount;
@@ -39,7 +40,7 @@ public class TechUser extends User {
 	public void setActiveCount(int activeCount) {
 		this.activeCount = activeCount;
 	}
-	
+
 	public int getInActiveCount() {
 		return inActiveCount;
 	}
@@ -59,7 +60,7 @@ public class TechUser extends User {
 		System.out.printf("You currently have %s active tickets\n", this.getActiveCount());
 		System.out.print("\n---------------------------\n\n");
 	}
-	
+
 	public void printInActiveTickets(ArrayList<Ticket> tickets) {
 		if (tickets != null) {
 			for (Ticket tmp : tickets) {
@@ -74,7 +75,6 @@ public class TechUser extends User {
 		System.out.printf("You currently have %s inactive tickets\n", this.getInActiveCount());
 		System.out.print("\n---------------------------\n\n");
 	}
-
 
 	public void writeAttributes(PrintWriter pw) {
 		pw.println("TECH");
