@@ -4,6 +4,11 @@ import java.io.PrintWriter;
 
 public class User {
 	
+	public enum UserType {
+		STAFF,
+		TECH
+	}
+	
 	private final String id;
 	private String pwd;
 	private final String firstName;
