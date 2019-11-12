@@ -6,10 +6,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/*
+ * File handling operations
+ */
 public class FileHandler {
 	
-	private static String STAFF_TAG = "STAFF";
-	
+	// try open a scanner using the passed filename
 	public static Scanner reader(String filename) {
 			Scanner sc;
 			try {
@@ -20,16 +22,23 @@ public class FileHandler {
 			return sc;
 	}
 	
+	// load the user database using filename
 	public static ArrayList<User> loadUserDatabase(String filename) {
 		String read = "\0";
 		Scanner sc = reader(filename);
 		ArrayList<User> users = new ArrayList<User>();
-		if (sc == null) { return null; };
 		
+		if (sc == null) { return null; }; // if no file with name exists
+		
+		// read user database into user object array
 		while (sc.hasNextLine()) {
 			read = sc.nextLine();
 			
-			if (read.equals(STAFF_TAG)) {
+			/*
+			 * Search for a leading identifier
+			 * will either be STAFF / TECH
+			 */
+			if (read.equals("STAFF")) {
 				users.add(new StaffUser(sc));
 			} else {
 				users.add(new TechUser(sc));
@@ -38,8 +47,15 @@ public class FileHandler {
 		return users;
 	}
 	
+	// write to the user database with the current array of users
 	public static void writeUserDatabase(String filename, ArrayList<User> users) {
 		PrintWriter pw;
+		
+		/*
+		 * try write the user array to file
+		 * error is thrown if the file does not exist /
+		 * application does not have permission 
+		 */
 		try {
 			pw = new PrintWriter(filename);
 			for (User tmp : users) {
@@ -51,6 +67,7 @@ public class FileHandler {
 		}
 	}
 	
+	// load from the ticket database using filename
 	public static ArrayList<Ticket> loadTicketDatabase(String filename, String tag) {
 		String read = "\0";
 		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
@@ -60,6 +77,10 @@ public class FileHandler {
 		
 		if (sc == null) { return tickets; }
 		
+		/*
+		 * read through file looking for identifier TICKET
+		 * pass the scanner to the ticket constructor for init
+		 */
 		while (sc.hasNextLine()) {
 			read = sc.nextLine();
 			tmp = null;
@@ -75,8 +96,15 @@ public class FileHandler {
 		return tickets;
 	}
 	
+	// write ticket database using the current tickets array
 	public static void writeTicketDatabase(String filename, ArrayList<Ticket> tickets) {
 		PrintWriter pw;
+		
+		/*
+		 * try to write each ticket using a printwriter
+		 * throws an error when the file does not exists &
+		 * the application does not have permissions to open a new file
+		 */
 		try {
 			pw = new PrintWriter(filename);
 			for (Ticket tmp : tickets) {

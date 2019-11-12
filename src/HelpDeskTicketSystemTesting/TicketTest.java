@@ -1,5 +1,7 @@
 package HelpDeskTicketSystemTesting;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileNotFoundException;
@@ -72,14 +74,16 @@ class TicketTest {
 	}
 	// Test ticket status initial value has a value of Open
 	@Test
-	void testGetTicketStatus() {
-		assertEquals("Open", ticket.getStatus());
+	void testGetTicketStringStatus() {
+		assertEquals("Open", ticket.getStringStatus());
+		assertTrue(ticket.getStatus());
 	}
 	// Test ticket setter and getter for ticket status with a value of false
 	@Test
-	void testTicketSetStatus() {
+	void testTicketSetStringStatus() {
 		ticket.setStatus(false);
-		assertEquals("Closed", ticket.getStatus());
+		assertEquals("Closed", ticket.getStringStatus());
+		assertFalse(ticket.getStatus());
 	}
 	// Test to check constructor sets Technician first  name to null
 	@Test

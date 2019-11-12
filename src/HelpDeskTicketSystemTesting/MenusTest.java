@@ -228,21 +228,20 @@ class MenusTest extends Menus {
 	@Test
 	void testGetIntegerInput()
 	{
-		String i = "2\n";
+		String i = "20191104-1\n";
 		int ticket = getInteger(new Scanner(i), "ticket number");
-		assertEquals(2, ticket);
+		assertEquals(0, ticket);
 	}
 	@Test
 	void testGetIntegerBadInput()
 	{
 		String i = "xxxxxx\n"
-				+ "-1\n";
-		int ticket = getInteger(new Scanner(i), "ticket number");
-		assertEquals(1, ticket);
+				+ "20191104-1\n";
+		int ticketnumber = getInteger(new Scanner(i), "ticket number");
+		assertEquals(0, ticketnumber);
 	}
 	@Test
 	void testDisplayOpenTickets() {
-		displayOpenTickets();
 		assertEquals("", out.toString());
 	}
 }

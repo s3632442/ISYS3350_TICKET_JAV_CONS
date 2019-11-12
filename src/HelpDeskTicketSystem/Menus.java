@@ -338,7 +338,7 @@ public class Menus {
 	}
 
 	protected static boolean compareString(String selection, String comparison) {
-		if (selection.equals(comparison)) {
+		if (selection.equalsIgnoreCase(comparison)) {
 			return true;
 		}
 		return false;
@@ -358,7 +358,7 @@ public class Menus {
 					throw new NumberFormatException();
 				}
 			}
-			if ("ticket number".equals(request)) {
+			if ("ticket number".equalsIgnoreCase(request)) {
 				if (userInput.length() < 10) {
 					throw new NumberFormatException();
 				}
@@ -373,7 +373,7 @@ public class Menus {
 		return out;
 	}
 
-	protected static String exit(Scanner sc, String request, boolean earlyExit) {
+	protected static String exit(Scanner sc, String request,  boolean earlyExit) {
 		String exit = "EXIT_ABORT";
 		String input = "\0";
 		if (earlyExit) {
@@ -428,7 +428,7 @@ public class Menus {
 				}
 			}
 		}
-
+		
 		if (availableTechnicians == null || availableTechnicians.isEmpty()) {
 			return null;
 		}
@@ -476,16 +476,17 @@ public class Menus {
 
 		do {
 			ticket[ticketCounter + 1] = getInput(sc, menu.get(ticketCounter));
-			if (ticket[ticketCounter + 1].equals("X!")) {
-				input = exit(sc, "selection", false);
-				if (compareString(input, "Y")) {
+			if (ticket[ticketCounter + 1].equalsIgnoreCase("X!")) {
+				input = exit(sc, "selection", true);
+				System.out.println(input);
+				if (input.equalsIgnoreCase("EXIT_RESUME")) {
 					return null;
 				}
 			} else {
 				// menu.set(ticketCounter, ticket[ticketCounter + 1]);
 				ticketCounter += 1;
 			}
-		} while (ticketCounter != (menu.size() - 2) || compareString(input, "Y"));
+		} while (ticketCounter != (menu.size() - 2) || compareString(input, "EXIT_RESUME"));
 
 		severity = checkTicketSeverity(ticket[7]);
 

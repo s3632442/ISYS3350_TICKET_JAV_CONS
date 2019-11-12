@@ -5,9 +5,11 @@ import java.util.Scanner;
 
 public class StaffUser extends User {
 	
-	private String email;
-	private String contactNumber;
+	private String email;			// staff email address
+	private String contactNumber;	// staff contact number
 	
+	
+	// default constructor
 	public StaffUser(String id, String pwd, String firstName, String lastName, String email, String contactNumber)
 	{
 		super(id, pwd, firstName, lastName);
@@ -15,12 +17,17 @@ public class StaffUser extends User {
 		this.contactNumber = contactNumber;
 	}
 	
+	// file staff initialization
 	public StaffUser(Scanner sc)
 	{
 		super(sc.nextLine(), sc.nextLine(), sc.nextLine(), sc.nextLine());
 		this.email = sc.nextLine();
 		this.contactNumber = sc.nextLine();
 	}
+	
+	/*
+	 * getters and setters
+	 */
 	public String getEmail()
 	{
 		return this.email;
@@ -41,6 +48,7 @@ public class StaffUser extends User {
 		this.contactNumber = contactNumber;
 	}
 
+	// write staff attributes out to file
 	public void writeAttributes(PrintWriter pw)
 	{
 		pw.println("STAFF");

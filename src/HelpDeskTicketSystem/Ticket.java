@@ -1,9 +1,6 @@
 package HelpDeskTicketSystem;
 
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Ticket {
