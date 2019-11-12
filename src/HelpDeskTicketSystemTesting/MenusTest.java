@@ -245,4 +245,19 @@ class MenusTest extends Menus {
 		displayOpenTickets();
 		assertEquals("", out.toString());
 	}
+	
+	// Test closer of ticket greater than seven days old
+	@Test
+	void testAutoCloseTicketMoreThanSevenDaysOld() {
+		// Create open ticket
+		Ticket oldTicket = new Ticket("20191101-1","Foo", "Bar", "2", "Bar@foo.com",
+				"0412341234", "Lab vm CPU died.", Ticket.TicketSeverity.HIGH, "N\\A");
+		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
+		tickets.add(oldTicket);
+		// Check if ticket is open
+		assertEquals("Open", oldTicket.getStringStatus());
+		closeActiveTicketsMoreThanSevenDaysOld( tickets);
+		// Check if ticket has been closed due to older than seven days
+		assertEquals("Closed", oldTicket.getStringStatus());
+	}
 }
