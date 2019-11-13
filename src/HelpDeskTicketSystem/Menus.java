@@ -121,7 +121,7 @@ public class Menus {
 				List<String> menuSelections = Arrays.asList("C", "X");
 				
 				//staff menu title
-				printMenu("STAFF MENU", menu, menuSelections);
+				printMenu("STAFF MENU\nMake a selection by entering a character from the options to the right and pressing enter.", menu, menuSelections);
 				input = sc.nextLine();
 				System.out.println();
 				//invalid menu selection message
@@ -164,7 +164,7 @@ public class Menus {
 					List<String> menuSelections = Arrays.asList("A", "C", "S", "I", "O", "X");
 
 					// menu title
-					printMenu("TECH MENU", menu, menuSelections);
+					printMenu("TECH MENU \nMake a selection by entering a character from the options to the right and pressing enter.", menu, menuSelections);
 					input = sc.nextLine();
 
 					System.out.println();
@@ -179,7 +179,7 @@ public class Menus {
 						// process user menu selection
 						switch (selection) {
 						case 'C':
-							intInput = getInteger(sc, "ticket number");
+							intInput = getInteger(sc, "ticket number to be changed (eg:12345678-1) and press enter");
 							if (tickets != null) {
 								Ticket tmp = tickets.get(intInput);
 								if (!tmp.getStatus()) {
