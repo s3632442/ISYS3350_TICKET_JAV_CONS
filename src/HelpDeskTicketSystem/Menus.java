@@ -121,7 +121,7 @@ public class Menus {
 				List<String> menuSelections = Arrays.asList("C", "X");
 				
 				//staff menu title
-				printMenu("STAFF MENU\nMake a selection by entering a character from the options to the right and pressing enter.", menu, menuSelections);
+				printMenu("STAFF MENU", menu, menuSelections);
 				input = sc.nextLine();
 				System.out.println();
 				//invalid menu selection message
@@ -159,12 +159,12 @@ public class Menus {
 			} else {
 				do {
 					// set menu selections
-					List<String> menu = Arrays.asList("View Active Tickets", "Close Ticket", "Change Ticket Status",
-							"View Inactive Tickets", "Open Ticket", "Logout");
-					List<String> menuSelections = Arrays.asList("A", "C", "S", "I", "O", "X");
+					List<String> menu = Arrays.asList("View Active Tickets", "Close Active Ticket", "Change Ticket Status",
+							"View Inactive Tickets", "Logout");
+					List<String> menuSelections = Arrays.asList("A", "C", "S", "I", "X");
 
 					// menu title
-					printMenu("TECH MENU \nMake a selection by entering a character from the options to the right and pressing enter.", menu, menuSelections);
+					printMenu("TECH MENU", menu, menuSelections);
 					input = sc.nextLine();
 
 					System.out.println();
@@ -178,6 +178,7 @@ public class Menus {
 
 						// process user menu selection
 						switch (selection) {
+						// Close a active ticket
 						case 'C':
 							intInput = getInteger(sc, "ticket number to be changed (eg:12345678-1) and press enter");
 							if (tickets != null) {
@@ -198,9 +199,13 @@ public class Menus {
 								System.out.println("Error - There are currently no tickets in the database!");
 							}
 							break;
+						// Display active tickets allocated to current logged in Tech	
 						case 'A':
 							((TechUser) user).printActiveTickets(tickets);
 							break;
+						/* Allow current logged in Tech to change the
+						 *  status of a active ticket from open to closed
+						 */
 						case 'S':
 							intInput = getInteger(sc, "ticket number");
 							if (tickets != null) {
@@ -223,30 +228,11 @@ public class Menus {
 							} else {
 								System.out.println("Error - There are currently no tickets in the database!");
 							}
+						// Display inactive tickets that were allocated to current logged in Tech
 						case 'I':
 							((TechUser) user).printInActiveTickets(tickets);
 							break;
-						case 'O':
-							intInput = getInteger(sc, "ticket number");
-							if (tickets != null) {
-								Ticket tmp = tickets.get(intInput);
-								if (tmp.getStatus()) {
-									System.out.println("Error - ticket is already open!");
-								} else if (tmp.isTechnician(user.getId())) {
-									tmp.setStatus(true);
-									((TechUser) user).setActiveCount(((TechUser) user).getActiveCount() + 1);
-									((TechUser) user).setInActiveCount(((TechUser) user).getInActiveCount() - 1);
-									System.out.printf("Ticket %s has been opened!", tmp.getId());
-									break;
-								} else {
-									System.out.println("Error - Can not open another technician's ticket!");
-									break;
-								}
-							} else {
-								System.out.println("Error - There are currently no tickets in the database!");
-							}
-							break;
-						// exit case
+						// Exit from Tech menu back to main help desk
 						case 'X':
 							input = exit(sc, "selection", false);
 							if (compareString(input, "EXIT_RESUME")) {
@@ -267,10 +253,12 @@ public class Menus {
 
 	// print menu method
 	protected static void printMenu(String title, List<String> menu, List<String> menuSelections) {
-		System.out.printf("%s\n---------------------------\n", title);
+		System.out.printf("%s\n----------------------------------\n", title);
+		System.out.printf("%-20s%s", "Menu Options", "Selection Key");
+		System.out.println("\n----------------------------------\n");
 
 		for (int i = 0; i < menu.size(); i++) {
-			System.out.printf("%-25s%s\n", menu.get(i), menuSelections != null ? menuSelections.get(i) : i + 1);
+			System.out.printf("%-30s%s\n", menu.get(i), menuSelections != null ? menuSelections.get(i) : i + 1);
 		}
 		System.out.println();
 		System.out.println("Enter selection: ");
