@@ -560,26 +560,26 @@ public class Menus {
 		}
 	}
 	
-	
+	// Method for closing open tickets older than seven days
 	public static void closeActiveTicketsMoreThanSevenDaysOld(ArrayList<Ticket> tickets) {
 		int closedTicketCount = 0;
 		if (tickets != null) {
 			for (Ticket tmp : tickets) {
 				if ((tmp.getStringStatus().toUpperCase()).equals("OPEN") && dateChecker(tmp.getId())) {
-//					System.out.println(tmp.getId());
-//					System.out.println(tmp.getStringStatus());
+					// change open ticket to closed ticket
 					tmp.setStatus(false);
-//					System.out.println(tmp.getStringStatus());
+					// Adjust the tech active verse inactive count
+					String techID = tmp.getTechnicianId();
+					int techIdChangeStatus = Integer.parseInt(techID)-1;
+					User tmpTechUser = users.get(techIdChangeStatus);
+					((TechUser) tmpTechUser).setActiveCount(((TechUser) tmpTechUser).getActiveCount() - 1);
+					((TechUser) tmpTechUser).setInActiveCount(((TechUser) tmpTechUser).getInActiveCount() + 1);
 					closedTicketCount++;
 					
 				}
 			}
 		}
-		if (closedTicketCount==0) {
-		System.out.print("Zero active tickets were closed");
-		System.out.print("\n---------------------------\n\n");
-		}
-		else {
+		if (closedTicketCount>0) {
 			System.out.printf("Number of active tickets closed: %s\n"
 					+ "(due to age older than 7 days)\n", closedTicketCount);
 			System.out.print("\n---------------------------\n\n");

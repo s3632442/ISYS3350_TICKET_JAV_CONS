@@ -66,7 +66,7 @@ public class TechUser extends User {
 	public void printInActiveTickets(ArrayList<Ticket> tickets) {
 		if (tickets != null) {
 			for (Ticket tmp : tickets) {
-				if (tmp.getTechnicianId().equals(this.getId()) && tmp.getStatus()) {
+				if (tmp.getTechnicianId().equals(this.getId()) && !tmp.getStatus()) {
 					if (tmp.getTechnicianId().equals(this.getId())) {
 						System.out.println("ID: " + tmp.getId() + "| Status:" + tmp.getStringStatus() + "| Severity:"
 								+ tmp.getSeverity());
