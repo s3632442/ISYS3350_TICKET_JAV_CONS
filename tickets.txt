@@ -8,7 +8,7 @@ Bar@foo.com
 lab vm cpu died
 HIGH
 3
-true
+false
 TICKET
 20191104-2
 Foo
@@ -19,7 +19,7 @@ Bar@foo.com
 database passwords are not hashed
 MEDIUM
 1
-true
+false
 TICKET
 20191108-3
 e
