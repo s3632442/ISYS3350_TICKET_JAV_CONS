@@ -489,18 +489,7 @@ public class Menus {
 			pwd = getInput(sc, "Password");
 			firstName = getInput(sc, "First name");
 			lastName = getInput(sc, "Last name");
-
-			if (type == User.UserType.STAFF) {
-				email = getInput(sc, "Email");
-				contactNumber = getInput(sc, "Contact Number");
-				System.out.println("First Name: " + firstName + " Last Name: " + lastName + "\n" + "Email: " + email
-						+ " Phone Number: " + contactNumber);
-				System.out.println("Are the details above correct? [Y]es or [N]o");
-				accept = sc.nextLine();
-				accept.toUpperCase();
-
-			}
-			//tech level to be ammended and tested
+			//tech level to be 
 			if (type == User.UserType.TECH) {
 				level = getInteger(sc, "Tech Level (eg '1' or '2')");
 				//String parsedLevel = level.toString(level);
@@ -510,7 +499,18 @@ public class Menus {
 				accept = accept.toUpperCase();
 
 			}
+			else {
+				email = getInput(sc, "Email");
+				contactNumber = getInput(sc, "Contact Number");
+				System.out.println("First Name: " + firstName + " Last Name: " + lastName + "\n" + "Email: " + email
+						+ " Phone Number: " + contactNumber);
+				System.out.println("Are the details above correct? [Y]es or [N]o");
+				accept = sc.nextLine();
+				accept = accept.toUpperCase();
+
+			}
 		} while (accept.equals("N"));
+		
 		if (accept.equals("Y") && type == User.UserType.STAFF) {
 			return new StaffUser(generateUserId(), pwd, firstName, lastName, email, contactNumber);
 		} else {
