@@ -68,11 +68,11 @@ public class FileHandler {
 	}
 	
 	// load from the ticket database using filename
-	public static ArrayList<Ticket> loadTicketDatabase(String filename, String tag) {
+	public static ArrayList<Ticket> loadTicketDatabase(String filename) {
 		String read = "\0";
 		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
 		Ticket tmp;
-		
+		String tag = "TICKET";
 		Scanner sc = reader(filename);
 		
 		if (sc == null) { return tickets; }

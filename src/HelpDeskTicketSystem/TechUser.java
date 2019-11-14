@@ -1,8 +1,13 @@
 package HelpDeskTicketSystem;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import org.junit.After;
+import org.junit.Before;
 
 public class TechUser extends User {
 

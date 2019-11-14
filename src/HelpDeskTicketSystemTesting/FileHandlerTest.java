@@ -37,7 +37,7 @@ class FileHandlerTest extends FileHandler {
 						"test description", Ticket.TicketSeverity.HIGH, "1"));
 		tickets.get(0).setStatus(false);
 		FileHandler.writeTicketDatabase("testtickets.txt", tickets);
-		tmp_tickets = FileHandler.loadTicketDatabase("testtickets.txt", "TICKET");
+		tmp_tickets = FileHandler.loadTicketDatabase("testtickets.txt");
 		assertEquals(tmp_tickets.get(0).getId(), tickets.get(0).getId());
 	}
 	
@@ -50,9 +50,9 @@ class FileHandlerTest extends FileHandler {
 						"2",  "test@test.com", "0299991111",
 						"test description", Ticket.TicketSeverity.HIGH, "1"));
 		tickets.get(0).setStatus(false);
-		tmp_tickets = FileHandler.loadTicketDatabase("p.txt", "TICKET");
+		tmp_tickets = FileHandler.loadTicketDatabase("p.txt");
 		assertTrue(tmp_tickets.isEmpty());
-		tmp_tickets = FileHandler.loadTicketDatabase("test.txt", "NOTET");
+		tmp_tickets = FileHandler.loadTicketDatabase("test.txt");
 		assertTrue(tmp_tickets.isEmpty());
 	}
 

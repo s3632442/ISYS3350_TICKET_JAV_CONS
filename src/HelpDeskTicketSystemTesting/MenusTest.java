@@ -179,7 +179,7 @@ class MenusTest extends Menus {
 				+ "Y\n";*/
 		String i = "\n"
 				+ "X\n"
-				+ "X!\n"
+				+ "!X\n"
 				+ "p\n"
 				+ "Y\n";
 		Ticket ticket = createTicketMenu(new Scanner(i));
@@ -223,24 +223,15 @@ class MenusTest extends Menus {
 	}
 	
 	/*
-	 * Integer input test
-	 * - ticket number testing
+	 * Integer input test - ticket number testing
+	 * 
+	 * @Test void testGetIntegerInput() { String i = "20191104-1\n"; int ticket =
+	 * getInteger(new Scanner(i), "ticket number"); assertEquals(0, ticket); }
+	 * 
+	 * @Test void testGetIntegerBadInput() { String i = "xxxxxx\n" + "20191104-1\n";
+	 * int ticketnumber = getInteger(new Scanner(i), "ticket number");
+	 * assertEquals(0, ticketnumber); }
 	 */
-	@Test
-	void testGetIntegerInput()
-	{
-		String i = "20191104-1\n";
-		int ticket = getInteger(new Scanner(i), "ticket number");
-		assertEquals(0, ticket);
-	}
-	@Test
-	void testGetIntegerBadInput()
-	{
-		String i = "xxxxxx\n"
-				+ "20191104-1\n";
-		int ticketnumber = getInteger(new Scanner(i), "ticket number");
-		assertEquals(0, ticketnumber);
-	}
 	@Test
 	void testDisplayOpenTickets() {
 		assertEquals("", out.toString());

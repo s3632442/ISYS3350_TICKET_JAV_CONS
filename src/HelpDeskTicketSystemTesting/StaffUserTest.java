@@ -2,17 +2,46 @@ package HelpDeskTicketSystemTesting;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.Scanner;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
 import HelpDeskTicketSystem.StaffUser;
 
 class StaffUserTest {
-
+	private final ByteArrayOutputStream out = new ByteArrayOutputStream();
+	private final PrintStream ogOut = System.out;
+	
+	@Before
+	public void setUpStreams() {
+		System.setOut(new PrintStream(out));
+	}
+	
+	@After
+	public void restoreStreams() {
+		System.setOut(ogOut);
+	}
+	
 	StaffUser tmp = new StaffUser("1", "asdf", "Foo", "Bar", "foo@bar.com", "0410101010");
+	
+	@Test
+	void testScannerConstructor() {
+		String i = "2\n"
+				+  "fdsa\n"
+				+  "Bar\n"
+				+  "Foo\n"
+				+  "Bar@foo.com\n"
+				+  "0412312312\n";
+		StaffUser newUser = new StaffUser(new Scanner(i));
+		assertEquals("2", newUser.getId());
+	}
 	
 	@Test
 	void testGetId() {
