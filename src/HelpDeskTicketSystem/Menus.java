@@ -473,14 +473,19 @@ public class Menus {
 	protected static String generateUserId() {
 		return String.valueOf(users.size() + 1);
 	}
-//Ammendments not working
+
+//createUserFunction
 	protected static User createUserMenu(Scanner sc, User.UserType type) {
 		String pwd = "\0", firstName = "\0", lastName = "\0";
-		String accept = "N";
+		String accept = "\0";
 		String email = "";
 		String contactNumber = "";
 		Integer level = null;
+
 		do {
+			if (accept.equals("N")) {
+				System.out.println("Please re-enter user details again");
+			}
 			pwd = getInput(sc, "Password");
 			firstName = getInput(sc, "First name");
 			lastName = getInput(sc, "Last name");
@@ -493,14 +498,17 @@ public class Menus {
 				System.out.println("Are the details above correct? [Y]es or [N]o");
 				accept = sc.nextLine();
 				accept.toUpperCase();
+
 			}
+			//tech level to be ammended and tested
 			if (type == User.UserType.TECH) {
 				level = getInteger(sc, "Tech Level (eg '1' or '2')");
-				String parsedLevel = level.toString(level);
+				//String parsedLevel = level.toString(level);
 				System.out.println("First Name: " + firstName + " Last Name: " + lastName + "\nTech Level: " + level);
 				System.out.println("Are the details above correct? [Y]es or [N]o");
 				accept = sc.nextLine();
-				accept.toUpperCase();
+				accept = accept.toUpperCase();
+
 			}
 		} while (accept.equals("N"));
 		if (accept.equals("Y") && type == User.UserType.STAFF) {
