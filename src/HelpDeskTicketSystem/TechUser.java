@@ -1,13 +1,8 @@
 package HelpDeskTicketSystem;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import org.junit.After;
-import org.junit.Before;
 
 public class TechUser extends User {
 
@@ -71,7 +66,7 @@ public class TechUser extends User {
 	public void printInActiveTickets(ArrayList<Ticket> tickets) {
 		if (tickets != null) {
 			for (Ticket tmp : tickets) {
-				if (tmp.getTechnicianId().equals(this.getId()) && !tmp.getStatus()) {
+				if (tmp.getTechnicianId().equals(this.getId()) && tmp.getStatus()) {
 					if (tmp.getTechnicianId().equals(this.getId())) {
 						System.out.println("ID: " + tmp.getId() + "| Status:" + tmp.getStringStatus() + "| Severity:"
 								+ tmp.getSeverity());

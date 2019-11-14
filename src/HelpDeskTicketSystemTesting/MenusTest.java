@@ -222,16 +222,6 @@ class MenusTest extends Menus {
 		assertNull(ticket);
 	}
 	
-	/*
-	 * Integer input test - ticket number testing
-	 * 
-	 * @Test void testGetIntegerInput() { String i = "20191104-1\n"; int ticket =
-	 * getInteger(new Scanner(i), "ticket number"); assertEquals(0, ticket); }
-	 * 
-	 * @Test void testGetIntegerBadInput() { String i = "xxxxxx\n" + "20191104-1\n";
-	 * int ticketnumber = getInteger(new Scanner(i), "ticket number");
-	 * assertEquals(0, ticketnumber); }
-	 */
 	@Test
 	void testDisplayOpenTickets() {
 		assertEquals("", out.toString());

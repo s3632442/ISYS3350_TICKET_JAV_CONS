@@ -91,7 +91,7 @@ public class Menus {
 						break;
 					// exit case
 					case 'X':
-						exit = getExit(sc);
+						exit = getConfirmInput(sc, "exit");
 					}
 				}
 			//staff user menu logic
@@ -127,7 +127,7 @@ public class Menus {
 							break;
 						// exit case
 						case 'X':
-							nestedExit = getExit(sc);
+							nestedExit = getConfirmInput(sc, "exit");
 							if (nestedExit) {
 								user = null;
 							}
@@ -204,7 +204,7 @@ public class Menus {
 						 */
 						case 'S':
 							do {
-								input = getInput(sc, "ticket number");
+								input = getInput(sc, "ticket number to be changed (eg:12345678-1) and press enter");
 								if (!compareString(input, "EXIT_RESUME")) {
 									if (tickets != null) {
 										intInput = Integer.parseInt(input) - 1;
@@ -233,7 +233,7 @@ public class Menus {
 							break;
 						// exit case
 						case 'X':
-							nestedExit = getExit(sc);
+							nestedExit = getConfirmInput(sc, "exit");
 							if (nestedExit) {
 								user = null;
 							}
@@ -288,10 +288,10 @@ public class Menus {
 		return null;
 	}
 
-	protected static Boolean getExit(Scanner scanner) {
+	protected static Boolean getConfirmInput(Scanner scanner, String type) {
 		String input = "\0";
 		Boolean exit = false;
-		System.out.println("Are you sure you want to exit? Yes / No");
+		System.out.printf("Are you sure you want to %s? Yes / No", type);
 		do {
 			System.out.println("Enter your selection: ");
 			input = scanner.nextLine();
@@ -320,7 +320,7 @@ public class Menus {
 		String phonePattern = "^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[- ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$";
 
 		if (compareString(request, "EXIT")) {
-			exit = getExit(scanner);
+			exit = getConfirmInput(scanner, "exit");
 			if (exit) {
 				return "EXIT_RESUME";
 			} else {
@@ -329,13 +329,13 @@ public class Menus {
 		}
 		
 		// request input
-		System.out.printf("Enter your %s: ", request);
+		System.out.printf("Enter your %s:\n", request);
 		input = scanner.nextLine();
 		
 		// if exit command
 		if (compareString(input, "!X") && !compareString(request, "selection")) {
 			System.out.println("Exiting will cause any progress to be lost");
-			exit = getExit(scanner);
+			exit = getConfirmInput(scanner, "exit");
 			if (exit) {
 				return "EXIT_RESUME";
 			} else {
@@ -348,6 +348,10 @@ public class Menus {
 			input = getInput(scanner, request);
 		}
 		if (!compareString(input, "EXIT_RESUME")) {
+			// if confirm input
+			if (compareString(request, "confirm input")) {
+				exit = getConfirmInput(scanner, "confirm");
+			}
 			// if employee number
 			if (compareString(request, "employee no")) {
 				if (!input.matches("-?\\d+")) {
@@ -356,7 +360,7 @@ public class Menus {
 				}
 			}
 			// if ticket number
-			if (compareString(request, "ticket number")) {
+			if (request.contains("ticket number")) {
 				if (input.length() < 10) { 
 					System.out.println("Error - invalid ticket length!");
 					input = getInput(scanner, request);
@@ -365,7 +369,7 @@ public class Menus {
 				}
 			}
 			// if employee type
-			if (compareString(request, "employee type")) {
+			if (request.contains("type of employee")) {
 				if (!compareString(input, "staff") && !compareString(input, "tech")) {
 					System.out.println("Error - must enter either staff or tech!");
 					input = getInput(scanner, request);
@@ -449,63 +453,60 @@ public class Menus {
 	}
 
 	protected static User userMenu(Scanner sc, LinkedHashMap<String, String> details, Boolean login) {
-		Integer counter;
+		Integer counter = 0;
 		User user = null;
-		String employeeType = "\0";
+		String employeeType = "\0", input = "\0";
 		if (login) {
-			details.put("Employee No", "");
-			details.put("Password", "");
+			details.put("employee identification number", "");
+			details.put("password", "");
 		} else {
-			details.put("Password", "");
-			details.put("First name", "");
-			details.put("Last name", "");
-			employeeType = getInput(sc, "Employee Type");
+			details.put("new password", "");
+			details.put("given name", "");
+			details.put("surname", "");
+			employeeType = getInput(sc, "type of employment, [S]taff or [T]ech");
 			if (compareString(employeeType, "staff")) {
-				details.put("Email", "");
-				details.put("Contact Number", "");
+				details.put("email", "");
+				details.put("contact number", "");
 			} else {
-				details.put("Tech Level", "");
+				details.put("technician level (Can be either 1 or 2)", "");
 			}
 		}
 
-		
+		details.put("confirm input", "");
+
 		List<String> keys = new ArrayList<String>(details.keySet());
-		for (counter = 0; counter < details.size(); counter++) {
+		do {
 			String key = keys.get(counter);
-			String value = details.get(key).toString();
-			value = getInput(sc, key);
-			if (compareString(value, "EXIT_RESUME")) {
+			input = details.get(key).toString();
+			input = getInput(sc, key);
+			if (compareString(input, "EXIT_RESUME")) {
 				System.out.println("Returning to login menu..");
-				break;
+			} else {
+				details.remove(key);
+				details.put(key, input);
+				counter++;
 			}
-			details.remove(key);
-			details.put(key, value);
-		}
+		} while(details.size() > counter && !compareString(input, "EXIT_RESUME"));
 
 		if (counter == details.size()) {
 			if (login) {
-				Integer userId = Integer.parseInt(details.get("Employee No")) - 1;
-				if (users.size() > userId && users.get(userId).login(details.get("Password"))) {
+				Integer userId = Integer.parseInt(details.get("employee identification number")) - 1;
+				if (users.size() > userId && users.get(userId).login(details.get("password"))) {
 					user = users.get(userId);
 					System.out.printf("Welcome %s %s!\n", user.getFirstName(), user.getLastName());
 				} else {
 					System.out.println("Error - invalid credentials, please try again!");
 				}
 				
-			} else if (compareString(employeeType, "staff")) {
-				user = new StaffUser(generateUserId(),
-							details.get("Password"),
-							details.get("First name"),
-							details.get("Last name"),
-							details.get("Email"),
-							details.get("Contact Number"));
 			} else {
-				Integer techLevel = Integer.parseInt(details.get("Tech Level"));
-				user = new TechUser(generateUserId(),
-							details.get("Password"),
-							details.get("First name"),
-							details.get("Last name"),
-							techLevel, 0, 0);
+				if (compareString(employeeType, "staff")) {
+					user = new StaffUser(generateUserId(), details.get("new password"), details.get("given name"),
+							details.get("surname"), details.get("email"), details.get("contact number"));
+				} else {
+					Integer techLevel = Integer.parseInt(details.get("technician level (Can be either 1 or 2)"));
+					user = new TechUser(generateUserId(), details.get("new password"), details.get("given name"),
+							details.get("surname"), techLevel, 0, 0);
+				}
 			}
 		}
 		return user;
@@ -521,10 +522,10 @@ public class Menus {
 		int ticketCounter = 0;
 		Ticket.TicketSeverity severity = null;
 		// create ticket menu options array
-		List<String> menu = Arrays.asList("Surname", "Given name", "Staff number", "Email", "Contact number",
-				"Description", "Severity", "Confirm", "Exit");
+		List<String> menu = Arrays.asList("Surname", "Given name", "Email", "Contact number",
+				"Description", "Issue severity", "Confirm", "Exit");
 		// create ticket menu selection key array
-		List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "C", "X");
+		List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "C", "X");
 
 		do {
 			strTicket[ticketCounter + 1] = getInput(sc, menu.get(ticketCounter));
@@ -537,7 +538,7 @@ public class Menus {
 	
 
 		if (!exit) {
-			severity = checkTicketSeverity(strTicket[7]);
+			severity = checkTicketSeverity(strTicket[6]);
 			do {
 //				System.out.println("If below Ticket is correct press C\n else select menu option to change details");
 //				Arrays.stream(ticket).skip(1).forEach(System.out::println);
@@ -565,10 +566,7 @@ public class Menus {
 						break;
 					case "6":
 						strTicket[6] = getInput(sc, menu.get(5));
-						break;
-					case "7":
-						strTicket[7] = getInput(sc, menu.get(6));
-						severity = checkTicketSeverity(strTicket[7]);
+						severity = checkTicketSeverity(strTicket[6]);
 						break;
 					case "C":
 						strTicket[0] = generateTicketId();
@@ -582,7 +580,7 @@ public class Menus {
 						exit = true;
 						break;
 					case "X":
-						exit = getExit(sc);
+						exit = getConfirmInput(sc, "exit");
 						break;
 					default:
 						System.out.println("Error - invalid selection!");

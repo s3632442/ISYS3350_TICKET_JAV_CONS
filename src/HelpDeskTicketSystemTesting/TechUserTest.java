@@ -6,7 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import org.junit.After;
@@ -14,7 +13,6 @@ import org.junit.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import HelpDeskTicketSystem.StaffUser;
 import HelpDeskTicketSystem.TechUser;
 import HelpDeskTicketSystem.Ticket;
 
