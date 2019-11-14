@@ -273,6 +273,18 @@ public class Menus {
 		System.out.println();
 		System.out.println("Enter selection: ");
 	}
+	
+	// method to print new ticket for user to check details
+		protected static void printTicket(String title, List<String> menu, String[] newTicket) {
+			System.out.printf("\n----------------------------------\n%s\n", title);
+			System.out.println("----------------------------------\n");
+			for (int i = 0, x=1; i < menu.size()-2; i++, x++) {
+				System.out.printf("%-18s: %s\n", menu.get(i), newTicket != null ? newTicket[x]  : i+1);
+			}
+			System.out.println();
+			System.out.println("----------------------------------\n");
+		}
+	
 	// helper method to check ticket severity level string against Enum
 	protected static Ticket.TicketSeverity checkTicketSeverity(String input) {
 		if (input.equals(Ticket.TicketSeverity.HIGH.name())) {
@@ -493,6 +505,11 @@ public class Menus {
 
 		if (!compareString(input, "Y")) {
 			do {
+//				System.out.println("If below Ticket is correct press C\n else select menu option to change details");
+//				Arrays.stream(ticket).skip(1).forEach(System.out::println);
+				printTicket("\nIf below Ticket is correct press C\n"
+						+ "else select menu option to change details.\n\n"
+						+ "NEW TICKET", menu, ticket);
 				printMenu("CREATE TICKET MENU", menu, menuSelections);
 				input = sc.nextLine();
 				if (input.length() == 1) {
