@@ -273,6 +273,7 @@ public class Menus {
 		System.out.println("----------------------------------\n");
 	}
 			
+
 	// helper method to check ticket severity level string against Enum
 	protected static Ticket.TicketSeverity checkTicketSeverity(String input) {
 		if (compareString(input, Ticket.TicketSeverity.HIGH.name())) {
