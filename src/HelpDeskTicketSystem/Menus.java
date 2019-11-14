@@ -1,6 +1,5 @@
 package HelpDeskTicketSystem;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -36,14 +35,24 @@ public class Menus {
 		String input = "\0";
 		Boolean exit = false, nestedExit = false;
 		Integer intInput;
-
+		// Initialise scanner
 		Scanner sc = new Scanner(System.in);
-		// Initialize selection variable to ASCII null to keep compiler happy
+		// Initialise selection variable to ASCII null to keep compiler happy
 		char selection = '\0';
 
 		// Check to see is persistent data for tickets and load if present
 		tickets = FileHandler.loadTicketDatabase("tickets.txt");
 		users = FileHandler.loadUserDatabase("users.txt");
+		
+		// System title screen
+		System.out.println("  -----------------------------------------");
+		System.out.println("|  CCCCC   IIIII  NN    NN   CCCCC    OOOOO  |");  
+		System.out.println("| CC   CC   III   NNN   NN  CC   CC  OO   OO |"); 
+		System.out.println("| CC        III   NN N  NN  CC       OO   OO |");
+		System.out.println("| CC        III   NN  N NN  CC       OO   OO |"); 
+		System.out.println("| CC   CC   III   NN   NNN  CC   CC  OO   OO |"); 
+		System.out.println("|  CCCCC   IIIII  NN    NN   CCCCC    OOOOO  |");
+		System.out.println("  -----------------------------------------\n");
 		
 		//Call for closing tickets older than 7	that are still open.
 		if (tickets != null && !tickets.isEmpty()){
@@ -133,7 +142,7 @@ public class Menus {
 			} else {
 				do {
 					// set menu selections
-					List<String> menu = Arrays.asList("View Active Tickets", "Close Ticket", "Change Ticket Status",
+					List<String> menu = Arrays.asList("View Active Tickets", "Close Active Ticket", "Change Ticket Status",
 							"View Inactive Tickets", "Logout");
 					List<String> menuSelections = Arrays.asList("A", "C", "S", "I", "X");
 
@@ -152,9 +161,10 @@ public class Menus {
 
 						// process user menu selection
 						switch (selection) {
+						// Close a active ticket
 						case 'C':
 							do {
-								input = getInput(sc, "ticket number");
+								input = getInput(sc, "ticket number to be changed (eg:12345678-1) and press enter");
 								if (!compareString(input, "EXIT_RESUME")) {
 									if (tickets != null) {
 										intInput = Integer.parseInt(input) - 1;
@@ -185,9 +195,13 @@ public class Menus {
 								input = "\0";
 							}	
 							break;
+						// Display active tickets allocated to current logged in Tech	
 						case 'A':
 							((TechUser) user).printActiveTickets(tickets);
 							break;
+						/* Allow current logged in Tech to change the
+						 *  status of a active ticket from open to closed
+						 */
 						case 'S':
 							do {
 								input = getInput(sc, "ticket number");
@@ -238,14 +252,16 @@ public class Menus {
 
 	// print menu method
 	protected static void printMenu(String title, List<String> menu, List<String> menuSelections) {
-		System.out.printf("%s\n---------------------------\n", title);
+		System.out.printf("%s\n----------------------------------\n", title);
+		System.out.printf("%-20s%s", "Menu Options", "Selection Key");
+		System.out.println("\n----------------------------------\n");
 
 		for (int i = 0; i < menu.size(); i++) {
-			System.out.printf("%-25s%s\n", menu.get(i), menuSelections != null ? menuSelections.get(i) : i + 1);
+			System.out.printf("%-30s%s\n", menu.get(i), menuSelections != null ? menuSelections.get(i) : i + 1);
 		}
 		System.out.println();
 	}
-
+	// helper method to check ticket severity level string against Enum
 	protected static Ticket.TicketSeverity checkTicketSeverity(String input) {
 		if (compareString(input, Ticket.TicketSeverity.HIGH.name())) {
 			return Ticket.TicketSeverity.HIGH;
@@ -281,6 +297,7 @@ public class Menus {
 		return getInput(scanner, "selection");
 	}
 
+	// helper method to compare user input for correctness again field in use
 	protected static String getInput(Scanner scanner, String request) {
 		String input = "\0";
 		Boolean exit = false;
@@ -363,7 +380,7 @@ public class Menus {
 		
 		return input;
 	}
-
+	// helper method to compare strings to verify user input
 	protected static boolean compareString(String selection, String comparison) {
 		if (selection.equalsIgnoreCase(comparison)) {
 			return true;
@@ -381,7 +398,8 @@ public class Menus {
 		String formattedDate = date.format(dateFormat);
 		return formattedDate + "-" + Ticket.ticketIDCounter;
 	}
-
+	
+	// Method to identify ticket allocation to available level Techs
 	public static TechUser getAvailableTechnician(TicketSeverity severity) {
 		Entry<TechUser, Integer> technician = null;
 
@@ -401,20 +419,18 @@ public class Menus {
 				}
 			}
 		}
-		
 		if (availableTechnicians == null || availableTechnicians.isEmpty()) {
 			return null;
 		}
-
 		for (Entry<TechUser, Integer> entry : availableTechnicians.entrySet()) {
 			if (technician == null || technician.getValue() > entry.getValue()) {
 				technician = entry;
 			}
 		}
-
 		return technician.getKey();
 	}
 	
+	// method to create an initial user Id for new account
 	protected static String generateUserId() {
 		return String.valueOf(users.size() + 1);
 	}
@@ -423,7 +439,10 @@ public class Menus {
 		Integer counter;
 		User user = null;
 		String employeeType = "\0";
-		if (!login) {
+		if (login) {
+			details.put("Employee No", "");
+			details.put("Password", "");
+		} else {
 			details.put("Password", "");
 			details.put("First name", "");
 			details.put("Last name", "");
@@ -434,9 +453,6 @@ public class Menus {
 			} else {
 				details.put("Tech Level", "");
 			}
-		} else {
-			details.put("Employee No", "");
-			details.put("Password", "");
 		}
 
 		
@@ -482,6 +498,7 @@ public class Menus {
 		return user;
 	}
 	
+	// method for create ticket menu
 	protected static Ticket createTicketMenu(Scanner sc) {
 		String input = "\0", technicianId = "N\\A";
 		Boolean exit = false;
@@ -490,9 +507,10 @@ public class Menus {
 		String[] strTicket = new String[8];
 		int ticketCounter = 0;
 		Ticket.TicketSeverity severity = null;
-
+		// create ticket menu options array
 		List<String> menu = Arrays.asList("Surname", "Given name", "Staff number", "Email", "Contact number",
 				"Description", "Severity", "Confirm", "Exit");
+		// create ticket menu selection key array
 		List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "C", "X");
 
 		do {
@@ -559,6 +577,8 @@ public class Menus {
 		return ticket;
 	}
 	
+	/* helper method to check ticket creation date is greater
+	 *  than 7 days for auto ticket closure*/
 	public static boolean dateChecker(String ticketId) {
 		int difference = 0;
 		String stripTicketId = ticketId.substring(0, 8);
@@ -575,7 +595,7 @@ public class Menus {
 		}
 	}
 	
-	
+	// Method for closing open tickets older than seven days
 	public static void closeActiveTicketsMoreThanSevenDaysOld(ArrayList<Ticket> tickets) {
 		int closedTicketCount = 0;
 		if (tickets != null) {
@@ -584,20 +604,21 @@ public class Menus {
 //					System.out.println(tmp.getId());
 //					System.out.println(tmp.getStringStatus());
 					tmp.setStatus(false);
-//					System.out.println(tmp.getStringStatus());
+					// Adjust the tech active verse inactive count
+					String techID = tmp.getTechnicianId();
+					int techIdChangeStatus = Integer.parseInt(techID)-1;
+					User tmpTechUser = users.get(techIdChangeStatus);
+					((TechUser) tmpTechUser).setActiveCount(((TechUser) tmpTechUser).getActiveCount() - 1);
+					((TechUser) tmpTechUser).setInActiveCount(((TechUser) tmpTechUser).getInActiveCount() + 1);
 					closedTicketCount++;
 					
 				}
 			}
 		}
-		if (closedTicketCount==0) {
-		System.out.print("Zero active tickets were closed");
-		System.out.print("\n---------------------------\n\n");
-		}
-		else {
+		if (closedTicketCount>0) {
 			System.out.printf("Number of active tickets closed: %s\n"
 					+ "(due to age older than 7 days)\n", closedTicketCount);
-			System.out.print("\n---------------------------\n\n");
+			System.out.print("\n----------------------------------\n\n");
 		}
 				
 	}
