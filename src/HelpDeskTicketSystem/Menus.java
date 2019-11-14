@@ -1,5 +1,6 @@
 package HelpDeskTicketSystem;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -74,15 +75,18 @@ public class Menus {
 							input = "STAFF";
 							user = createUserMenu(sc, User.UserType.STAFF);
 							users.add(user);
-							System.out.println("Logging into Staff Menu..");
+							System.out.println("\nPlease record your User Id:" + user.getId() + ", you will require this to log in.\nTo continue press [Enter] to continue");
+							sc.nextLine();
+							System.out.println("Logging into Staff Menu..\n");
 						} else if (input.equalsIgnoreCase("t")) {
 							input = "TECH";
 							user = createUserMenu(sc, User.UserType.TECH);
 							users.add(user);
-
-							System.out.println("Logging into Tech Menu..");
+							System.out.println("\nPlease record your User Id:" + user.getId() + ", you will require this to log in.\nTo continue press [Enter] to continue");
+							sc.nextLine();
+							System.out.println("Logging into Tech Menu..\n");
 						} else {
-							System.out.println("Returning to login menu..");
+							System.out.println("Returning to login Menu..\n");
 						}
 						break;
 					// login
@@ -490,24 +494,20 @@ public class Menus {
 			pwd = getInput(sc, "Password");
 			firstName = getInput(sc, "First name");
 			lastName = getInput(sc, "Last name");
-			// tech level to be ammended after merge
 			if (type == User.UserType.TECH) {
 				level = getInput(sc, "Tech Level (eg '1' or '2')");
-				// String parsedLevel = level.toString(level);
-				System.out.println("First Name: " + firstName + " Last Name: " + lastName + "\nTech Level: " + level);
+				System.out.println("\nFirst Name: " + firstName + " Last Name: " + lastName + "\nTech Level: " + level + "\n");
 				System.out.println("Are the details above correct? [Y]es or [N]o");
 				accept = sc.nextLine();
 				accept = accept.toUpperCase();
-
 			} else {
 				email = getInput(sc, "Email");
 				contactNumber = getInput(sc, "Contact Number");
-				System.out.println("First Name: " + firstName + " Last Name: " + lastName + "\n" + "Email: " + email
-						+ " Phone Number: " + contactNumber);
+				System.out.println("\nFirst Name: " + firstName + " Last Name: " + lastName + "\n"
+						+ "Email: " + email + " Phone Number: " + contactNumber + "\n");
 				System.out.println("Are the details above correct? [Y]es or [N]o");
 				accept = sc.nextLine();
 				accept = accept.toUpperCase();
-
 			}
 		} while (accept.equals("N"));
 
