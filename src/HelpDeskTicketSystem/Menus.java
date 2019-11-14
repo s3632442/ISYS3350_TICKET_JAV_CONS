@@ -489,17 +489,16 @@ public class Menus {
 			pwd = getInput(sc, "Password");
 			firstName = getInput(sc, "First name");
 			lastName = getInput(sc, "Last name");
-			//tech level to be 
+			// tech level to be ammended after merge
 			if (type == User.UserType.TECH) {
 				level = getInteger(sc, "Tech Level (eg '1' or '2')");
-				//String parsedLevel = level.toString(level);
+				// String parsedLevel = level.toString(level);
 				System.out.println("First Name: " + firstName + " Last Name: " + lastName + "\nTech Level: " + level);
 				System.out.println("Are the details above correct? [Y]es or [N]o");
 				accept = sc.nextLine();
 				accept = accept.toUpperCase();
 
-			}
-			else {
+			} else {
 				email = getInput(sc, "Email");
 				contactNumber = getInput(sc, "Contact Number");
 				System.out.println("First Name: " + firstName + " Last Name: " + lastName + "\n" + "Email: " + email
@@ -510,7 +509,7 @@ public class Menus {
 
 			}
 		} while (accept.equals("N"));
-		
+
 		if (accept.equals("Y") && type == User.UserType.STAFF) {
 			return new StaffUser(generateUserId(), pwd, firstName, lastName, email, contactNumber);
 		} else {
