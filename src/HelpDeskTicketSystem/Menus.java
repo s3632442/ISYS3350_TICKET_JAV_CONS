@@ -69,7 +69,7 @@ public class Menus {
 					switch (selection) {
 					// create user
 					case 'C':
-						input = getInput(sc, "What type of employee are you? Enter 'S' for staff or 'T' for tech.");
+						input = getInput(sc, "What type of employee are you? [S]taff or [T]ech?");
 						if (input.equalsIgnoreCase("s")) {
 							input = "STAFF";
 							user = createUserMenu(sc, User.UserType.STAFF);
@@ -480,7 +480,8 @@ public class Menus {
 		String accept = "\0";
 		String email = "";
 		String contactNumber = "";
-		Integer level = null;
+		String level = null;
+		int levelInt = 0;
 
 		do {
 			if (accept.equals("N")) {
@@ -491,7 +492,7 @@ public class Menus {
 			lastName = getInput(sc, "Last name");
 			// tech level to be ammended after merge
 			if (type == User.UserType.TECH) {
-				level = getInteger(sc, "Tech Level (eg '1' or '2')");
+				level = getInput(sc, "Tech Level (eg '1' or '2')");
 				// String parsedLevel = level.toString(level);
 				System.out.println("First Name: " + firstName + " Last Name: " + lastName + "\nTech Level: " + level);
 				System.out.println("Are the details above correct? [Y]es or [N]o");
@@ -513,7 +514,8 @@ public class Menus {
 		if (accept.equals("Y") && type == User.UserType.STAFF) {
 			return new StaffUser(generateUserId(), pwd, firstName, lastName, email, contactNumber);
 		} else {
-			return new TechUser(generateUserId(), pwd, firstName, lastName, level, 0, 0);
+			levelInt = Integer.parseInt(level);
+			return new TechUser(generateUserId(), pwd, firstName, lastName, levelInt, 0, 0);
 		}
 
 	}
