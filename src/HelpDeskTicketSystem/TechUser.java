@@ -95,11 +95,11 @@ public class TechUser extends User {
 		if (tickets != null) {
 			for (Ticket tmp : tickets) {
 				if (tmp.getTechnicianId().equals(this.getId()) && tmp.getStatus()) {
-					System.out.println(tmp.getId());
+					System.out.printf("| ID: %-12s| Description: %-35s| Severity: %-7s |\n", tmp.getId(), tmp.getDescription(), tmp.getSeverity());
 				}
 			}
 		}
-		System.out.printf("You currently have %s active tickets\n", this.getActiveCount());
+		System.out.printf("\nYou currently have %s active ticket(s)", this.getActiveCount());
 		System.out.print("\n---------------------------\n\n");
 	}
 
@@ -110,15 +110,14 @@ public class TechUser extends User {
 	public void printInActiveTickets(ArrayList<Ticket> tickets) {
 		if (tickets != null) {
 			for (Ticket tmp : tickets) {
-				if (tmp.getTechnicianId().equals(this.getId()) && tmp.getStatus()) {
+				if (tmp.getTechnicianId().equals(this.getId()) && !tmp.getStatus()) {
 					if (tmp.getTechnicianId().equals(this.getId())) {
-						System.out.println("ID: " + tmp.getId() + "| Status:" + tmp.getStringStatus() + "| Severity:"
-								+ tmp.getSeverity());
+						System.out.printf("| ID: %-12s| Description: %-35s| Severity: %-7s |\n", tmp.getId(), tmp.getDescription(), tmp.getSeverity());
 					}
 				}
 			}
 		}
-		System.out.printf("You currently have %s inactive tickets\n", this.getInActiveCount());
+		System.out.printf("\nYou currently have %s inactive ticket(s)", this.getInActiveCount());
 		System.out.print("\n---------------------------\n\n");
 	}
 
