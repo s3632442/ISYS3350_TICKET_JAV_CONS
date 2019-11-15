@@ -11,7 +11,11 @@ import java.util.Scanner;
  */
 public class FileHandler {
 	
-	// try open a scanner using the passed filename
+	/**
+	 * Helper method for building a file reader.
+	 * @param filename - file to read from
+	 * @return Scanner : null
+	 */
 	public static Scanner reader(String filename) {
 			Scanner sc;
 			try {
@@ -22,7 +26,11 @@ public class FileHandler {
 			return sc;
 	}
 	
-	// load the user database using filename
+	/**
+	 * Helper method to load the user database from the given filename
+	 * @param filename - file to read from
+	 * @return ArrayList<User> : null
+	 */
 	public static ArrayList<User> loadUserDatabase(String filename) {
 		String read = "\0";
 		Scanner sc = reader(filename);
@@ -47,7 +55,11 @@ public class FileHandler {
 		return users;
 	}
 	
-	// write to the user database with the current array of users
+	/**
+	 * Helper method for writing the current users to a database file
+	 * @param filename - file to write to
+	 * @param users - users database to write
+	 */
 	public static void writeUserDatabase(String filename, ArrayList<User> users) {
 		PrintWriter pw;
 		
@@ -67,7 +79,11 @@ public class FileHandler {
 		}
 	}
 	
-	// load from the ticket database using filename
+	/**
+	 * Helper method for loading the tickets database from the given filename
+	 * @param filename -  file to read from
+	 * @return ArrayList<Ticket> : null
+	 */
 	public static ArrayList<Ticket> loadTicketDatabase(String filename) {
 		String read = "\0";
 		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
@@ -96,19 +112,23 @@ public class FileHandler {
 		return tickets;
 	}
 	
-	// write ticket database using the current tickets array
+	/**
+	 * Helper method for writing the tickets database to a file using the given filename
+	 * @param filename - file to write to
+	 * @param tickets - tickets database to write
+	 */
 	public static void writeTicketDatabase(String filename, ArrayList<Ticket> tickets) {
 		PrintWriter pw;
 		
 		/*
-		 * try to write each ticket using a printwriter
+		 * try to write each ticket using a print writer
 		 * throws an error when the file does not exists &
 		 * the application does not have permissions to open a new file
 		 */
 		try {
 			pw = new PrintWriter(filename);
 			for (Ticket tmp : tickets) {
-				tmp.writeDetails(pw);
+				tmp.writeAttributes(pw);
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
