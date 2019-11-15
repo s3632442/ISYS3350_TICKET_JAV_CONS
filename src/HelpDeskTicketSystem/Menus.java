@@ -225,6 +225,11 @@ public class Menus {
 		System.exit(0);
 	}
 
+	protected static void printHeader(String title) {
+		System.out.printf("%s\n----------------------------------\n", title);
+		System.out.printf("%-20s%s", "Menu Options", "Selection Key");
+		System.out.println("\n----------------------------------");
+	}
 	/**
 	 * Helper method for printing complex and consistent menus
 	 * @param title - header to print
@@ -232,9 +237,7 @@ public class Menus {
 	 * @param menuSelections - array of input items the user can enter
 	 */
 	protected static void printMenu(String title, List<String> menu, List<String> menuSelections) {
-		System.out.printf("%s\n----------------------------------\n", title);
-		System.out.printf("%-20s%s", "Menu Options", "Selection Key");
-		System.out.println("\n----------------------------------\n");
+		printHeader(title);
 
 		for (int i = 0; i < menu.size(); i++) {
 			System.out.printf("%-30s%s\n", menu.get(i), menuSelections != null ? menuSelections.get(i) : i + 1);
@@ -493,201 +496,266 @@ public class Menus {
 	 * @return String
 	 */
 	protected static String generateUserId() {
-		return String.valueOf(users.size() + 1);
+		if (users != null && !users.isEmpty()) {
+			return String.valueOf(users.size() + 1);
+		} else {
+			return "1";
+		}
 	}
 
 	/**
-	 * Method to traverse the main menu.
+	 * Helper method to copy the keys and values of a map to a new map
+	 * @param map - Map to copy
+	 * @return LinkedHashMap<String, String>
+	 */
+	protected static LinkedHashMap<String, String> copyMap(LinkedHashMap<String, String> map) {
+		LinkedHashMap<String, String> newMap = new LinkedHashMap<>();
+		ArrayList<String> keys = new ArrayList<String>(map.keySet());
+		for (int i = 0; i < keys.size(); i++) {
+			String key = keys.get(i);
+			String value = map.get(key).toString();
+			newMap.put(key, value);
+		}
+		return newMap;
+	}
+
+	/**
+	 * Helper method to print a map out like a menu
+	 * @param map - Map to print
+	 */
+	protected static void printMapMenu(String title, LinkedHashMap<String, String> map) {
+		printHeader(title);
+
+		ArrayList<String> keys = new ArrayList<String>(map.keySet());
+
+		for (int i = 0; i < keys.size(); i++) {
+			String s = keys.get(i);
+			String value = map.get(s);
+			if (value.contains("contact number")) {
+				String[] str = value.split(" ");
+				value = str[0] + str[1];
+			}
+			System.out.printf("%-20s%s\n", value != null ? value : "N\\A", s);
+		}
+	}
+
+	/**
+	 * Helper method to edit the values stored in a linkedhashmap
+	 * @param sc - Scanner to read input
+	 * @param originalMap - Copy of the original map for menu printing
+	 * @param map - altered map that may see further alteration
+	 * @return LinkedHashMap<String, String> : null
+	 */
+	protected static LinkedHashMap<String, String> editMap(Scanner sc, String title, LinkedHashMap<String, String> originalMap,
+			LinkedHashMap<String, String> map) {
+		boolean exit = false;
+		String input = "\0";
+		do {
+			printMapMenu(title, originalMap);
+			input = getInput(sc);
+			System.out.println(input);
+			boolean exists = map.containsKey(input);
+			if (!exists || input.length() != 1) {
+				System.out.println("Error - invalid selection, try again");
+			} else if (compareString(input, "EXIT_RESUME")) {
+				System.out.println("Returning to menu..");
+				map = null;
+				exit = true;
+			} else {
+				String key = input;
+				String value = originalMap.get(key);
+				input = getInput(sc, value);
+				if (compareString(key, "c")) {
+					if (input != null) {
+						exit = true;
+					} else {
+						return null;
+					}
+				} else {
+					map.remove(key);
+					map.put(key, input);
+				}
+			}
+
+		} while (!exit && !compareString(input, "EXIT_RESUME"));
+		return map;
+	}
+
+	/**
+	 * Helper method to traverse over linkedhashmap and retrieve input
+	 * @param sc - Scanner to read input
+	 * @param map - Map to traverse and update
+	 * @return LinkedHashMap<String, String> : null
+	 */
+	protected static LinkedHashMap<String, String> traverseMap(Scanner sc, LinkedHashMap<String, String> map) {
+		ArrayList<String> keys = new ArrayList<String>(map.keySet());
+		String input = "\0";
+		Integer counter = 0;
+		do {
+			String key = keys.get(counter);
+			input = map.get(key).toString();
+			if (compareString(key, "c")) {
+				System.out.print("| ");
+				for (int i = 0; i < keys.size() - 1; i++) {
+					String s = keys.get(i);
+					System.out.printf("%s: %s | ", s, map.get(s).toString());
+				}
+				System.out.println();
+			}
+
+			if (map.size() > 1 && compareString(key, "staff") || compareString(key, "tech") && map.size() > 1) { counter++; } 
+			else { 
+				input = getInput(sc, input);
+				if (input != null && compareString(input, "EXIT_RESUME")) {
+					System.out.println("Returning to menu..");
+					return null;
+				} else {
+					map.remove(key);
+					map.put(key, input);
+					counter++;
+				} 
+			}
+			
+		} while (map.size() > counter && !compareString(input, "EXIT_RESUME"));
+		return map;
+	}
+
+	/**
+	 * Helper method to create/login a user and allow for editing
 	 * @param sc
 	 * @param login
 	 * @return User : null
 	 */
 	protected static User userMenu(Scanner sc, Boolean login) {
 		
-		Integer counter = 0; 	// counter for while-loop
+		String type =  "\0";
+		Boolean exit = false;
 		User user = null; 		// user to return, always returns
-		String input = "\0";	// user input string
-		LinkedHashMap<String, String> map = new LinkedHashMap<>();	// details needed from user
+		LinkedHashMap<String, String> map = new LinkedHashMap<>(), 
+			originalMap = new LinkedHashMap<>();	// details needed from user
 
 		/**
-		 * set the information needed from the user
+		 * setup the information needed from the user
 		 */
 		if (login) {
-			map.put("employee no", "employee id number");
-			map.put("password", "password");
+			originalMap.put("employee no", "employee id number");
+			originalMap.put("password", "password");
 		} else {
-			map.put("employment type", "type of employment, [S]taff or [T]ech");
-			map.put("password", "new password");
-			map.put("first name", "given name");
-			map.put("last name", "surname");
+			type = getInput(sc, "type of employment, [S]taff or [T]ech");
+			if (type != null && !compareString(type, "EXIT_RESUME")) {
+				originalMap.put("1", "new password");
+				originalMap.put("2", "given name");
+				originalMap.put("3", "surname");
+				if (compareString(type, "staff")) {
+					originalMap.put("4", "email address");
+					originalMap.put("5", "contact number using Australian format (eg 61290001234)");
+				} else {
+					originalMap.put("4", "technician level (Can be either 1 or 2)");
+				}
+				originalMap.put("c", "confirm");
+			} else {
+				return null;
+			}
 		}
 
-		/**
-		 * request each detail from the user
-		 */
-		List<String> keys = new ArrayList<String>(map.keySet());
-		do {
-			String key = keys.get(counter); 	// get key with index counter
-			input = map.get(key).toString(); 	// get value at key
-
-			// if key is confirm, print out current details
-			if (compareString(key, "confirm")) {
-				System.out.print("| ");
-				for (int i = 0; i < map.size() - 1; i++) {
-					String s = keys.get(i);
-					System.out.printf("%s: %s | ", s, map.get(s).toString());
-				}
-				System.out.println();
-			}
-			
-			input = getInput(sc, input);
-			
-			/**
-			 * check for exit case
-			 * else check if extra details need to be added
-			 * then add and increment the new value
-			 */
-			if (input != null && compareString(input, "EXIT_RESUME")) {
-				System.out.println("Returning to login menu..");
-			} else {
-				if (compareString(key, "employment type")) {
-					if (compareString(input, "s") || compareString(input, "staff")) {
-						map.put("email", "email address");
-						map.put("contact number", "contact number using Australian format (eg 61290001234)");
-					} else {
-						map.put("tech level", "technician level (Can be either 1 or 2)");
-					}
-					map.put("confirm", "confirm");
-					keys = new ArrayList<String>(map.keySet());
-				}
-				map.remove(key);
-				map.put(key, input);
-				counter++;
-			}
-		} while(map.size() > counter && !compareString(input, "EXIT_RESUME"));
+		map = copyMap(originalMap);
+		map = traverseMap(sc, map);
 
 		/**
 		 * if counter has become equal to map.size()
 		 * checking if the user details were filled out and not exited early
 		 */
-		if (counter == map.size()) {
-			
-			// check if details were confirmed for creation or user is attempting a login
-			if (map.get("confirm") != null || login) {
-				
-				// if logging in
-				if (login) {
-					Integer userId = Integer.parseInt(map.get("employee no")) - 1;
-					if (users.size() > userId && users.get(userId).login(map.get("password"))) {
-						user = users.get(userId);
-						System.out.printf("Welcome %s %s!\n", user.getFirstName(), user.getLastName());
+		do {
+			if (map != null) {
+				if (map.get("c") != null || login) {
+					if (login) {
+						Integer userId = Integer.parseInt(map.get("employee no")) - 1;
+						if (users.size() > userId && users.get(userId).login(map.get("password"))) {
+							user = users.get(userId);
+							System.out.printf("Welcome %s %s!\n", user.getFirstName(), user.getLastName());
+							return user;
+						} else {
+							System.out.println("Error - invalid credentials, please try again");
+							user = userMenu(sc, true);
+						}
 					} else {
-						System.out.println("Error - invalid credentials, please try again");
-						user = userMenu(sc, true); // Recursive call until explicit exit or user successfully logs in
+						if (compareString(type, "staff")) {
+							user = new StaffUser(generateUserId(), 
+										map.get("1"), map.get("2"), map.get("3"),
+										map.get("4"), map.get("5"));
+						} else {
+							Integer techLevel = Integer.parseInt(map.get("4"));
+							user = new TechUser(generateUserId(), 
+										map.get("1"), map.get("2"), map.get("3"),
+										techLevel, 0, 0);
+						}
+						return user;
 					}
 				} else {
-					if (compareString(map.get("employment type"), "staff") || compareString(map.get("employment type"), "s")) {
-						user = new StaffUser(generateUserId(), 
-									map.get("password"), map.get("first name"), map.get("last name"),
-									map.get("email"), map.get("contact number"));
-					} else {
-						Integer techLevel = Integer.parseInt(map.get("tech level"));
-						user = new TechUser(generateUserId(), 
-									map.get("password"), map.get("first name"), map.get("last name"),
-									techLevel, 0, 0);
-					}
+					map.remove("c");
+					map.put("c", "confirm");
+					map = editMap(sc, "EDIT USER MENU", originalMap, map);
 				}
 			} else {
-				System.out.println("Did not confirm account creation, returning to start..");
-				user = userMenu(sc, false); // Recursive call until explicit exit or user details filled
+				exit = true;
 			}
-		} 
+		} while (!exit);
 		return user; // will return null
 	}
 	
 	/**
-	 * method for traversing the create ticket menu
-	 * @param sc
+	 * Helper method to create a ticket and allow for editing
+	 * @param sc - Scanner to read input
 	 * @return Ticket : null
 	 */
 	protected static Ticket createTicketMenu(Scanner sc) {
-		String input = "\0", technicianId = "N\\A";
+
 		Boolean exit = false;
 		Ticket ticket = null;
-		TechUser technician = null;
-		String[] strTicket = new String[8];
-		int ticketCounter = 0;
-		Ticket.TicketSeverity severity = null;
-		// create ticket menu options array
-		List<String> menu = Arrays.asList("Surname", "Given name", "Email", "Contact number",
-				"Description", "Issue severity", "Confirm", "Exit");
-		// create ticket menu selection key array
-		List<String> menuSelections = Arrays.asList("1", "2", "3", "4", "5", "6", "C", "X");
+
+		LinkedHashMap<String, String> map = new LinkedHashMap<>(),
+			originalMap = new LinkedHashMap<>();
+
+		originalMap.put("1", "surname");
+		originalMap.put("2", "given name");
+		originalMap.put("3", "email address");
+		originalMap.put("4", "contact number");
+		originalMap.put("5", "description");
+		originalMap.put("6", "issue severity");
+		originalMap.put("c", "confirm");
+
+		map = copyMap(originalMap);
+		map = traverseMap(sc, map);
 
 		do {
-			strTicket[ticketCounter + 1] = getInput(sc, menu.get(ticketCounter));
-			if (compareString(strTicket[ticketCounter + 1], "EXIT_RESUME")) {
-				exit = true;
-			} else {
-				ticketCounter += 1;
-			}
-		} while (ticketCounter != (menu.size() - 2) && !exit);
-	
+			if (map != null) {
+				if (map.get("c") != null) {
+					String ticketId = generateTicketId();
+					Ticket.TicketSeverity severity = checkTicketSeverity(map.get("6"));
+					String techId = "N\\A";
+					TechUser technician = getAvailableTechnician(severity);
 
-		if (!exit) {
-			severity = checkTicketSeverity(strTicket[6]);
-			do {
-				printTicket("\nIf below Ticket is correct press C\n"
-						+ "else select menu option to change details.\n\n"
-						+ "NEW TICKET", menu, strTicket);
-				printMenu("CREATE TICKET MENU", menu, menuSelections);
-				input = getInput(sc);
-				if (input.length() == 1) {
-					switch (input.toUpperCase()) {
-					case "1":
-						strTicket[1] = getInput(sc, menu.get(0));
-						break;
-					case "2":
-						strTicket[2] = getInput(sc, menu.get(1));
-						break;
-					case "3":
-						strTicket[3] = getInput(sc, menu.get(2));
-						break;
-					case "4":
-						strTicket[4] = getInput(sc, menu.get(3));
-						break;
-					case "5":
-						strTicket[5] = getInput(sc, menu.get(4));
-						break;
-					case "6":
-						strTicket[6] = getInput(sc, menu.get(5));
-						severity = checkTicketSeverity(strTicket[6]);
-						break;
-					case "C":
-						strTicket[0] = generateTicketId();
-						technician = getAvailableTechnician(severity);
-						if (technician != null) {
-							technicianId = technician.getId();
-							technician.setActiveCount(technician.getActiveCount() + 1);
-						}
-						ticket = new Ticket(strTicket[0], strTicket[1], strTicket[2], strTicket[3], strTicket[4], strTicket[5], strTicket[6],
-								severity, technicianId);
-						exit = true;
-						break;
-					case "X":
-						exit = getConfirmInput(sc, "exit");
-						break;
-					default:
-						System.out.println("Error - invalid selection");
+					if (technician != null) {
+						techId = technician.getId();
+						technician.setActiveCount(technician.getActiveCount() + 1);
 					}
+					ticket = new Ticket(ticketId, map.get("1"), map.get("2"), user.getId(), map.get("3"), map.get("4"),
+							map.get("5"), severity, techId);
+					exit = true;
 				} else {
-					System.out.println("Error - invalid selection");
+					map.remove("c");
+					map.put("c", "confirm");
+					map = editMap(sc, "EDIT TICKET MENU", originalMap, map);
 				}
-			} while (!exit);
-		}
+			} else {
+				exit = true;
+			}
+		} while (!exit);
+		
 		return ticket;
 	}
-	
+
+
 	/**
 	 * helper method to check ticket creation date is greater
 	 * than 7 days for auto ticket closure.

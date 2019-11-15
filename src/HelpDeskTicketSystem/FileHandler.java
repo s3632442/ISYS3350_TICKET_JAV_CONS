@@ -36,7 +36,7 @@ public class FileHandler {
 		Scanner sc = reader(filename);
 		ArrayList<User> users = new ArrayList<User>();
 		
-		if (sc == null) { return null; }; // if no file with name exists
+		if (sc == null) { return users; }; // if no file with name exists
 		
 		// read user database into user object array
 		while (sc.hasNextLine()) {
