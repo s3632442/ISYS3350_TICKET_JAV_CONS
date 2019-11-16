@@ -259,7 +259,7 @@ public class Menus {
 		System.out.printf("Did you want to %s? [Y]es or [N]o\n", type);
 		// retrieve input until user gives valid input of [Y]es or [N]o
 		do {
-			System.out.print("Enter your selection: ");
+			System.out.print("Type your selection and press enter: ");
 			input = scanner.nextLine();
 			if (compareString(input, "Y") || compareString(input, "YES")) {
 				exit = true;
@@ -310,7 +310,7 @@ public class Menus {
 		}
 		
 		// request input
-		System.out.printf("Enter your %s: ", request);
+		System.out.printf("Type your %s and press enter: ", request);
 		input = scanner.nextLine();
 		
 		// if user is attempting an early exit
@@ -875,7 +875,7 @@ public class Menus {
 		 * the ticket is successfully changed
 		 */
 		do {
-			input = getInput(sc, "ticket number to be changed (eg 12345678-1) and press enter");
+			input = getInput(sc, "ticket number to be changed (eg 12345678-1)");
 			
 			// if user is not trying to exit
 			if (!compareString(input, "EXIT_RESUME")) {
