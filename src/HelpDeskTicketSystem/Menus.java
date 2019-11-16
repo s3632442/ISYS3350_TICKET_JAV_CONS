@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
+
 import HelpDeskTicketSystem.Ticket.TicketSeverity;
 
 public class Menus {
@@ -509,6 +510,21 @@ public class Menus {
 	}
 
 	/**
+	 * Helper method to capitalize the 
+	 * @param str
+	 * @return
+	 */
+	protected static String capitalize(String str) {
+		if (str == null) return str;
+		String[] strArray = str.split(" ");
+		String out = "";
+		for (String s : strArray) {
+			out += s.substring(0,1).toUpperCase() + s.substring(1);
+		}	
+		return out;
+	}
+	
+	/**
 	 * Helper method to copy the keys and values of a map to a new map
 	 * @param map - Map to copy
 	 * @return LinkedHashMap<String, String>
@@ -545,7 +561,7 @@ public class Menus {
 			if (l.length() > 15) {
 				l = splitMenuString(l);
 			}
-			System.out.printf("%-30s%s\n", l, r);
+			System.out.printf("%-30s%s\n", capitalize(l), capitalize(r));
 		}
 	}
 
@@ -636,7 +652,7 @@ public class Menus {
 					if (l.length() > 15) {
 						l = splitMenuString(l);
 					}
-					System.out.printf("%s: %s | ", l, r);
+					System.out.printf("%s: %s | ", capitalize(l), capitalize(r));
 				}
 				System.out.println();
 			}
@@ -727,10 +743,10 @@ public class Menus {
 						} 
 						// user has entered invalid credentials, callback to userMenu until user==null
 						else {
-							System.out.println(map);
 							System.out.println("Error - invalid credentials, please try again");
-							user = userMenu(sc, true);
-							if (user == null) {
+							map = copyMap(originalMap);
+							map = traverseMap(sc, map);
+							if (map == null) {
 								exit = true;
 							}
 						}
