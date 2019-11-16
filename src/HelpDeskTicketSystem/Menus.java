@@ -158,18 +158,12 @@ public class Menus {
 						// Close a active ticket
 						case 'C':
 							ticket = ticketTechMenu(sc, true);
-							if (ticket != null) {
-								System.out.println("success");
-							}
 							break;
 						/**
 						 * Change ticket severity
 						 */
 						case 'S':
 							ticket = ticketTechMenu(sc, false);
-							if (ticket != null) {
-								System.out.println("success");
-							}
 							break;
 						// Display active tickets allocated to current logged in Tech
 						case 'A':
@@ -660,14 +654,13 @@ public class Menus {
 			 * if key is confirm, print current details to this point
 			 */
 			if (compareString(key, "c")) {
-				System.out.print("| ");
 				for (int i = 0; i < keys.size() - 2; i++) {
 					String l = copy.get(keys.get(i)).toString();
 					String r = map.get(keys.get(i)).toString();
 					if (l.length() > 15) {
 						l = splitMenuString(l);
 					}
-					System.out.printf("%s: %s | ", capitalize(l), r);
+					System.out.printf("%s: %s \n", capitalize(l), r);
 				}
 				System.out.println();
 			}
