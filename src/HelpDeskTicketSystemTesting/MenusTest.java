@@ -17,7 +17,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import HelpDeskTicketSystem.Ticket;
+import HelpDeskTicketSystem.User;
 import HelpDeskTicketSystem.Menus;
+import HelpDeskTicketSystem.TechUser;
 
 class MenusTest extends Menus {
 
@@ -54,7 +56,7 @@ class MenusTest extends Menus {
 	{
 		String i = "\n"
 				+ "foobar\n";
-		String input = getInput(new Scanner(i), "Given name");
+		String input = getInput(new Scanner(i), "given name");
 		assertEquals("foobar", input);
 	}
 	@Test
@@ -62,7 +64,7 @@ class MenusTest extends Menus {
 	{
 		String i = "foobar\n"
 				+ "foo@bar.com\n";
-		String input = getInput(new Scanner(i), "Email");
+		String input = getInput(new Scanner(i), "email address");
 		assertEquals("foo@bar.com", input);
 	}
 	@Test
@@ -70,7 +72,7 @@ class MenusTest extends Menus {
 	{
 		String i = "101010101010101\n"
 				+ "04 1111 1111\n";
-		String input = getInput(new Scanner(i), "Contact number");
+		String input = getInput(new Scanner(i), "contact number");
 		assertEquals("04 1111 1111", input);
 	}
 	@Test
@@ -78,7 +80,7 @@ class MenusTest extends Menus {
 	{
 		String i = "lo\n"
 				+ "high";
-		String input = getInput(new Scanner(i), "Severity");
+		String input = getInput(new Scanner(i), "issue severity");
 		assertEquals("HIGH", input);
 	}
 	
@@ -127,37 +129,34 @@ class MenusTest extends Menus {
 	// Test all ticket paths
 	@Test
 	void testTicketMenu() {
-		String i = "X!\n"
+		String i = "!X\n"
 				+ "Foo\n"
 				+ "N\n"
 				+ "Foo\n"
 				+ "Bar\n"
-				+ "super1000\n"
 				+ "foo@bar.com\n"
 				+ "02 6310 1010\n"
 				+ "leaking all the memory\n"
-				+ "HIGH\n"
-				+ "p\n" 
+				+ "LOW\n"
+				+ "n\n"
+				+ "ppppppppp\n"
 				+ "1\n"
 				+ "Bar\n"
 				+ "2\n"
 				+ "Foo\n"
 				+ "3\n"
-				+ "super1000\n"
+				+ "bar@foo.com\n"
 				+ "4\n"
-				+ "foo@bar.com\n"
+				+ "02 6399 9999\n"
 				+ "5\n"
-				+ "02 6310 1010\n"
+				+ "stepped on lego brick\n"
 				+ "6\n"
-				+ "leaking all the memory\n"
-				+ "7\n"
 				+ "HIGH\n"
-				+ "X\n"
-				+ "N\n"
-				+ "C\n";
+				+ "c\n"
+				+ "y\n";
 		String ticketId = generateTicketId();
 		Ticket ticket = createTicketMenu(new Scanner(i));
-		assertEquals(ticketId + "FooBarsuper1000foo@bar.com02 6310 1010leaking all the memoryHIGH", 
+		assertEquals(ticketId + "FooBarN\\Abar@foo.com02 6399 9999stepped on lego brickHIGH", 
 				ticket.getId()
 				+ ticket.getCreatorLastName()
 				+ ticket.getCreatorFirstName()
@@ -188,36 +187,31 @@ class MenusTest extends Menus {
 	
 	@Test
 	void testTicketMenuCompleteExit() {
-		String i = "X!\n"
+		String i = "!X\n"
 				+ "Foo\n"
 				+ "N\n"
 				+ "Foo\n"
 				+ "Bar\n"
-				+ "super1000\n"
 				+ "foo@bar.com\n"
 				+ "02 6310 1010\n"
 				+ "leaking all the memory\n"
-				+ "HIGH\n"
-				+ "p\n"
+				+ "LOW\n"
+				+ "n\n"
 				+ "ppppppppp\n"
 				+ "1\n"
 				+ "Bar\n"
 				+ "2\n"
 				+ "Foo\n"
 				+ "3\n"
-				+ "super1000\n"
+				+ "bar@foo.com\n"
 				+ "4\n"
-				+ "foo@bar.com\n"
+				+ "02 6399 9999\n"
 				+ "5\n"
-				+ "02 6310 1010\n"
+				+ "stepped on lego brick\n"
 				+ "6\n"
-				+ "leaking all the memory\n"
-				+ "7\n"
 				+ "HIGH\n"
-				+ "X\n"
-				+ "N\n"
-				+ "X\n"
-				+ "Y\n";
+				+ "c\n"
+				+ "n\n";
 		Ticket ticket = createTicketMenu(new Scanner(i));
 		assertNull(ticket);
 	}
@@ -231,14 +225,39 @@ class MenusTest extends Menus {
 	@Test
 	void testAutoCloseTicketMoreThanSevenDaysOld() {
 		// Create open ticket
+		TechUser tech = new TechUser("1", "asdf", "Bar", "Foo", 2, 0, 0);
+		ArrayList<User> users = new ArrayList<User>();
+		users.add(tech);
 		Ticket oldTicket = new Ticket("20191101-1","Foo", "Bar", "2", "Bar@foo.com",
-				"0412341234", "Lab vm CPU died.", Ticket.TicketSeverity.HIGH, "N\\A");
+				"0412341234", "Lab vm CPU died.", Ticket.TicketSeverity.HIGH, "1");
 		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
 		tickets.add(oldTicket);
 		// Check if ticket is open
 		assertEquals("Open", oldTicket.getStringStatus());
-		closeActiveTicketsMoreThanSevenDaysOld( tickets);
+		closeActiveTicketsMoreThanSevenDaysOld(tickets, users);
 		// Check if ticket has been closed due to older than seven days
 		assertEquals("Closed", oldTicket.getStringStatus());
 	}
+	
+	@Test
+	void testEnterToContinue() {
+		String i = "\n";
+		enterToContinue(new Scanner(i));
+		assertEquals("", out.toString());
+	}
+	
+	@Test
+	void testGetInputExitResumeExit() {
+		String i = "y\n";
+		String input = getInput(new Scanner(i), "exit");
+		assertEquals("EXIT_RESUME", input);
+	}
+	
+	@Test
+	void testGetInputEarlyExitSelection() {
+		String i = "!X\n";
+		String input = getInput(new Scanner(i));
+		assertEquals("!X", input);
+	}
+	
 }

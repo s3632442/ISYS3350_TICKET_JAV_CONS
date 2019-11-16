@@ -34,7 +34,6 @@ public class Menus {
 		// variable declaration
 		String input = "\0";
 		Boolean exit = false, nestedExit = false;
-		Integer intInput;
 		// Initialize scanner
 		Scanner sc = new Scanner(System.in);
 		// Initialize selection variable to ASCII null to keep compiler happy
@@ -56,7 +55,8 @@ public class Menus {
 		
 		//Call for closing tickets older than 7	that are still open.
 		if (tickets != null && !tickets.isEmpty()){
-			closeActiveTicketsMoreThanSevenDaysOld(tickets);
+			closeActiveTicketsMoreThanSevenDaysOld(tickets, users);
+			fixMissingTechnicians();
 		}
 		
 		do {
@@ -130,15 +130,15 @@ public class Menus {
 							System.out.println("Error - invalid selection");
 						}
 					}
-				} while (user != null && !nestedExit);
+				} while (user != null);
 				
 			} else {
 				do {
 					// set menu selections
-					List<String> menu = Arrays.asList("View Active Tickets", "Close Active Ticket",
+					List<String> menu = Arrays.asList("View Active Tickets", "Close Active Ticket", "Change Ticket Severity",
 							"View Inactive Tickets", "Logout");
-					List<String> menuSelections = Arrays.asList("A", "C", "I", "X");
-
+					List<String> menuSelections = Arrays.asList("A", "C", "S", "I", "X");
+					Ticket ticket = null;
 					// menu title
 					printMenu("TECH MENU", menu, menuSelections);
 					input = getInput(sc);
@@ -156,47 +156,21 @@ public class Menus {
 						switch (selection) {
 						// Close a active ticket
 						case 'C':
-							Boolean confirm = false;
-							do {
-								input = getInput(sc, "ticket number to be changed (eg 12345678-1) and press enter");
-								if (!compareString(input, "EXIT_RESUME")) {
-									if (tickets != null) {
-										intInput = Integer.parseInt(input) - 1;
-										if (intInput >= tickets.size()) {
-											System.out.println("Error - invalid ticket number, please try again");
-										} else {
-											Ticket tmp = tickets.get(intInput);
-											if (!tmp.getStatus()) {
-												System.out.println("Error - ticket is already closed");
-												enterToContinue(sc);
-												confirm = true;
-											} else if (tmp.isTechnician(user.getId())) {
-												System.out.printf("Attempting to remove ticket: %s\n");
-												confirm = getConfirmInput(sc, "confirm");
-												if (confirm) {
-													tmp.setStatus(false);
-													((TechUser) user)
-															.setActiveCount(((TechUser) user).getActiveCount() - 1);
-													((TechUser) user)
-															.setInActiveCount(((TechUser) user).getInActiveCount() + 1);
-													System.out.printf("Ticket %s has been closed", tmp.getId());
-													enterToContinue(sc);
-												}
-											} else {
-												System.out.println("Error - Can not close another technician's ticket");
-												enterToContinue(sc);
-												confirm = true;
-											}
-										}
-									} else {
-										System.out.println("Error - There are currently no tickets in the database");
-										enterToContinue(sc);
-										break;
-									}
-								}
-							} while(!confirm  && !compareString(input, "EXIT_RESUME"));
+							ticket = ticketTechMenu(sc, true);
+							if (ticket != null) {
+								System.out.println("success");
+							}
 							break;
-						// Display active tickets allocated to current logged in Tech	
+						/**
+						 * Change ticket severity
+						 */
+						case 'S':
+							ticket = ticketTechMenu(sc, false);
+							if (ticket != null) {
+								System.out.println("success");
+							}
+							break;
+						// Display active tickets allocated to current logged in Tech
 						case 'A':
 							((TechUser) user).printActiveTickets(tickets);
 							enterToContinue(sc);
@@ -219,17 +193,22 @@ public class Menus {
 						}
 						System.out.println();
 					}
-				} while (user != null && !nestedExit);
+				} while (user != null);
 			}
 		} while (user != null || !exit);
 		System.exit(0);
 	}
 
+	/**
+	 * Helper method for printing the header on every select-style menu
+	 * @param title - Menu title
+	 */
 	protected static void printHeader(String title) {
 		System.out.printf("%s\n----------------------------------\n", title);
 		System.out.printf("%-20s%s", "Menu Options", "Selection Key");
 		System.out.println("\n----------------------------------");
 	}
+
 	/**
 	 * Helper method for printing complex and consistent menus
 	 * @param title - header to print
@@ -243,22 +222,6 @@ public class Menus {
 			System.out.printf("%-30s%s\n", menu.get(i), menuSelections != null ? menuSelections.get(i) : i + 1);
 		}
 		System.out.println();
-	}
-	
-	/**
-	 * Helper method to print new ticket for user to check details.
-	 * @param title - 
-	 * @param menu
-	 * @param newTicket
-	 */
-	protected static void printTicket(String title, List<String> menu, String[] newTicket) {
-		System.out.printf("\n----------------------------------\n%s\n", title);
-		System.out.println("----------------------------------\n");
-		for (int i = 0, x=1; i < menu.size()-2; i++, x++) {
-			System.out.printf("%-18s: %s\n", menu.get(i), newTicket != null ? newTicket[x]  : i+1);
-		}
-		System.out.println();
-		System.out.println("----------------------------------\n");
 	}
 			
 
@@ -280,6 +243,10 @@ public class Menus {
 		return null;
 	}
 	
+	/**
+	 * Helper method to halt error output and wait for the user to press enter
+	 * @param sc - Scanner to read enter from
+	 */
 	protected static void enterToContinue(Scanner sc) {
 		System.out.println("Press Enter key to continue..");
 		sc.nextLine();
@@ -334,6 +301,7 @@ public class Menus {
 		// Regex that matches Australian formatted phone numbers
 		String phonePattern = "^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[- ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$";
 
+		// if user is attempting to exit or needs to confirm input
 		if (compareString(request, "exit") || compareString(request, "confirm")) {
 			exit = getConfirmInput(scanner, request);
 			if (exit) {
@@ -350,7 +318,7 @@ public class Menus {
 		System.out.printf("Enter your %s: ", request);
 		input = scanner.nextLine();
 		
-		// if exit command
+		// if user is attempting an early exit
 		if (compareString(input, "!X") && !compareString(request, "selection")) {
 			System.out.println("Exiting will cause any progress to be lost");
 			exit = getConfirmInput(scanner, "exit");
@@ -360,54 +328,57 @@ public class Menus {
 				input = getInput(scanner, request);
 			}
 		}
-		// if empty
+		// if user has inputed nothing
 		if (compareString(input, "")) {
 			System.out.println("Error - input can not be empty");
 			input = getInput(scanner, request);
 		}
+
+		// if user is not attempting to early exit
 		if (!compareString(input, "EXIT_RESUME")) {
-			// if employee number
+			// if user is inputting an employee id
 			if (compareString(request, "employee id number")) {
 				if (!input.matches("-?\\d+")) {
 					System.out.println("Error - invalid input, must enter an integer");
 					input = getInput(scanner, request);
 				}
 			}
-			// if ticket number
+			// if user is inputting a ticket number e.g. 20190101-1
 			if (request.contains("ticket number")) {
 				if (input.length() < 10) { 
 					System.out.println("Error - invalid ticket length, ticket must be 10 or more digits long (eg 12345678-1)");
 					input = getInput(scanner, request);
 				} else {
 					String out = input.substring(input.lastIndexOf('-') + 1, input.length());
-					System.out.println(out);
 					return out;
 				}
 			}
-			// if employee type
+			// if user is inputting their employment type e.g. tech or staff
 			if (request.contains("type of employment")) {
+				// if user has inputted neither staff or tech callback to getInput()
 				if (!compareString(input, "staff") && !compareString(input, "s") &&
 					!compareString(input, "tech") && !compareString(input, "t")) {
 					System.out.println("Error - invalid type of employment, must enter either [S]taff or [T]ech");
 					input = getInput(scanner, request);
 				} else if (compareString(input, "s")) {
-					input = "staff";
+					input = "staff";					// return staff if s for consistency
 				} else if (compareString(input, "t")) {
-					input = "tech";
+					input = "tech";						// return tech if t for consistency
 				}
 			}
-			// if invalid email
+			// if user is inputting an invalid email address callback to getInput()
 			if (compareString(request, "email address") && !input.matches(emailPattern)) {
 				System.out.println("Error - invalid email address");
 				input = getInput(scanner, request);
 			}
-			// if invalid phone number
+			// if user is inputting an invalid phone number callback to getInput()
 			if (request.contains("contact number") && !input.matches(phonePattern)) {
 				System.out.println("Error - invalid phone number, must use Australian format e.g. +61290001234");
 				input = getInput(scanner, request);
 			}
-			// if valid ticket severity
+			// if user is inputting a ticket severity
 			if (compareString(request, "issue severity")) {
+				// if user is inputting an invalid ticket severity callback to getInput()
 				if (checkTicketSeverity(input.toUpperCase()) == null) {
 					System.out.println("Error - invalid severity, must be LOW, MEDIUM, OR HIGH");
 					input = getInput(scanner, request);
@@ -444,6 +415,30 @@ public class Menus {
 		return formattedDate + "-" + Ticket.ticketIDCounter;
 	}
 	
+	/**
+	 * Fix the tickets array if it contains a ticket that has
+	 * not been assigned a technician
+	 * Will return false if it is unable to allocate a technician to any ticket
+	 * @return Boolean
+	 */
+	protected static Boolean fixMissingTechnicians() {
+		Boolean result = false;
+		Integer counter = 0;
+		for (Ticket tmp : tickets) {
+			if (compareString(tmp.getTechnicianId(), "N\\A")) {
+				TechUser technician = getAvailableTechnician(tmp.getSeverity());
+				if (technician == null) {
+					counter++;
+					continue;
+				} else {
+					tmp.setTechnicianId(technician.getId());
+					technician.setActiveCount(technician.getActiveCount() + 1);
+				}
+			}
+		}
+		if (counter > 0) { result = false; }
+		return result;
+	}
 	/**
 	 * Method to identify ticket allocation to available tech.
 	 * Allocates to tech with appropriate techLevel and with the least
@@ -484,7 +479,7 @@ public class Menus {
 		 * technician with the least amount of currently active tickets
 		 */
 		for (Entry<TechUser, Integer> entry : availableTechnicians.entrySet()) {
-			if (technician == null || technician.getValue() > entry.getValue()) {
+			if (technician == null || technician.getValue() < entry.getValue()) {
 				technician = entry;
 			}
 		}
@@ -504,13 +499,27 @@ public class Menus {
 	}
 
 	/**
+	 * Helper method to split a menu string when it is too long in length
+	 * @param item - Menu item to split
+	 * @return String
+	 */
+	protected static String splitMenuString(String item) {
+		String[] str = item.split(" ");
+		return str[0] + " " + str[1];
+	}
+
+	/**
 	 * Helper method to copy the keys and values of a map to a new map
 	 * @param map - Map to copy
 	 * @return LinkedHashMap<String, String>
 	 */
 	protected static LinkedHashMap<String, String> copyMap(LinkedHashMap<String, String> map) {
 		LinkedHashMap<String, String> newMap = new LinkedHashMap<>();
+
+		// indexed keys to iterate over LinkedHashMap to retain order
 		ArrayList<String> keys = new ArrayList<String>(map.keySet());
+		
+		// going over hashmap and copy the keys/values to be the exact same
 		for (int i = 0; i < keys.size(); i++) {
 			String key = keys.get(i);
 			String value = map.get(key).toString();
@@ -526,16 +535,17 @@ public class Menus {
 	protected static void printMapMenu(String title, LinkedHashMap<String, String> map) {
 		printHeader(title);
 
+		// indexed keys to iterate over LinkedHashMap to retain order
 		ArrayList<String> keys = new ArrayList<String>(map.keySet());
 
+		// going over hashmaps to print a menu to output
 		for (int i = 0; i < keys.size(); i++) {
-			String s = keys.get(i);
-			String value = map.get(s);
-			if (value.contains("contact number")) {
-				String[] str = value.split(" ");
-				value = str[0] + str[1];
+			String r = keys.get(i);
+			String l = map.get(r);
+			if (l.length() > 15) {
+				l = splitMenuString(l);
 			}
-			System.out.printf("%-20s%s\n", value != null ? value : "N\\A", s);
+			System.out.printf("%-30s%s\n", l, r);
 		}
 	}
 
@@ -550,28 +560,43 @@ public class Menus {
 			LinkedHashMap<String, String> map) {
 		boolean exit = false;
 		String input = "\0";
+
+		// edit map until user confirms no/yes 
 		do {
 			printMapMenu(title, originalMap);
 			input = getInput(sc);
 			System.out.println(input);
 			boolean exists = map.containsKey(input);
+
+			// if input does not exist as a key continue loop
 			if (!exists || input.length() != 1) {
 				System.out.println("Error - invalid selection, try again");
-			} else if (compareString(input, "EXIT_RESUME")) {
+			} 
+			// if user is attempting to exit
+			else if (compareString(input, "EXIT_RESUME")) {
 				System.out.println("Returning to menu..");
 				map = null;
 				exit = true;
-			} else {
+			} 
+			// else attempt to grab the inputted key and modify the value
+			else {
 				String key = input;
 				String value = originalMap.get(key);
 				input = getInput(sc, value);
+
+				// if confirm menu
 				if (compareString(key, "c")) {
+					// if user has entered yes, exit
 					if (input != null) {
 						exit = true;
-					} else {
+					} 
+					// else the user wishes to exit without saving, return null
+					else {
 						return null;
 					}
-				} else {
+				} 
+				// else update the value the user chose
+				else {
 					map.remove(key);
 					map.put(key, input);
 				}
@@ -591,19 +616,35 @@ public class Menus {
 		ArrayList<String> keys = new ArrayList<String>(map.keySet());
 		String input = "\0";
 		Integer counter = 0;
+
+		LinkedHashMap<String, String> copy = copyMap(map);
+
+		// do until the user attempts to exit or the map is filled
 		do {
-			String key = keys.get(counter);
-			input = map.get(key).toString();
+
+			String key = keys.get(counter);		// get key at current index
+			input = map.get(key).toString();	// get value at current index
+
+			/**
+			 * if key is confirm, print current details to this point
+			 */
 			if (compareString(key, "c")) {
 				System.out.print("| ");
 				for (int i = 0; i < keys.size() - 1; i++) {
-					String s = keys.get(i);
-					System.out.printf("%s: %s | ", s, map.get(s).toString());
+					String l = copy.get(keys.get(i)).toString();
+					String r = map.get(keys.get(i)).toString();
+					if (l.length() > 15) {
+						l = splitMenuString(l);
+					}
+					System.out.printf("%s: %s | ", l, r);
 				}
 				System.out.println();
 			}
 
+			// skip previously provided input for userMenu
 			if (map.size() > 1 && compareString(key, "staff") || compareString(key, "tech") && map.size() > 1) { counter++; } 
+			
+			// replace the value at key in the hashmap with user input
 			else { 
 				input = getInput(sc, input);
 				if (input != null && compareString(input, "EXIT_RESUME")) {
@@ -666,24 +707,44 @@ public class Menus {
 		 * checking if the user details were filled out and not exited early
 		 */
 		do {
-			if (map != null) {
+			// if user is not attempting to exit early
+			if (map != null && !map.containsValue("EXIT_RESUME")) {
+
+				// if user has confirmed or is trying to login
 				if (map.get("c") != null || login) {
+
+					// if logging in
 					if (login) {
+
+						// parse user id
 						Integer userId = Integer.parseInt(map.get("employee no")) - 1;
+						
+						// if user exists in the database
 						if (users.size() > userId && users.get(userId).login(map.get("password"))) {
 							user = users.get(userId);
 							System.out.printf("Welcome %s %s!\n", user.getFirstName(), user.getLastName());
 							return user;
-						} else {
+						} 
+						// user has entered invalid credentials, callback to userMenu until user==null
+						else {
+							System.out.println(map);
 							System.out.println("Error - invalid credentials, please try again");
 							user = userMenu(sc, true);
+							if (user == null) {
+								exit = true;
+							}
 						}
-					} else {
+					} 
+					// else user must be creating account
+					else {
+						// create staffUser
 						if (compareString(type, "staff")) {
 							user = new StaffUser(generateUserId(), 
 										map.get("1"), map.get("2"), map.get("3"),
 										map.get("4"), map.get("5"));
-						} else {
+						} 
+						// create TechUser
+						else {
 							Integer techLevel = Integer.parseInt(map.get("4"));
 							user = new TechUser(generateUserId(), 
 										map.get("1"), map.get("2"), map.get("3"),
@@ -691,12 +752,16 @@ public class Menus {
 						}
 						return user;
 					}
-				} else {
+				} 
+				// else user wants to edit details
+				else {
 					map.remove("c");
 					map.put("c", "confirm");
 					map = editMap(sc, "EDIT USER MENU", originalMap, map);
 				}
-			} else {
+			} 
+			// else user wants to exit
+			else {
 				exit = true;
 			}
 		} while (!exit);
@@ -727,22 +792,33 @@ public class Menus {
 		map = copyMap(originalMap);
 		map = traverseMap(sc, map);
 
+		// do until user explicitly exits or a ticket is successfully created
 		do {
+			// if map == null then user is trying to exit
 			if (map != null) {
+
+				// if key=c is not null then the user has confirmed their details
 				if (map.get("c") != null) {
+					// build system-side ticket attributes
 					String ticketId = generateTicketId();
 					Ticket.TicketSeverity severity = checkTicketSeverity(map.get("6"));
 					String techId = "N\\A";
 					TechUser technician = getAvailableTechnician(severity);
 
+					// if technician was found
 					if (technician != null) {
 						techId = technician.getId();
 						technician.setActiveCount(technician.getActiveCount() + 1);
 					}
-					ticket = new Ticket(ticketId, map.get("1"), map.get("2"), user.getId(), map.get("3"), map.get("4"),
+
+					// create ticket
+					ticket = new Ticket(ticketId, map.get("1"), map.get("2"), user != null ? user.getId() : "N\\A", map.get("3"), map.get("4"),
 							map.get("5"), severity, techId);
 					exit = true;
-				} else {
+				} 
+				
+				// else the user wants to edit their details
+				else {
 					map.remove("c");
 					map.put("c", "confirm");
 					map = editMap(sc, "EDIT TICKET MENU", originalMap, map);
@@ -755,6 +831,104 @@ public class Menus {
 		return ticket;
 	}
 
+	/**
+	 * Helper method for tech to deal with ticket
+	 * Allows for tech to either close or change the severity of a ticket
+	 * @param sc - Scanner to read input
+	 * @param close - true=close ticket, false=change severity
+	 * @return Ticket : null
+	 */
+	protected static Ticket ticketTechMenu(Scanner sc, Boolean close) {
+		Boolean exit = false;
+		String input = "\0";
+		Ticket ticket = null;
+		Integer ticketId;
+
+		/**
+		 * do until user explicitly exits, the ticket cannot be modified, or
+		 * the ticket is successfully changed
+		 */
+		do {
+			input = getInput(sc, "ticket number to be changed (eg 12345678-1) and press enter");
+			
+			// if user is not trying to exit
+			if (!compareString(input, "EXIT_RESUME")) {
+				
+				// if there are tickets in the database
+				if (tickets != null) {
+					// parse ticket id
+					ticketId = Integer.parseInt(input) - 1;
+					
+					// if ticket does not exist
+					if (ticketId >= tickets.size()) {
+						System.out.println("Error - invalid ticket number, please try again");
+					} 
+					// else process the ticket
+					else {
+						ticket = tickets.get(ticketId);
+
+						// if ticket is closed exit do-while
+						if (!ticket.getStatus()) {
+							System.out.println("Error - ticket is closed");
+							enterToContinue(sc);
+							exit = true;
+						} 
+						// if user is the allocated technician modify the ticket
+						else if (ticket.isTechnician(user.getId())) {
+							System.out.printf("Attempting to modify ticket: %s\n", ticket.getId());
+							
+							// confirm ticket is correct with user
+							exit = getConfirmInput(sc, "confirm");
+							
+							// if yes
+							if (exit) {
+								// close ticket
+								if (close) {
+									ticket.setStatus(false);
+									((TechUser)user).setActiveCount(((TechUser)user).getActiveCount() - 1);
+									((TechUser)user).setInActiveCount(((TechUser)user).getInActiveCount() + 1);
+									System.out.printf("Ticket %s has been closed", ticket.getId());
+								} 
+								// change severity and/or assigned technician
+								else {
+									input = getInput(sc, "issue severity");
+									TicketSeverity severity = checkTicketSeverity(input);
+									if (severity != null) {
+										TechUser technician = getAvailableTechnician(severity);
+										ticket.setSeverity(severity);
+										if (technician != null) {
+											if (!compareString(technician.getId(), user.getId())) {
+												((TechUser) user)
+														.setActiveCount(((TechUser) user).getActiveCount() - 1);
+												((TechUser) user)
+														.setInActiveCount(((TechUser) user).getInActiveCount() + 1);
+												ticket.setTechnicianId(technician.getId());
+												technician.setActiveCount(technician.getActiveCount() + 1);
+											}
+										}
+										System.out.printf("Ticket %s has been changed", ticket.getId());
+									}
+								}
+							}		
+						} 
+						// else user is not the technician, exit do-while
+						else {
+							System.out.println("Error - can not change another technician's ticket");
+							enterToContinue(sc);
+							exit = true;
+						}
+					}
+				} else {
+					System.out.println("Error - there are no tickets in the database");
+					enterToContinue(sc);
+					exit = true;
+				}
+			} else {
+				exit = true;
+			}
+		} while (!exit);
+		return ticket; // can return null
+	}
 
 	/**
 	 * helper method to check ticket creation date is greater
@@ -782,7 +956,7 @@ public class Menus {
 	 * method for closing open tickets older than seven days
 	 * @param tickets
 	 */
-	public static void closeActiveTicketsMoreThanSevenDaysOld(ArrayList<Ticket> tickets) {
+	public static void closeActiveTicketsMoreThanSevenDaysOld(ArrayList<Ticket> tickets, ArrayList<User> users) {
 		int closedTicketCount = 0;
 		if (tickets != null) {
 			for (Ticket tmp : tickets) {
