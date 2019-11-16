@@ -398,7 +398,7 @@ public class Menus {
 	 * @return boolean
 	 */
 	protected static boolean compareString(String selection, String comparison) {
-		if (selection.equalsIgnoreCase(comparison)) {
+		if (selection != null && comparison != null && selection.equalsIgnoreCase(comparison)) {
 			return true;
 		}
 		return false;
@@ -516,11 +516,16 @@ public class Menus {
 	 */
 	protected static String capitalize(String str) {
 		if (str == null) return str;
-		String[] strArray = str.split(" ");
 		String out = "";
-		for (String s : strArray) {
-			out += s.substring(0,1).toUpperCase() + s.substring(1);
-		}	
+		String[] tmp = str.split(" ");
+		if (tmp.length > 1) {
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].substring(0,1).toUpperCase() + tmp[i].substring(1);
+			}
+			out = tmp[0] + " " + tmp[1];
+		} else {
+			out = str.substring(0,1).toUpperCase() + str.substring(1);
+		}
 		return out;
 	}
 	
@@ -581,7 +586,6 @@ public class Menus {
 		do {
 			printMapMenu(title, originalMap);
 			input = getInput(sc);
-			System.out.println(input);
 			boolean exists = map.containsKey(input);
 
 			// if input does not exist as a key continue loop
@@ -594,23 +598,26 @@ public class Menus {
 				map = null;
 				exit = true;
 			} 
-			// else attempt to grab the inputted key and modify the value
+			// else attempt to grab the key entered and modify the value
 			else {
 				String key = input;
 				String value = originalMap.get(key);
 				input = getInput(sc, value);
 
-				// if confirm menu
-				if (compareString(key, "c")) {
-					// if user has entered yes, exit
+				// if exit menu
+				if (compareString(key, "x")) {
+					// if user has entered yes, exit without saving
 					if (input != null) {
+						map = null;
 						exit = true;
-					} 
-					// else the user wishes to exit without saving, return null
-					else {
-						return null;
 					}
 				} 
+				// else if confirm menu
+				else if (compareString(key, "c")) {
+					if (compareString(input, "SUCCESS")) {
+						exit = true;
+					}
+				}
 				// else update the value the user chose
 				else {
 					map.remove(key);
@@ -631,8 +638,13 @@ public class Menus {
 	protected static LinkedHashMap<String, String> traverseMap(Scanner sc, LinkedHashMap<String, String> map) {
 		ArrayList<String> keys = new ArrayList<String>(map.keySet());
 		String input = "\0";
-		Integer counter = 0;
+		Integer counter = 0, length = 0;
 
+		if (map != null && map.get("x") != null) {
+			length = map.size() - 1;
+		} else {
+			length = map.size();
+		}
 		LinkedHashMap<String, String> copy = copyMap(map);
 
 		// do until the user attempts to exit or the map is filled
@@ -641,18 +653,21 @@ public class Menus {
 			String key = keys.get(counter);		// get key at current index
 			input = map.get(key).toString();	// get value at current index
 
+			if (compareString(key, "x")) {
+				continue;
+			}
 			/**
 			 * if key is confirm, print current details to this point
 			 */
 			if (compareString(key, "c")) {
 				System.out.print("| ");
-				for (int i = 0; i < keys.size() - 1; i++) {
+				for (int i = 0; i < keys.size() - 2; i++) {
 					String l = copy.get(keys.get(i)).toString();
 					String r = map.get(keys.get(i)).toString();
 					if (l.length() > 15) {
 						l = splitMenuString(l);
 					}
-					System.out.printf("%s: %s | ", capitalize(l), capitalize(r));
+					System.out.printf("%s: %s | ", capitalize(l), r);
 				}
 				System.out.println();
 			}
@@ -673,7 +688,7 @@ public class Menus {
 				} 
 			}
 			
-		} while (map.size() > counter && !compareString(input, "EXIT_RESUME"));
+		} while (length > counter && !compareString(input, "EXIT_RESUME"));
 		return map;
 	}
 
@@ -710,6 +725,7 @@ public class Menus {
 					originalMap.put("4", "technician level (Can be either 1 or 2)");
 				}
 				originalMap.put("c", "confirm");
+				originalMap.put("x", "exit");
 			} else {
 				return null;
 			}
@@ -804,7 +820,8 @@ public class Menus {
 		originalMap.put("5", "description");
 		originalMap.put("6", "issue severity");
 		originalMap.put("c", "confirm");
-
+		originalMap.put("x", "exit");
+		
 		map = copyMap(originalMap);
 		map = traverseMap(sc, map);
 
