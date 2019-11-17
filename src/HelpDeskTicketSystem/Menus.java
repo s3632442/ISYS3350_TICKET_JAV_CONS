@@ -143,13 +143,12 @@ public class Menus {
 					List<String> menu = Arrays.asList("View Active Tickets", "Close Active Ticket", "Change Ticket Severity",
 							"View Inactive Tickets", "Logout");
 					List<String> menuSelections = Arrays.asList("A", "C", "S", "I", "X");
-					Ticket ticket = null;
+					if (tickets != null) { fixMissingTechnicians(); }
 					// menu title
 					printMenu("TECH MENU", menu, menuSelections);
 					input = getInput(sc);
 
 					System.out.println();
-
 					// validate selection input length
 					if (input.length() != 1 && !compareString(input, "EXIT_RESUME")) {
 						System.out.println("Error - invalid selection");
@@ -161,13 +160,13 @@ public class Menus {
 						switch (selection) {
 						// Close a active ticket
 						case 'C':
-							ticket = ticketTechMenu(sc, true);
+							ticketTechMenu(sc, true);
 							break;
 						/**
 						 * Change ticket severity
 						 */
 						case 'S':
-							ticket = ticketTechMenu(sc, false);
+							ticketTechMenu(sc, false);
 							break;
 						// Display active tickets allocated to current logged in Tech
 						case 'A':
@@ -951,14 +950,27 @@ public class Menus {
 									input = getInput(sc, "issue severity");
 									TicketSeverity severity = checkTicketSeverity(input);
 									if (severity != null) {
-										TechUser technician = getAvailableTechnician(severity);
+										TechUser technician;
+										TechUser tmp = ((TechUser)user);
+										if (tmp.getLevel() == 1 && severity == TicketSeverity.HIGH) {
+												technician = getAvailableTechnician(severity);
+												if (technician != null) { 
+													tmp.setActiveCount(tmp.getActiveCount() - 1); 
+													tmp.setInActiveCount(tmp.getInActiveCount() + 1);
+												}
+										} else if (tmp.getLevel() == 2 && severity == TicketSeverity.LOW ||
+													tmp.getLevel() == 2 && severity == TicketSeverity.MEDIUM) {
+												technician = getAvailableTechnician(severity);
+												if (technician != null) { 
+													tmp.setActiveCount(tmp.getActiveCount() - 1);
+													tmp.setInActiveCount(tmp.getInActiveCount() + 1);
+												}
+										} else {
+											technician = tmp;
+										}
 										ticket.setSeverity(severity);
 										if (technician != null) {
 											if (!compareString(technician.getId(), user.getId())) {
-												((TechUser) user)
-														.setActiveCount(((TechUser) user).getActiveCount() - 1);
-												((TechUser) user)
-														.setInActiveCount(((TechUser) user).getInActiveCount() + 1);
 												ticket.setTechnicianId(technician.getId());
 												technician.setActiveCount(technician.getActiveCount() + 1);
 											}
