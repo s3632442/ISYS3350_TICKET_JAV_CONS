@@ -101,7 +101,7 @@ class TicketTest {
 	void testTicketWriteToFile() throws FileNotFoundException {
 		String filename = "ticket.txt";
 		PrintWriter pw = new PrintWriter(filename);
-		ticket.writeDetails(pw);
+		ticket.writeAttributes(pw);
 		pw.close();
 		Scanner sc = new Scanner(new FileReader(filename));
 		sc.nextLine();

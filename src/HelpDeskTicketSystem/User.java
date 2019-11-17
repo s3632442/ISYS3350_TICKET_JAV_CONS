@@ -3,19 +3,21 @@ package HelpDeskTicketSystem;
 import java.io.PrintWriter;
 
 public class User {
-	
-	// types of users
-	public enum UserType {
-		STAFF,
-		TECH
-	}
-	
-	private final String id; 		// unique identifier
-	private String pwd; 			// plaintext password
-	private final String firstName; // user first name
-	private final String lastName;  // user last name
 
-	// default constructor
+	
+	private final String id;
+	private String pwd;
+	private final String firstName;
+	private final String lastName; 
+
+	
+	/**
+	 * Default constructor
+	 * @param id - identification number
+	 * @param pwd - plain text password
+	 * @param firstName - user first name
+	 * @param lastName - user last name
+	 */
 	public User(String id, String pwd, String firstName, String lastName)
 	{
 		this.id = id;
@@ -24,35 +26,56 @@ public class User {
 		this.lastName = lastName;
 	}
 	
-	/*
-	 * getters and setters
+	/**
+	 * get user identification number
+	 * @return String
 	 */
 	public String getId()
 	{
 		return this.id;
 	}
 	
+	/**
+	 * get user plain text password
+	 * @return String
+	 */
 	public String getPwd()
 	{
 		return this.pwd;
 	}
 	
+	/**
+	 * get user first name
+	 * @return String
+	 */
 	public String getFirstName()
 	{
 		return this.firstName;
 	}
 	
+	/**
+	 * get user last name
+	 * @return String
+	 */
 	public String getLastName()
 	{
 		return this.lastName;
 	}
 	
+	/**
+	 * set user's password
+	 * @param pwd - new password to set
+	 */
 	public void setPwd(String pwd)
 	{
 		this.pwd = pwd;
 	}
 
-	// login 
+	/**
+	 * Helper method to check for valid credentials on login.
+	 * @param pwd - password for comparison
+	 * @return boolean
+	 */
 	public boolean login(String pwd)
 	{
 		// if password is the same as stored password
@@ -63,7 +86,10 @@ public class User {
 		return false;
 	}
 	
-	// default write user attributes out to file 
+	/**
+	 * Helper method to write user attributes to file
+	 * @param pw - Output stream to write to
+	 */
 	public void writeAttributes(PrintWriter pw)
 	{
 		pw.println("USER");
