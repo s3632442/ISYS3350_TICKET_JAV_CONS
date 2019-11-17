@@ -68,7 +68,6 @@ public class Menus {
 				List<String> menuSelections = Arrays.asList("C", "L", "X");		
 				// title
 				printMenu("IT HELP DESK SYSTEM", menu, menuSelections);
-				System.out.println("To exit out of a input field type \"!x\" and press enter.\n");
 				input = getInput(sc);
 				System.out.println();
 				// if invalid selection is made
@@ -196,6 +195,12 @@ public class Menus {
 		System.exit(0);
 	}
 
+	/**
+	 * Helper method to print exit case for sub menus
+	 */
+	protected static void printExitCase() {
+		System.out.println("To exit out of a input field type \"!x\" and press enter.\n");
+	}
 	/**
 	 * Helper method for printing the header on every select-style menu
 	 * @param title - Menu title
@@ -701,6 +706,7 @@ public class Menus {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>(), 
 			originalMap = new LinkedHashMap<>();	// details needed from user
 
+		printExitCase();
 		/**
 		 * setup the information needed from the user
 		 */
@@ -808,6 +814,8 @@ public class Menus {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>(),
 			originalMap = new LinkedHashMap<>();
 
+		printExitCase();
+
 		originalMap.put("1", "surname");
 		originalMap.put("2", "given name");
 		originalMap.put("3", "email address");
@@ -872,6 +880,8 @@ public class Menus {
 		Ticket ticket = null;
 		Integer ticketId;
 
+		printExitCase();
+		
 		/**
 		 * do until user explicitly exits, the ticket cannot be modified, or
 		 * the ticket is successfully changed
