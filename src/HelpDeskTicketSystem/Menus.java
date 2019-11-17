@@ -83,6 +83,9 @@ public class Menus {
 						user = userMenu(sc, false);
 						if (user != null) {
 							users.add(user);
+							//prompt user to record their allocated ID number
+							System.out.println("\nPlease record your User Id:" + user.getId() + ", you will require this to log in.\nTo continue press [Enter] to continue");
+							sc.nextLine();
 						}
 						break;
 					// login
