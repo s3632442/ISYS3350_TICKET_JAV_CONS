@@ -144,6 +144,7 @@ public class Menus {
 							"View Inactive Tickets", "Logout");
 					List<String> menuSelections = Arrays.asList("A", "C", "S", "I", "X");
 					Ticket ticket = null;
+					fixMissingTechnicians();
 					// menu title
 					printMenu("TECH MENU", menu, menuSelections);
 					input = getInput(sc);
