@@ -630,6 +630,7 @@ public class Menus {
 				else {
 					map.remove(key);
 					map.put(key, input);
+					confirmEdit(map, originalMap);
 				}
 			}
 
@@ -645,8 +646,13 @@ public class Menus {
 	 */
 	protected static void confirmEdit(LinkedHashMap<String, String> map, LinkedHashMap<String, String> copy) {
 		ArrayList<String> keys = new ArrayList<String>(copy.keySet());
-
-		for (int i = 0; i < keys.size() - 1; i++) {
+		Integer length = 0;
+		if (copy.get("x") != null) {
+			length = keys.size() - 2;
+		} else {
+			length = keys.size() - 1;
+		}
+		for (int i = 0; i < length; i++) {
 			String l = copy.get(keys.get(i)).toString();
 			String r = map.get(keys.get(i)).toString();
 			if (l.length() > 15) {
