@@ -399,6 +399,7 @@ public class Menus {
 	 * @return boolean
 	 */
 	protected static boolean compareString(String selection, String comparison) {
+
 		if (selection != null && comparison != null && selection.equalsIgnoreCase(comparison)) {
 			return true;
 		}
@@ -587,7 +588,7 @@ public class Menus {
 		do {
 			printMapMenu(title, originalMap);
 			input = getInput(sc);
-			boolean exists = map.containsKey(input);
+			boolean exists = map.containsKey(input.toLowerCase());
 
 			// if input does not exist as a key continue loop
 			if (!exists || input.length() != 1) {
@@ -601,7 +602,7 @@ public class Menus {
 			} 
 			// else attempt to grab the key entered and modify the value
 			else {
-				String key = input;
+				String key = input.toLowerCase();
 				String value = originalMap.get(key);
 				input = getInput(sc, value);
 
@@ -881,7 +882,7 @@ public class Menus {
 		Integer ticketId;
 
 		printExitCase();
-		
+
 		/**
 		 * do until user explicitly exits, the ticket cannot be modified, or
 		 * the ticket is successfully changed
