@@ -589,8 +589,9 @@ public class Menus {
 
 		// edit map until user confirms no/yes 
 		do {
-			printMapMenu(title, map);
+			printMapMenu(title, originalMap);
 			input = getInput(sc);
+			if (compareString(input, "c")) { confirmEdit(map, originalMap);}
 			boolean exists = map.containsKey(input.toLowerCase());
 
 			// if input does not exist as a key continue loop
@@ -637,6 +638,25 @@ public class Menus {
 	}
 
 	/**
+	 * Helper method to print input values to the screen for confirmation
+	 * @param sc
+	 * @param map
+	 * @return
+	 */
+	protected static void confirmEdit(LinkedHashMap<String, String> map, LinkedHashMap<String, String> copy) {
+		ArrayList<String> keys = new ArrayList<String>(copy.keySet());
+
+		for (int i = 0; i < keys.size() - 1; i++) {
+			String l = copy.get(keys.get(i)).toString();
+			String r = map.get(keys.get(i)).toString();
+			if (l.length() > 15) {
+				l = splitMenuString(l);
+			}
+			System.out.printf("%s: %s \n", capitalize(l), r);
+		}
+	}
+
+	/**
 	 * Helper method to traverse over linkedhashmap and retrieve input
 	 * @param sc - Scanner to read input
 	 * @param map - Map to traverse and update
@@ -656,22 +676,11 @@ public class Menus {
 			String key = keys.get(counter);		// get key at current index
 			input = map.get(key).toString();	// get value at current index
 
-			if (compareString(key, "x")) {
-				continue;
-			}
 			/**
 			 * if key is confirm, print current details to this point
 			 */
 			if (compareString(key, "c")) {
-				for (int i = 0; i < keys.size() - 1; i++) {
-					String l = copy.get(keys.get(i)).toString();
-					String r = map.get(keys.get(i)).toString();
-					if (l.length() > 15) {
-						l = splitMenuString(l);
-					}
-					System.out.printf("%s: %s \n", capitalize(l), r);
-				}
-				System.out.println();
+				confirmEdit(map, copy);
 			}
 
 			// skip previously provided input for userMenu
@@ -792,6 +801,7 @@ public class Menus {
 				else {
 					map.put("c", "confirm");
 					map.put("x", "exit");
+					originalMap.put("x", "exit");
 					map = editMap(sc, "EDIT USER MENU", originalMap, map);
 				}
 			} 
@@ -859,6 +869,7 @@ public class Menus {
 				else {
 					map.put("c", "confirm");
 					map.put("x", "exit");
+					originalMap.put("x", "exit");
 					map = editMap(sc, "EDIT TICKET MENU", originalMap, map);
 				}
 			} else {
