@@ -68,6 +68,7 @@ public class Menus {
 				List<String> menuSelections = Arrays.asList("C", "L", "X");		
 				// title
 				printMenu("IT HELP DESK SYSTEM", menu, menuSelections);
+				System.out.println("To exit out of a input field type \"!x\" and press enter.\n");
 				input = getInput(sc);
 				System.out.println();
 				// if invalid selection is made
@@ -94,6 +95,7 @@ public class Menus {
 						exit = getConfirmInput(sc, "exit");
 					}
 				}
+				
 			//staff user menu logic
 			} else if (user instanceof StaffUser) {
 				do {
