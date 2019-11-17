@@ -382,7 +382,7 @@ public class Menus {
 				input = getInput(scanner, request);
 			}
 			// if user is inputting a ticket severity
-			if (compareString(request, "issue severity")) {
+			if (request.contains("issue severity")) {
 				// if user is inputting an invalid ticket severity callback to getInput()
 				if (checkTicketSeverity(input.toUpperCase()) == null) {
 					System.out.println("Error - invalid severity, must be LOW, MEDIUM, OR HIGH");
@@ -831,9 +831,9 @@ public class Menus {
 		originalMap.put("1", "surname");
 		originalMap.put("2", "given name");
 		originalMap.put("3", "email address");
-		originalMap.put("4", "contact number");
+		originalMap.put("4", "contact number using Australian format (e.g 61290001234)");
 		originalMap.put("5", "description");
-		originalMap.put("6", "issue severity");
+		originalMap.put("6", "issue severity (e.g HIGH, MEDIUM, or LOW)");
 		originalMap.put("c", "confirm");
 		//originalMap.put("x", "exit");
 		
