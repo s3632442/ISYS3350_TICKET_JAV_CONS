@@ -211,7 +211,9 @@ class MenusTest extends Menus {
 				+ "6\n"
 				+ "HIGH\n"
 				+ "c\n"
-				+ "n\n";
+				+ "n\n"
+				+ "x\n"
+				+ "y\n";
 		Ticket ticket = createTicketMenu(new Scanner(i));
 		assertNull(ticket);
 	}
